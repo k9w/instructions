@@ -1,0 +1,104 @@
+
+started 04-10-2021
+
+Launch the agent from a console login shell, not in X or Wayland.
+
+$ ssh-agent /bin/ksh
+
+Or
+
+$ eval `ssh-agent -s`
+
+Or
+
+$ ssh-agent $SHELL
+
+Then type `ssh-add` and on the next line type the key password when
+prompted.
+
+$ ssh-add
+Enter passphrase for /home/kevin/.ssh/id_ed25519:
+Identity added: /home/kevin/.ssh/id_ed25519 (kevin@OpenBSD63.vultr.com)
+$ 
+
+When using X or Wayland, consult the proper setting to activate the
+graphical ssh-agent which will prompt for the key password if it finds
+a key in ~/.ssh.
+
+To kill the currently running ssh-agent without shutdown, reboot, or
+logging out of the original login shell:
+
+$ ssh-agent -D
+
+Or
+
+$ ssh-agent -k
+
+In some cases the agent had spawned a subshell. One exit command would
+not log you out. But a second exit would.
+
+In other cases, the agent did not appear to spawn a subshell, as
+evidenced by a single exit command causing a full logout.
+
+
+--------
+
+
+One change to make is to no longer use the same private key from all
+my laptops, but to generate a different keypair for each laptop, and
+perhaps each OS install if multi-booting or re-installing the OS.
+
+Backup these keys offline, such as a USB drive or printout in an
+OCR-friendly font.
+
+----
+
+Disalbe passwords in SSH server. Set both of these keywords in
+sshd_config to no.
+
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+
+
+--------
+
+
+How to manually SSH from one server to another, not automated
+
+
+You don't need to store your private key on the server. If you're
+manually logged into one server from your laptop with ssh key and
+ssh-agent running, you can use Agent Forwarding to SSH from one server
+to another, for instance to SFTP files between hosts.
+
+Find the agent ID locally:
+$ echo $SSH_AUTH_SOCK
+/tmp/ssh-jYaU6spT5WqA/agent.74875
+
+If your server root account is compromised (some other way than
+stealing/cracking ssh key), the attacker can access your laptop
+ssh-agent socket and SSH into other servers of yours without providing
+the key passphrase. Only allow agent forwarding on machines you
+control and have properly secured.
+
+To enable agent forwarding:
+
+On the first server you SSH into:
+sshd_config:
+
+AllowAgentForwarding yes
+
+You can actually disable it globally, but then use a match rule to
+only allow certain users or addresses to forward their agents.
+
+On your laptop:
+ssh_config:
+
+ForwardAgent yes
+
+
+--------
+
+
+How to safely automate SSH connections between servers.
+

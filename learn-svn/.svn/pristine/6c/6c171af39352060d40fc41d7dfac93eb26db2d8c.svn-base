@@ -1,0 +1,225 @@
+	$Id: learning_path,v 2.6 2019/09/25 07:46:02 kevin Exp $
+
+file started 09-15-19
+
+my history
+
+Mom and Dad had an early model IBM PC with yellow text and DOS. Dad
+used it for something. Mom used it to track orders and inventory for
+dad's parents' Amway business (selling household cleaning supplies).
+
+Dad got a pair of Toshiba laptops in the early 1990s with a bright
+backlight and blue text DOS. I typed my first email reply on it to my
+aunt living in Brazil at the time. I seem to remember a couple DOS
+games. I learned about files, directories, and how to list them in
+DOS.
+
+In about 1994, Dad purchased an i486 desktop PC for the kitchen
+counter which came with windows 3.1. I got better at DOS commands and
+played several games, including Fuzzy's World of Mineature Space Golf.
+We used the Juno email app and each had our own address. We used
+various encyclopedias on CD including pictures, sound files, and
+videos (my favorite). We got onto the Web with Netscape Communicator
+web browser.  We watched very early online videos with Reelplayer. I
+discovered Google search.
+
+In late 1997, Dad purchased a Dell desktop with Windowss 95. It
+included Microsoft Games such as Jewel Chase. The next year, Dad
+introduced me to the Battlecruiser game by 3000AD inc. It came with a
+thich PDF manual which I printed out and read on early Saturday
+mornings before others got up to use the computer.
+
+Dad first introduced me to Red Hat Linux in 1998. I read the printed
+manual and O'Reilly's Running Linux 1999 edition. That's where I first
+heard of the BSDs. This book taught me basic shell commands and
+manpages. Dad maintained a Windows and Linux dual boot setup for many
+years. I kept playing the Battlecruiser game and got involved in their
+online community and Roleplay story writing based on the game. I also
+kept using Linux, though gaming on Windows slowed my Linux learning.
+
+When Red Had Linux split into RHEL and Fedora, dad switched to Debian.
+He also introduced me to Perl around that time and I went through the
+first part of O'Reilly's Learning Perl.
+
+In January 2004, while still a 17 year old Sophmore in homeschool, I
+entered community college, having never owned my own PC or had root
+access to Windows or Linux at all. Somewhere around this time, my
+sister purchased her first used MacBook.
+
+Dad showed me Mark Shuttleworth's announcement of Ubuntu in 2004 at
+DebConf. He switched to it within the next year.
+
+In July 2005, I graduated homeschool with a picture of me in a sharp
+blue cap and gown my mom took of me in the park across the street from
+our house. Within a month, I got my first taxable job as a clerk at
+Walgreens.
+
+At college, I took a few classes specifically about Linux. This and
+dad's Unix Power Tools book (O'Reilly) more than doubled my Linux
+command knowledge. Meanwhile Dad had settled on KDE as his preferred
+DE.
+
+In 2009, I transferred to another Wangreens store in the city and met
+a co-worker named Michael. He encouraged me to start playing World of
+Warcraft, an MMO which ran only on Windows and macOS, not Linux yet.
+saved some money and purchased my first PC at the launch of the games
+Cataclysm expansion in 2010. Michael and I custom-built the desktop
+from Fry's Electronics. I installed Windows 7 Home Premium.  Michael
+also introduced me to CompTIA A+ and we studied it together, and me on
+my own later.
+
+In June 2011, I dropped out of college. I was spending too much time
+on WoW and not enough time on homework to pass my classes. That
+November, I quit my job a Walgreens. I held down a few other retail
+jobs and went unemployeed for about a third of the time for the next
+two years. 
+
+In late 2011 or 2012, I discoverd Jupiter Broadcasting's Linux Action
+Show on Youtube. Michael gave me his old Windows Mobile smartphone and
+I used it on wifi only (without cell service). With it I learned about
+podcasts and subscribed to Jupiter Broadcasting and discovered the
+network's other shows at the time. (From 2003 to 2014, I only had
+about 3 basic cell phones, never a smartphone with cell service).
+
+Sometime after finding JB, I purchased a 2010 Asus Eee PC netbook from
+my younger brother, removed Windows 7 Starter, and installed Ubuntu.
+
+I caught up on the back catalog of Techsnap and switched from Ubuntu
+to Arch after watching Chris and Brian's review of it on the Linux
+Action Show. 
+
+On the LAS episode reviewing the release of FreeBSD 9, Alan Jude gave
+a great overview of the OS and piqued my interest in the technical
+benefits of it over Linux that never occured to me in all the years
+since I first heard of Linux and the BSDs. I knew then I wanted to
+give it a try when I got a spare PC.
+
+In April 2013, I started volunteering at Free Geek and put my Linux
+and A+ knowledge to use for other people. That September, I found and
+got my first full-time job of of Craigslist at a Xerox call center for
+the Sprint cell phone carrier, which involved mostly billing disputes,
+sales commissions, and some tech support. 
+
+In 2014, I purchased my first full-size (used) laptop. It was a 15
+inch Acer from Free Geek. I remember having Ubuntu on the Acer, and
+Arch on the Asus netbook until I got comfortable enough with Arch to
+switch entirely away from Ubuntu to it. That did not happen until 2015
+when I got my brother's 15 inch laptop and I installed Antergos on it
+(based on Arch). I also moved out of my parents' house and took his
+place in his apartment.
+
+I had first heard of Linux User Groups in the Running Linux book.  The
+JB hosts had touted the benefits of a LUG for a long time. In 2014, I
+searched and found calagator.org, where I found the Portland Linux
+Unix Group, and BSD Pizza Night. I attended occasionally and dropped
+out in 2015.
+
+Ever since I had purchased my desktop, I had dual-booted Windows 7
+with Linux and even removed Windows for brief periods. I remember
+booting up the Gentoo installer ISO at some point, but never installed
+it. Within two months of moving into the apartment, I quit playing WoW
+and gave the desktop to Michael.
+
+My brother's laptop died that summer in 2015 and Dad paid $1100 for me
+to order a brand new Lemur model 14 inch laptop from System 76. It
+came with Ubuntu and I re-installed it with Antergos. When my wife
+Crista's MacBook died in 2016, I let her use the System 76. When she
+had trouble with Antergos, I switched it to Fedora while I used
+Antergos on the Acer.
+
+During this time, I had been learning more about all the BSDs from
+Alan on Techsnap and then even more with the launch of JB's BSD Now. 
+
+In 2017, after we had used Comcast service with their public
+xfinitywifi option using neighbor's rouers, I got a modem, router, and
+unifi wifi access point. I setup the router with pfSense.
+
+Sometime in 2018, I started attending PLUG and BSD Pizza Night more
+again and gradually became a regular there.
+
+In April 2018 I spun up a VPS on Vultr with OpenBSD 6.3. That
+November, I switched full time from Antergos to OpenBSD-current on the
+Acer. I found out the Acer's touchpad, wifi, and Ethernet seemed to be
+having problems with OpenBSD. So in January 2019 I purchased a
+Thinkpad t440 on eBay from Blind Center of Nevada and moved my SSD
+from Acer to it. I used another SSD in Acer and installed Ubuntu
+18.04, though I hardly used it. I had also installed OpenBSD 6.3
+release on the netbook and upgraded it to 6.4. 
+
+Shortly after the release of 6.5, I replaced pfSense on the router
+with 6.5-current and had to learn quickly how to setup the router
+config and PF. I decided then that I needed to learn version control
+at some point soon.
+
+In September 2019, I replaced 18.04 on Acer with DragonFly BSD 5.6.2.
+However, its touchpad did not work with it and I couldn't get wifi up
+with the newer wpa_supplicant from ports, and didn't try the older one
+in base.
+
+--------
+
+Waiting to get another Thinkpad to replace Acer before I do more with
+DragonFly BSD.
+
+
+--------
+after starting this file 09-15-19
+
+
+Use CVS for these projects; explore more of CVS as I use it for these
+projects.
+
+www.shellscript.sh tutorial
+
+I should be proficient with CVS at this point. Switch to using SVN for
+the next project.
+
+
+here is where I am today 09-25-19: I am starting to learn subversion.
+
+
+www.regular-expressions.info
+
+If these tutorials do not work examples through find, grep, awk, and
+sed, write up worked examples for them in a new file called
+find-grep-awk-sed.
+
+I should be proficient at SVN at this point. Switch to using Git for
+the next project or Game of Trees.
+
+perl in OpenBSD
+www.perl.org tutorial
+www.learn-perl.org tutorial
+one or two more perl tutorials
+
+www.learn-c.org tutorial
+find and complete another C tutorial
+
+go through Peter Hanstein's PF tutorial
+beef up the config on my router
+
+pick tutorials for:
+HTML
+CSS
+JavaScript
+
+Publish my own website at capernaumtech.com or k9w.org
+
+If I haven't done so already, post my work above to my github
+repository.
+
+collect and post my configs for openbsd-laptop to github
+
+collect and post my configs for openbsd-router to github
+
+plan openbsd-nas and openbsd-cloud-proxy-server (for external access
+to my NAS when we are away from home)
+
+deploy and post my configs for openbsd-nas to github
+
+take courses at Linux Academy, learn AWS, Azure, Google Cloud
+
+kotlin is Google's replacement for Java on Android
+
+Rust is the new up and coming systems language in the same space as C,
+C++, and Go

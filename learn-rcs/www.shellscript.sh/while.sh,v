@@ -1,0 +1,139 @@
+head	1.6;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.6
+date	2019.07.25.22.09.06;	author kevin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2019.07.25.14.49.56;	author kevin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2019.07.25.14.44.13;	author kevin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2019.07.25.05.54.46;	author kevin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2019.07.25.02.57.02;	author kevin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2019.07.25.00.36.02;	author kevin;	state Exp;
+branches;
+next	;
+
+
+desc
+@keep repeating back what I type, unless I type bye
+@
+
+
+1.6
+log
+@moved contents of myfile into script as multi-line comment
+@
+text
+@#!/bin/sh
+
+while read f ; do
+	case $f in 
+		hello)		echo English	;;
+		howdy)		echo American	;;
+		gday)		echo Australian	;;
+		bonjour)	echo French	;;
+		"guten tag")	echo German	;;
+		*)		echo Unknown Language: $f
+			;;
+	esac
+done < myfile
+
+# The section below is a multi-line comment.
+
+: '
+After I completed this exercise from shellscript.sh I appended the
+contents of myfile here for archiving in RCS and deleted the working
+file.
+
+hello
+howdy
+gday
+bonjour
+guten tag
+balony sandwich
+'
+
+@
+
+
+1.5
+log
+@added missing wildcard line for unknown language
+@
+text
+@d14 16
+@
+
+
+1.4
+log
+@read from myfile and identify language
+@
+text
+@d10 1
+@
+
+
+1.3
+log
+@Remove var declare; change while condition to always true; set exit condition to ^C.
+@
+text
+@d3 10
+a12 7
+# Colon (:) always evaluates to true.
+
+while : ; do
+	echo "Please type something in (^C to quit)"
+	read INPUT_STRING
+	echo "You typed: $INPUT_STRING"
+done
+@
+
+
+1.2
+log
+@Double the brackets to accept whitespace in the input string
+@
+text
+@d3 1
+a3 1
+INPUT_STRING=hello
+d5 2
+a6 2
+while [[ $INPUT_STRING != "bye" ]] ; do
+	echo "Please type something in (bye to quit)"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+while [ $INPUT_STRING != "bye" ] ; do
+@

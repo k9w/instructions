@@ -1,0 +1,201 @@
+
+Script started on 2021-02-03 06:23:31+00:00
+$ pwd
+/home/kevin
+$ svnadmin create dotfiles
+$ su
+Password: 
+# mv dotfiles /home
+# exit
+$ mkdir test
+$ cd test
+$ svn import . file:///home/dotfiles -m ""
+$ cd ..
+$ rmdir test
+$ svn checkout file:///home/dotfiles .
+Checked out revision 0.
+$ mkdir instructions
+$ svn add configuration
+A         configuration
+$ svn commit -m "Added file configuration as first commit."
+Adding         configuration
+Transmitting file data .done
+Committing transaction...
+Committed revision 1.
+$ svn list file:///home/dotfiles
+configuration
+$ svn log file:///home/dotfiles
+------------------------------------------------------------------------
+r1 | kevin | 2021-02-03 06:31:03 +0000 (Wed, 03 Feb 2021) | 1 line
+
+Added file configuration as first commit.
+------------------------------------------------------------------------
+$ svn log configuration
+------------------------------------------------------------------------
+r1 | kevin | 2021-02-03 06:31:03 +0000 (Wed, 03 Feb 2021) | 1 line
+
+Added file configuration as first commit.
+------------------------------------------------------------------------
+$ svn diff configuration
+Index: configuration
+===================================================================
+--- configuration	(revision 1)
++++ configuration	(working copy)
+@@ -11,3 +11,5 @@
+ 
+ dnf install subversion
+
++This is new data.
++
+$ svn status configuration
+M       configuration
+$ svn revert configuration
+Reverted 'configuration'
+$ svn add --depth=empty .ssh
+A         .ssh
+$ svn add .ssh/authorized_keys
+A         .ssh/authorized_keys
+$ svn status
+?       .bash_history
+?       .bash_logout
+?       .bash_profile
+?       .bashrc
+A       .ssh
+A       .ssh/authorized_keys
+?       .ssh/id_ed25519.pub
+?       .subversion
+?       .viminfo
+?       instructions
+$ svn diff
+Index: .ssh/authorized_keys
+===================================================================
+--- .ssh/authorized_keys	(nonexistent)
++++ .ssh/authorized_keys	(working copy)
+@@ -0,0 +1 @@
++ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINPCvLA5gGqSDzIBB2GtBlpuyMSTELVzkzTHwl3OL5rE kevin@OpenBSD63.vultr.com
+$ svn log configuration
+------------------------------------------------------------------------
+r1 | kevin | 2021-02-03 06:31:03 +0000 (Wed, 03 Feb 2021) | 1 line
+
+Added file configuration as first commit.
+------------------------------------------------------------------------
+$ svn commit -m "Added .ssh and .ssh/authorized_keys."
+Adding         .ssh
+Adding         .ssh/authorized_keys
+Transmitting file data .done
+Committing transaction...
+Committed revision 2.
+
+$ su
+Password: 
+# cd ..
+# svnadmin create conf
+# mkdir test
+# cd test
+# mkdir root etc usr var
+# svn import root file:///home/conf -m ""
+# svn import etc file:///home/conf -m ""
+# svn import usr file:///home/conf -m ""
+# svn import var file:///home/conf -m ""
+# svn import foo file:///home/conf -m ""
+vn: E000002: Can't stat '/home/test/foo': No such file or directory
+# cd ..
+# rm -rf test
+# cd /
+# svn checkout file:///home/conf root
+Checked out revision 0.
+# svn checkout file:///home/conf etc
+Checked out revision 0.
+# svn checkout file:///home/conf usr
+Checked out revision 0.
+# svn checkout file:///home/conf var
+Checked out revision 0.
+# ls -al /var/.svn
+drwxr-xr-x.  4 root root 4096 Feb  4 04:54 .svn
+# cd /etc
+# svn add --depth=empty ssh
+A         ssh
+# cd ssh
+# svn add sshd_config
+A         sshd_config
+# cd ..
+# svn add sudoers
+A         sudoers
+# cd /var
+# svn add --depth=empty spool
+A         spool
+# svn add --depth=empty cron
+A         cron
+
+No root crontab file existed yet. So I did not add it yet.
+
+# cd /var
+# svn commit -m "Added cron directory."
+Adding         spool
+Adding         spool/cron
+Committing transaction...
+Committed revision 1.
+# cd /etc
+# svn commit -m "Added sshd_config and sudoers."
+Adding         ssh
+Adding         ssh/sshd_config
+Adding         sudoers
+Transmitting file data ..done
+Committing transaction...
+Committed revision 2.
+# exit
+$ cd
+$ svn add instructions
+A         instructions
+A         instructions/svn_setup
+$ svn commit -m "Added instrucitons folder and svn_setup."
+Adding         instructions
+Adding         instructions/svn_setup
+Transmitting file data .done
+Committing transaction...
+Committed revision 3.
+$ svn list -R file:///home/dotfiles
+.ssh/
+.ssh/authorized_keys
+configuration
+instructions/
+instructions/svn_setup
+$ svn diff
+Index: instructions/svn_setup
+===================================================================
+--- instructions/svn_setup	(revision 3)
++++ instructions/svn_setup	(working copy)
+@@ -143,8 +143,23 @@
+ Transmitting file data ..done
+ Committing transaction...
+ Committed revision 2.
++# exit
++$ cd
++$ svn add instructions
++A         instructions
++A         instructions/svn_setup
++$ svn commit -m "Added instrucitons folder and svn_setup."
++Adding         instructions
++Adding         instructions/svn_setup
++Transmitting file data .done
++Committing transaction...
++Committed revision 3.
++$ svn list -R file:///home/dotfiles
++.ssh/
++.ssh/authorized_keys
++configuration
++instructions/
++instructions/svn_setup
++$
+ 
+ 
+-
+-
+-
+$ svn commit -m "Added more to svn_setup."
+Sending        svn_setup
+Transmitting file data .done
+Committing transaction...
+Committed revision 4.
+$
+

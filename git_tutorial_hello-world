@@ -1,0 +1,217 @@
+started 12-02-20
+
+
+One main difference Git has from CVS and Subversion is there is no
+concept of a working copy separate from the repository. In Git, every
+local working copy is itself a full repository, with a complete copy
+of the history of changes, ability to roll back part or all of the
+files to a prior version, etc.
+
+
+Initial setup:
+
+# pkg_add git
+
+$ git config --global user.name "Kevin Williams"
+$ git config --global user.email kevin@k9w.org
+
+
+
+--------
+12-06
+
+Created a .git repo in ~/instructions, added both files, and performed
+the initial commit.
+
+$ ls
+git         subversion
+$ git init
+Initialized empty Git repository in /home/kevin/instructions/.git/
+$ git add .
+ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+        new file:   git
+        new file:   subversion
+
+$ git commit -m "initial commit; added git and subversion"
+[master (root-commit) b5ac6bf] initial commit; added git and subversion
+ 2 files changed, 58 insertions(+)
+ create mode 100644 git
+ create mode 100644 subversion
+$ 
+
+
+Remove file subversion, restore it with git, then remove it with git,
+and commit the removal to the repo.
+
+$ rm subversion                          
+$ git status    
+On branch master  
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    subversion
+            
+                                          
+no changes added to commit (use "git add" and/or "git commit -a")
+$ ls              
+git                              
+$ git checkout -- subversion
+$ ls
+git        subversion
+            
+$ git rm subversion
+rm 'subversion'
+            
+$ ls
+            
+git                                  
+$ git status                    
+On branch master          
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        deleted:    subversion
+                                          
+$ git commit -m "deleted file subversion"
+[master c1b267a] deleted file subversion
+ 1 file changed, 31 deletions(-)
+ delete mode 100644 subversion
+$ 
+
+
+Use .gitignore to tell git to not complain when a file is present but
+not added with git add.
+
+
+From:
+https://stackoverflow.com/questions/987142/make-gitignore-ignore-everything-except-a-few-files
+
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!script.pl
+!template.latex
+# etc...
+
+# ...even if they are in subdirectories
+!*/
+
+# if the files to be tracked are in subdirectories
+!*/a/b/file1.txt
+!*/a/b/c/*
+
+
+In my case, I made the following .gitignore:
+
+# Ignore ./temp and everything in it.
+temp
+
+
+Then I need to add .gitignore to git. If I do not, then the next place
+I or the next person clones this repo, git will prompt that all the
+other files in that working directory are not tracked. 
+
+$ git add .gitignore
+
+
+To clone a copy of a repository locally, cd out of the directory and
+git clone it. Here we clone a repo to as another directory in the
+parent folder.
+
+$ pwd
+/home/kevin/instructions
+$ cd ..
+$ git clone instructions clone-of-instructions
+Cloning into 'clone-of-instructions'...
+done.
+$ ls
+clone-of-instructions	instructions
+$ 
+
+
+Here, clone a repository from github to my local machine.
+
+$ cd
+$ git clone https://github.com/k9w/hello-world
+
+
+I changed a file and am now ready to commit and push the change back
+to my repo on github.
+
+
+$ git config -l
+
+Has some extra info, remote.origin.url.
+
+$ git commit push origin master
+
+
+
+
+For pushing or pulling changes, either commit any pending changes
+first, or as part of the pull or push command.
+
+
+Push changes from this repository to another repository.
+
+$ cd ~/hello-world
+$ ls
+LICENSE	README.md	hello	new	test.txt	test1.txt	test2.txt
+$ git mv new testdir
+
+$ git diff
+diff --git a/test.txt b/test.txt
+index 190a180..a781d64 100644
+--- a/test.txt
++++ b/test.txt
+@@ -1 +1 @@
+-123
++This file used to contain '123'. Now it contains this line.
+
+
+c$ git config -l | cat
+user.name=Kevin Williams
+user.email=kevin@k9w.org
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.url=https://github.com/k9w/hello-world
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
+c$ git push origin master
+Username for 'https://github.com': 
+Password for 'https://k9w@github.com': 
+Everything up-to-date
+c$ git commit -m "renamed new to testdir; replaced text in a file"
+[master 0d5e9c3] renamed new to testdir; replaced text in a file
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+ rename {new => testdir}/qa-only.txt (100%)
+ rename {new => testdir}/testfile (100%)
+c$ git push origin master                                          
+Username for 'https://github.com': 
+Password for 'https://k9w@github.com': 
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 284 bytes | 284.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/k9w/hello-world
+   9743bff..0d5e9c3  master -> master
+c$ 
+
+
+
+
+
+Pull changes from another repository to this repository.
+

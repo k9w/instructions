@@ -1,0 +1,42 @@
+cd ~/k9w
+cvs -d $PWD init
+
+cd ~/bin/learn
+cvs -d $OLDPWD import -m "Initial import from RCS project" learn k9w start
+N learn/rcs_notes
+N learn/cvs_notes
+cvs import: Importing /home/kevin/k9w/learn/www.shellscript.sh
+N learn/www.shellscript.sh/first.sh,v
+N learn/www.shellscript.sh/for.sh,v
+N learn/www.shellscript.sh/test.sh,v
+N learn/www.shellscript.sh/var.sh,v
+N learn/www.shellscript.sh/while.sh,v
+N learn/www.shellscript.sh/test.sh
+
+No conflicts created by this import
+
+             
+cd ..
+mv learn learn.orig
+cvs -qd ~/k9w checkout -P learn
+U learn/cvs_notes
+U learn/rcs_notes
+U learn/www.shellscript.sh/first.sh,v
+U learn/www.shellscript.sh/for.sh,v
+U learn/www.shellscript.sh/test.sh
+U learn/www.shellscript.sh/test.sh,v
+U learn/www.shellscript.sh/var.sh,v
+U learn/www.shellscript.sh/while.sh,v
+
+
+# diff changes on cvs_notes
+
+# incorporate RCS history into CVS where I used RCS
+
+# diff changes on shellscript.sh examples that I tracked with RCS,
+with revisions done after the import into CVS, and with the current
+version in the source repository and working directory.
+
+# continue working the tutorial at Functions
+
+# try out and learn the rest of the CVS commands and document them here

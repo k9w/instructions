@@ -1,0 +1,3 @@
+BEGIN { print "Produce to pick up from the store:" }
+/produce/ { print $ 2}
+END { print "--------" }

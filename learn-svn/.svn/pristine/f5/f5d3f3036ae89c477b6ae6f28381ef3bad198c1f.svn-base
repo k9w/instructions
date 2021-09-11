@@ -1,0 +1,131 @@
+started 09-30-19
+
+Search all files recursively in /usr/src for 'Dragonfly' with exact
+capitalization (-i to search case-insensitive):
+
+grep -R Dragonfly /usr/src
+
+
+Search 'myfile' for all occurrences of .Pp at the start of a line.
+
+grep '^\.Pp' myfile
+
+Single quotes ' are needed to tell the shell to not interpret characters
+that are special to it, but to instead pass them through to grep.
+The carat ^ matches the regular expression only at the start of a line.
+Backslash \ causes . to be interpreted literally by grep, instead of as
+a single character . in a regular expression.
+
+Similar to above, but $ means to only match .Pp if it appears at the end 
+of a line in myfile.
+
+grep '\.Pp$' myfile
+
+Search myfile for any word that has the letter n in it.
+
+grep .n myfile
+
+Search myfile for all lines not containing foo or bar.
+
+grep -v -e 'foo -e 'bar' myfile
+
+Search myfile for either 19, 20, or 25. This form below is an extended 
+regular expression. -n means to print the line number of each match in
+myfile.
+
+grep -n -E 19|20|25 myfile
+
+Search grep-xargs for any line starting with l or o.
+egrep '^(l|o)' grep-xargs
+Currently, this returns only one result which is:
+'of a line in myfile.'
+
+Leaving out the ( ) returns far more results (not shown here). Need to
+investigate this further as I learn regular expressions.
+egrep '^l|o' grep-xargs
+
+Search grep-xargs for any line ending in any letter from l to u
+inclusive.
+egrep '[l-u]$' grep-xargs
+This returns about 8 resultant lines, currently. This is still
+case-sensitive.
+
+For the same search for lower AND upper case:
+egrep '[l-u]|[L-U]$' grep-xargs
+
+
+For the same search for lower OR upper case:
+egrep '([l-u]|[L-U])$' grep-xargs
+egrep -i '[l-u]$' grep-xargs
+The search returns fewerer results than above because grep stops once it
+has found the lowercase and does not even try for the upercase.
+
+Search myfile for one or more patterns from file instead of specifying a
+pattern on the grep command line.
+
+grep -file myfile
+
+Use fgrep to search ~/bin/learn-cvs/* for the literal string '$Id:'
+fgrep $Id: ~/bin/learn-cvs/*
+
+However, it also displays several lines after the match in each file
+matched. I need to figure out why.
+
+If I search svn_notes for 'rename'
+grep rename svn_notes
+It will return results for rename and renamed.
+
+To only match rename if it is a whole word and does not have 'd' at the
+end:
+grep -w rename svn_notes
+
+Here is that same search, with the results, along with their current
+line numbers with -n:
+grep -wn rename svn_notes
+17:paths. Do I want to rename .svnprepos to k9w-svn ? ###
+125:To properly track file rename, move, copy, or delete, regular shell
+
+Here it is again, with -C for 2 lines (by default) of surrounding
+context for each matched line.
+grep -wnC rename svn_notes
+
+15-
+16-### I stopped here. I have renamed cvs paths to not conflict with SVN
+17:paths. Do I want to rename .svnprepos to k9w-svn ? ###
+18-
+19-svnadmin create ~/.svnrepos/learn-svn
+--
+123-09-30
+124-
+125:To properly track file rename, move, copy, or delete, regular shell
+126-commands won't preserve the change history properly in Subversion.
+127-Instead, use svn move OLD NEW:
+
+Here is the same search but looking in all files in the current
+directory, but without the 2 lines of context before and after.
+grep -wn rename ~/bin/learn-cvs/*
+
+This only searches the current directory. To descend into subdirectories
+use the -R option and remove the asterisk *.
+grep -wnR rename ~/bin/learn-cvs
+
+Same search, but only show the files that were matched, using -l.
+grep -wnRl rename ~/bin/learn-cvs
+
+/home/kevin/bin/learn-cvs/cvs_notes
+/home/kevin/bin/learn-cvs/www.shellscript.sh/CVS/Entries
+/home/kevin/bin/learn-cvs/www.shellscript.sh/common.lib
+/home/kevin/bin/learn-cvs/www.shellscript.sh/function2.sh
+/home/kevin/bin/learn-cvs/www.shellscript.sh/function3.sh
+/home/kevin/bin/learn-cvs/www.shellscript.sh/rename.sh
+
+If we use -c instead of -l:
+grep -wnRc rename ~/bin/learn-cvs
+
+Grep returns a list of every file searched, even those containin 0
+matches.
+
+Search files in ~/Resume/ for 10 digit phone numbers, or any 12
+character word that has - as the 3rd and 6th characters. It finds
+phone numbers and '------------'.
+grep '...-...-....' ~/Resume/*
