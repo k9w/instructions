@@ -7,6 +7,11 @@ local working copy is itself a full repository, with a complete copy
 of the history of changes, ability to roll back part or all of the
 files to a prior version, etc.
 
+Instead, git has the concept of a staging area, which is a temporary
+snapshot taken of all files indicated with 'git add'. If you stage
+file, and then make a change to one of them, you'll see the changed
+file with 'git status'.
+
 
 Initial setup:
 
