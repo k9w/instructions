@@ -117,27 +117,6 @@ To show how currently staged files differ from the latest commit:
 $ git diff --staged
 ```
 
-If you add a file to the index (staging area) and then decide you
-don't want it tracked, you can reset the staging area back to match
-the last commit.
-
-```
-$ git reset HEAD
-```
-
-If you have multiple files in the staging area and only want to remove
-one, or some, but not all, specify the file, files, or a wildcard.
-
-```
-$ git reset HEAD test-file1
-```
-
-Or:
-
-```
-$ git restore --staged test-file1
-```
-
 
 To rename an already-tracked file:
 
@@ -169,6 +148,36 @@ $ git rm --cached test-file2
 ```
 
 And then commit as normal.
+
+
+If you add a file to the index (staging area) and then decide you
+don't want it tracked, you can reset the staging area back to match
+the last commit.
+
+```
+$ git reset HEAD
+```
+
+If you have multiple files in the staging area and only want to remove
+one, or some, but not all, specify the file, files, or a wildcard.
+
+```
+$ git reset HEAD test-file1
+```
+
+Or:
+
+```
+$ git restore --staged test-file1
+```
+
+If you modify a tracked file and want to revert the change, here is how
+to revert it back to the currently-staged version, or the latest
+committed version if none is staged:
+
+```
+$ git checkout -- test-file
+```
 
 
 Setup the server this way:
