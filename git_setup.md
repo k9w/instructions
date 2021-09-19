@@ -165,10 +165,16 @@ one, or some, but not all, specify the file, files, or a wildcard.
 $ git reset HEAD test-file1
 ```
 
-Or:
+To restore from the version you have staged:
 
 ```
 $ git restore --staged test-file1
+```
+
+To restore from the version you have committed:
+
+```
+$ git restore test-file1
 ```
 
 If you modify a tracked file and want to revert the change, here is how
