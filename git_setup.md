@@ -125,6 +125,20 @@ the last commit.
 $ git reset HEAD
 ```
 
+If you have multiple files in the staging area and only want to remove
+one, or some, but not all, specify the file, files, or a wildcard.
+
+```
+$ git reset HEAD test-file1
+```
+
+Or:
+
+```
+$ git restore --staged test-file1
+```
+
+
 To rename an already-tracked file:
 
 ```
