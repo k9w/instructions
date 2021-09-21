@@ -236,3 +236,13 @@ To 9.k9w.org:/home/kevin/git-repos/dotfiles.git
  * [new branch]      openbsd-thinkpad -> openbsd-thinkpad
 $
 ```
+
+On another machine or server, to clone dotfiles repo directly into the
+home directory, the current directory and not make a 'dotfiles'
+directory:
+
+```
+9$ cd ~
+9$ git clone git-repos/dotfiles.git .
+```
+
