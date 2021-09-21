@@ -189,3 +189,50 @@ $ git checkout -- test-file
 Setup the server this way:
 <https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server>
 
+```
+9$ cd ~/git-repos
+9$ mkdir dotfiles && cd dotfiles
+9$ git init
+Initialized empty Git repository in /home/kevin/git-repos/dotfiles/.git/
+9$ cd ..
+9$ git clone --bare dotfiles dotfiles.git
+Cloning into bare repository 'dotfiles.git'...
+warning: You appear to have cloned an empty repository.
+done
+```
+
+Then on the local origin, setup the remote.
+
+```
+$ git remote add 9 9.k9w.org:/home/kevin/git-repos/dotfiles.git
+$ git remote -v
+9       9.k9w.org:/home/kevin/git-repos/dotfiles.git (fetch)
+9       9.k9w.org:/home/kevin/git-repos/dotfiles.git (push)
+```
+
+And push to the server.
+
+```
+$ git push 9
+Enumerating objects: 36, done.
+Counting objects: 100% (36/36), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (34/34), done.
+Writing objects: 100% (36/36), 6.25 KiB | 533.00 KiB/s, done.
+Total 36 (delta 9), reused 0 (delta 0), pack-reused 0
+To 9.k9w.org:/home/kevin/git-repos/dotfiles.git
+ * [new branch]      main -> main
+$
+```
+
+I plan to use dotfiles for all my local machines and cloud VMs. So
+here I rename the local branch from 'main' to 'openbsd-thinkpad'.
+
+```
+$ git branch -m openbsd-thinkpad
+$ git push 9
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+To 9.k9w.org:/home/kevin/git-repos/dotfiles.git
+ * [new branch]      openbsd-thinkpad -> openbsd-thinkpad
+$
+```
