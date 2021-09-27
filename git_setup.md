@@ -246,3 +246,27 @@ directory:
 9$ git clone git-repos/dotfiles.git .
 ```
 
+
+Unlike Subversion and CVS, Git refers to HEAD as the currently
+selected branch.
+
+
+To create a branch:
+
+```
+$ git branch <name-of-new-branch>
+```
+
+
+Rename the currently selected branch:
+
+```
+$ git branch -m <new-name-of-current-branch>
+```
+
+To switch HEAD and select another branch
+
+```
+$ git checkout <other-branch-name>
+```
+
