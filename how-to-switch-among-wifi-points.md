@@ -1,13 +1,15 @@
 08-20-21
 
-Thanks guys. I was already using 'join SSID wpakey KEY' in hostname.if
-for all my SSIDs and had just switched successfully from 'dhcp' to 'inet
-autoconf' to get faster boot time with dhcpleased(8). Roaming between
-access points at home, at work, and on my hotspot has continued to work
-well.
+https://www.reddit.com/r/openbsd/comments/p8ml4g/switch_openbsd_laptop_from_preferred_wifi_to
+
+Thanks guys. I was already using 'join SSID wpakey KEY' in
+hostname.if(5) for all my SSIDs and had just switched successfully
+from 'dhcp' to 'inet autoconf' to get faster boot time with
+dhcpleased(8). Roaming between access points at home, at work, and on
+my hotspot has continued to work well.
 
 To the one who pointed out the manpages, I had already read through
-those (even the long ifconfig manpage) and still didn't get how to
+those (even the long ifconfig(8) manpage) and still didn't get how to
 switch among multiple in-range wifi's. That's why I asked in this
 thread.
 
@@ -16,8 +18,8 @@ worked.
 
 ----
 
-Use ifconfig(8) to find out your wifi driver. This guide assumes you use
-the iwm(4) driver for Intel chipsets have all your SSIDs in
+Use ifconfig(8) to find out your wifi driver. This guide assumes you
+use the iwm(4) driver for Intel chipsets and have all your SSIDs in
 /etc/hostname.iwm0 as described above.
 
 Start with all the SSIDs and wpakeys in /etc/hostname.iwm0 (if you have
