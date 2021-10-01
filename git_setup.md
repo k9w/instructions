@@ -413,3 +413,21 @@ To 9.k9w.org:/home/kevin/git-repos/instructions.git
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 o$
 ```
+
+In the 'dotfiles' repo, I had originally called the first, default
+branch 'main' I decided to change that to 'openbsd-thinkpad' and then to
+'openbsd-laptop'.
+
+To view all branch names, both local and remote:
+
+```
+$ git branch -a
+```
+
+To delete the branch 'openbsd-thinkpad':
+
+```
+$ git push origin --delete openbsd-thinkpad
+ - [deleted]         openbsd-thinkpad
+```
+
