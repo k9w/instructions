@@ -315,4 +315,69 @@ To switch HEAD and select another branch
 $ git checkout <other-branch-name>
 ```
 
-git clone 9.k9w.org:~/git-repos/instructions.git
+
+Here is a case on my openbsd-laptop in the 'instructions' repo branch
+'main' where I had a remote setup called '9' for
+9.k9w.org:~/git-repos/instructions.git and where the local repo on
+openbsd-laptop had fallen behind 9.k9w.org after I had cloned from 9
+onto fedora-laptop, committed changes, pushed them to 9, rebooted
+laptop from openbsd to fedora (two SSDs in same laptop), did a
+successfull 'git pull', and couldn't push because the local branch was
+behind the remote. Here is how I resolved it:
+
+```
+$ git fetch 9
+o$ git merge
+fatal: No remote for the current branch.
+o$ git merge 9
+merge: 9 - not something we can merge
+o$ git remote rename 9 origin
+o$ git pus
+git: 'pus' is not a git command. See 'git --help'.
+
+The most similar commands are
+        push
+        pull
+o$ git push
+fatal: The current branch main has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin main
+
+o$ git push
+fatal: The current branch main has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin main
+
+o$ git push --set-upstream origin main
+To 9.k9w.org:/home/kevin/git-repos/instructions.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to '9.k9w.org:/home/kevin/git-repos/instructions.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+o$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> main
+
+o$ git pull origin main
+From 9.k9w.org:/home/kevin/git-repos/instructions
+ * branch            main       -> FETCH_HEAD
+Updating 7a15525..6f49420
+Fast-forward
+ git_setup.md | 52 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 49 insertions(+), 3 deletions(-)
+o$ git status
+On branch main
+nothing to commit, working tree clean
+o$ 
+```
