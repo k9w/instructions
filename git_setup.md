@@ -431,3 +431,23 @@ $ git push origin --delete openbsd-thinkpad
  - [deleted]         openbsd-thinkpad
 ```
 
+I found 'git branch -a' still listed openbsd-thinkpad.
+
+https://stackoverflow.com/questions/35941566/git-says-remote-ref-does-not-exist-when-i-delete-remote-branch
+
+Here is how to update the local list of branches, including the list of
+remote branches, after the branch openbsd-thinkpad has been removed
+from the remote:
+
+```
+$ git fetch --prune
+From 9.k9w.org:~/git-repos/dotfiles
+ - [deleted]         (none)     -> origin/openbsd-thinkpad
+[kevin@f ~]$ git branch -a
+* fedora-laptop
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/fedora-laptop
+  remotes/origin/main
+  remotes/origin/openbsd-laptop
+```
+
