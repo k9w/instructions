@@ -237,13 +237,58 @@ To 9.k9w.org:/home/kevin/git-repos/dotfiles.git
 $
 ```
 
-On another machine or server, to clone dotfiles repo directly into the
-home directory, the current directory and not make a 'dotfiles'
-directory:
+On the same machine serving the repo.git repositories, to clone
+dotfiles repo directly into the home directory, the current directory
+and not make a 'dotfiles' directory:
 
 ```
 9$ cd ~
 9$ git clone git-repos/dotfiles.git .
+```
+
+On another machine with the same user, home directory, and ssh key for
+the server, to clone the instructions repo:
+
+```
+$ git clone 9.k9w.org:~/git-repos/instructions.git
+Cloning into 'instructions'...
+remote: Enumerating objects: 138, done.
+remote: Counting objects: 100% (138/138), done.
+remote: Compressing objects: 100% (106/106), done.
+remote: Total 138 (delta 31), reused 126 (delta 25), pack-reused 0
+Receiving objects: 100% (138/138), 71.60 KiB | 748.00 KiB/s, done.
+Resolving deltas: 100% (31/31), done.
+```
+
+When you try to clone into the current directory, git may complain the
+path already exists.
+
+```
+$ git clone 9.k9w.org:~/git-repos/dotfiles.git .
+fatal: destination path '.' already exists and is not an empty directory.
+```
+
+Instead, leave off the trailing dot and let git clone into a new
+directory called 'dotfiles'.
+
+```
+$ git clone 9.k9w.org:~/git-repos/dotfiles.git
+Cloning into 'dotfiles'...
+remote: Enumerating objects: 36, done.
+remote: Counting objects: 100% (36/36), done.
+remote: Compressing objects: 100% (34/34), done.
+remote: Total 36 (delta 9), reused 0 (delta 0), pack-reused 0
+Receiving objects: 100% (36/36), 6.25 KiB | 6.25 MiB/s, done.
+Resolving deltas: 100% (9/9), done.
+```
+
+You can then copy the files into your intended directory after
+ensuring it won't overwrite anything you want to keep. If necessary,
+move or rename files which would have been overwritten by the repo
+files.
+
+```
+$ mv dotfiles/* .
 ```
 
 
@@ -270,3 +315,4 @@ To switch HEAD and select another branch
 $ git checkout <other-branch-name>
 ```
 
+git clone 9.k9w.org:~/git-repos/instructions.git
