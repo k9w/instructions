@@ -380,4 +380,36 @@ o$ git status
 On branch main
 nothing to commit, working tree clean
 o$ 
+
+o$ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   git_setup.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+o$ git add git_setup.md
+nstead of "git push 9", and resolved a merge conflict.'
+           <
+[main c548e11] Added info on how to rename a remote to more easily do
+"git push" instead of "git push 9", and resolved a merge conflict.
+ 1 file changed, 66 insertions(+), 1 deletion(-)
+o$ git push
+fatal: The current branch main has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin main
+
+o$ git push --set-upstream origin main
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 1.33 KiB | 340.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0
+To 9.k9w.org:/home/kevin/git-repos/instructions.git
+   6f49420..c548e11  main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+o$
 ```
