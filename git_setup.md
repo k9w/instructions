@@ -13,12 +13,16 @@ $ git config --global init.defaultBranch main
 ```
 
 On Linux and FreeBSD, 'git diff' passes certain flags to less and
-displays correctly. But on OpenBSD, it fills up the entire screen with
-blanks and exits.
+displays correctly. But on OpenBSD, if the contents fit on one
+screenfull, less filsthe rest of the screen with blanks and exits.
 
-To fix it on OpenBSD, set core.pager to either pass the correct flags
-to less(1), compare to the manpage on FreeBSD, or set core.pager to
-cat(1) instead of less(1).
+To fix it on OpenBSD, one option is to set core.pager to pass the correct flags
+to less(1).
+
+To find the correct flags to pass to less on OpenBSD, compare is
+manpage with less on FreeBSD.
+
+Or set core.pager to cat(1) instead of less(1) with we do here:
 
 ```
 $ git config --global core.pager cat
@@ -26,10 +30,10 @@ $ git config --global core.pager cat
 
 Keep in mind if the output is long enough for commands such as 'git
 log' that you choose to pipe it into less, you'll lose the color
-highlighting.
+highlighting Git provides.
 
 
-To make a git repo of your dotfiles, start in you home directory:
+To make a Git repo of your dotfiles, start in you home directory:
 
 ```
 $ cd
@@ -42,16 +46,40 @@ name it that yet.
 $ git init
 ```
 
-Rename the default branch from 'master' to 'main'.
+Rename the default branch from 'master' to 'main' if you haven't
+already set init.defaultBranch to it in ~/.gitconfig.
 
 ```
 $ git branch -m main
 ```
 
-Add the initial list of files to be tracked.
+Often times, your Git repo is in a directory containing only the files
+in the project you want to track. In many cases, building or running
+the project makes logs, binaries and other files you don't want to
+track or don't need to clutter up other people's or other machines'
+folders where your repo may now or later be cloned to.
+
+Because your 'dotfiles' repo is in your home directory, Git will see
+other files and folders there which you likely don't need or want to
+track.
+
+To prevent those files from showing in a 'git status' or be added with
+'git add', make a ./.gitignore as follows.
 
 ```
-$ git add .Xresources .cwmrc .emacs.d/init.el .gitconfig .init.ee .kshrc .mg .nexrc
+# Ignore all files and directories recursively except what is added
+# manually by 'git add'. Requires 'git add -f' to add a file for the
+# first time to be committed and tracked.
+
+*
+
+```
+
+Next add the initial list of files to be tracked.
+
+```
+$ git add -f .Xresources .cwmrc .emacs.d/init.el .gitconfig .init.ee \
+.kshrc .mg .nexrc
 ```
 
 Check to see if you missed any files.
@@ -67,32 +95,27 @@ necessarily track all dotfiles shipped with the OS.
 $git add .profile .tmux.conf .vimrc .xsession
 ```
 
-Check the status, with 'less' if the output is too long.
+Check the status, with 'git status'.
 
 ```
 $ git status
 $ git status | less
 ```
-
-Add all files in the current directory to gitignore, including the
-ones you already added to the index (staging area) with 'git add'
-above.
-
-```
-$ ls -a > .gitignore
-```
-
-Git does not ignore files or files which match patterns listed in
-.gitignore if they are already tracked by git. That's why we added the
-files first, above.
-
-check the status, commit what you have thus far, and print the
+Commit what you have thus far, and print the
 commands you just typed.
 
 ```
 $ git commit -m 'Initial commit.'
 $ git status
 $ history
+```
+
+Going forward, whenever you modify an already tracked file and want to
+commit it to Git, you need to manually add it to the staging area, but
+without the -f flag since it's already tracked.
+
+```
+$ git add .tmux.conf
 ```
 
 To show files currently tracked by git:
@@ -126,20 +149,28 @@ $ git mv test-file test-file1
 
 This changes the file name in the working directory just like mv(1)
 and stages the new filename in the index, ready for the next commit.
+
+You could also just rename the file regularly just with mv, 'git add
+-f' the new filename. 'git status' or 'git commit' would then
+auto-detect the file under the old name to be removed and see the file
+under the new name to be committed.
+
 Interestingly, if you had already modified the file before renaming
 it, but didn't stage it with 'git add', Git won't stage the changed
 file contents when it stages the file name change. In my test, I did
 that separately after committing the rename.
 
+You can remove a tracked file from the local directory and Git will
+notice it and remove it just like a renamed file above.
 
-To remove an already-tracked file from git and from the local directory:
+To remove an already-tracked file from git and from the local
+directory in one command:
 
 ```
 $ git rm test-file1
 ```
 
 And then commit as normal.
-
 
 To remove an already-tracked file from Git but keep the local file:
 
@@ -159,7 +190,7 @@ $ git reset HEAD
 ```
 
 If you have multiple files in the staging area and only want to remove
-one, or some, but not all, specify the file, files, or a wildcard.
+one, or some, but not all, specify the file(s) or a wildcard.
 
 ```
 $ git reset HEAD test-file1
@@ -184,6 +215,17 @@ committed version if none is staged:
 ```
 $ git checkout -- test-file
 ```
+
+Git allows one person to clone a repository from another person or
+machine. Changes can then be pushed and pulled in a peer-to-peer
+fashion. Git also supports other workflows.
+
+
+
+
+
+
+
 
 
 Setup the server this way:
