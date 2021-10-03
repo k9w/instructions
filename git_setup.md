@@ -216,40 +216,80 @@ committed version if none is staged:
 $ git checkout -- test-file
 ```
 
-Git allows one person to clone a repository from another person or
-machine. Changes can then be pushed and pulled in a peer-to-peer
-fashion. Git also supports other workflows.
 
+The distributed nature of Git allows one person to clone another's
+repository, or for one to upload their own repo to a server or another
+machine they can access. Git supports a number fo workflows around
+this.
 
+The examples thus far in this guide assume you started the repo above
+on your own laptop. One common way to share a repo with others is to
+upload it to services with web interfaces such as Github, Gitlab, and
+self-hosted solutions such as Gitweb and Gitea.
 
-
-
-
-
+First start with a method the Git creators likely originally intended
+to upload a repo: via the command line to a server you can login to
+with SSH (even if you end up using a protocol other than SSH to serve
+the repo).
 
 
 Setup the server this way:
 <https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server>
 
+Login to the server, create a git-repos folder in your home directory
+and cd to it.
+
 ```
-9$ cd ~/git-repos
-9$ mkdir dotfiles && cd dotfiles
-9$ git init
-Initialized empty Git repository in /home/kevin/git-repos/dotfiles/.git/
-9$ cd ..
-9$ git clone --bare dotfiles dotfiles.git
+$ cd
+$ mkdir git-repos
+$ cd ~/git-repos
+```
+
+Now make a folder for the dotfiles repo.
+
+```
+$ mkdir dotfiles && cd dotfiles
+```
+
+Remember, unlike most Git repos, this dotfiles repo is intended to
+exist in the root of your home directory.
+
+So why make a dotfiles folder in a sub directory of your home folder?
+
+This is because Git requires a bare repo to be created before you can upload
+yours to it: an empty directory.
+
+First start by initializing a new repository in the current folder.
+
+```
+$ git init
+Initialized empty Git repository in /home/<username>/git-repos/dotfiles/.git/
+```
+
+Then cd back up to the ~/git-repos folder.
+
+```
+$ cd ..
+```
+
+Now clone that empty repository, the folder called 'dotfiles' into a
+clone-able Git repository, a new folder called 'dotfiles.git'.
+
+```
+$ git clone --bare dotfiles dotfiles.git
 Cloning into bare repository 'dotfiles.git'...
 warning: You appear to have cloned an empty repository.
 done
 ```
 
-Then on the local origin, setup the remote.
+Now on the origin, on your local laptop where you first started this
+repo, setup the remote to the server path you just setup..
 
 ```
-$ git remote add 9 9.k9w.org:/home/kevin/git-repos/dotfiles.git
+$ git remote add origin <server>:/home/<username>/git-repos/dotfiles.git
 $ git remote -v
-9       9.k9w.org:/home/kevin/git-repos/dotfiles.git (fetch)
-9       9.k9w.org:/home/kevin/git-repos/dotfiles.git (push)
+origin  <server>:/home/<username>/git-repos/dotfiles.git (fetch)
+origin  <server>:/home/<username>/git-repos/dotfiles.git (push)
 ```
 
 And push to the server.
@@ -262,7 +302,7 @@ Delta compression using up to 2 threads
 Compressing objects: 100% (34/34), done.
 Writing objects: 100% (36/36), 6.25 KiB | 533.00 KiB/s, done.
 Total 36 (delta 9), reused 0 (delta 0), pack-reused 0
-To 9.k9w.org:/home/kevin/git-repos/dotfiles.git
+To <server>:/home/<username>/git-repos/dotfiles.git
  * [new branch]      main -> main
 $
 ```
@@ -274,7 +314,7 @@ here I rename the local branch from 'main' to 'openbsd-thinkpad'.
 $ git branch -m openbsd-thinkpad
 $ git push 9
 Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
-To 9.k9w.org:/home/kevin/git-repos/dotfiles.git
+To <server>:/home/<username>/git-repos/dotfiles.git
  * [new branch]      openbsd-thinkpad -> openbsd-thinkpad
 $
 ```
@@ -292,7 +332,7 @@ On another machine with the same user, home directory, and ssh key for
 the server, to clone the instructions repo:
 
 ```
-$ git clone 9.k9w.org:~/git-repos/instructions.git
+$ git clone <server>:~/git-repos/instructions.git
 Cloning into 'instructions'...
 remote: Enumerating objects: 138, done.
 remote: Counting objects: 100% (138/138), done.
@@ -306,7 +346,7 @@ When you try to clone into the current directory, git may complain the
 path already exists.
 
 ```
-$ git clone 9.k9w.org:~/git-repos/dotfiles.git .
+$ git clone <server>:~/git-repos/dotfiles.git .
 fatal: destination path '.' already exists and is not an empty directory.
 ```
 
@@ -314,7 +354,7 @@ Instead, leave off the trailing dot and let git clone into a new
 directory called 'dotfiles'.
 
 ```
-$ git clone 9.k9w.org:~/git-repos/dotfiles.git
+$ git clone <server>:~/git-repos/dotfiles.git
 Cloning into 'dotfiles'...
 remote: Enumerating objects: 36, done.
 remote: Counting objects: 100% (36/36), done.
@@ -324,10 +364,9 @@ Receiving objects: 100% (36/36), 6.25 KiB | 6.25 MiB/s, done.
 Resolving deltas: 100% (9/9), done.
 ```
 
-You can then copy the files into your intended directory after
-ensuring it won't overwrite anything you want to keep. If necessary,
-move or rename files which would have been overwritten by the repo
-files.
+Then copy the files into your intended directory after ensuring it
+won't overwrite anything you want to keep. If necessary, move or
+rename files which would have been overwritten by the repo files.
 
 ```
 $ mv dotfiles/* .
@@ -360,8 +399,8 @@ $ git checkout <other-branch-name>
 
 Here is a case on my openbsd-laptop in the 'instructions' repo branch
 'main' where I had a remote setup called '9' for
-9.k9w.org:~/git-repos/instructions.git and where the local repo on
-openbsd-laptop had fallen behind 9.k9w.org after I had cloned from 9
+<server>:~/git-repos/instructions.git and where the local repo on
+openbsd-laptop had fallen behind <server> after I had cloned from 9
 onto fedora-laptop, committed changes, pushed them to 9, rebooted
 laptop from openbsd to fedora (two SSDs in same laptop), did a
 successfull 'git pull', and couldn't push because the local branch was
@@ -393,9 +432,9 @@ To push the current branch and set the remote as upstream, use
     git push --set-upstream origin main
 
 o$ git push --set-upstream origin main
-To 9.k9w.org:/home/kevin/git-repos/instructions.git
+To <server>:/home/<username>/git-repos/instructions.git
  ! [rejected]        main -> main (non-fast-forward)
-error: failed to push some refs to '9.k9w.org:/home/kevin/git-repos/instructions.git'
+error: failed to push some refs to '<server>:/home/<username>/git-repos/instructions.git'
 hint: Updates were rejected because the tip of your current branch is behind
 hint: its remote counterpart. Integrate the remote changes (e.g.
 hint: 'git pull ...') before pushing again.
@@ -412,7 +451,7 @@ If you wish to set tracking information for this branch you can do so with:
     git branch --set-upstream-to=origin/<branch> main
 
 o$ git pull origin main
-From 9.k9w.org:/home/kevin/git-repos/instructions
+From <server>:/home/<username>/git-repos/instructions
  * branch            main       -> FETCH_HEAD
 Updating 7a15525..6f49420
 Fast-forward
@@ -450,7 +489,7 @@ Delta compression using up to 2 threads
 Compressing objects: 100% (3/3), done.
 Writing objects: 100% (3/3), 1.33 KiB | 340.00 KiB/s, done.
 Total 3 (delta 2), reused 0 (delta 0), pack-reused 0
-To 9.k9w.org:/home/kevin/git-repos/instructions.git
+To <server>:/home/<username>/git-repos/instructions.git
    6f49420..c548e11  main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 o$
@@ -483,9 +522,9 @@ from the remote:
 
 ```
 $ git fetch --prune
-From 9.k9w.org:~/git-repos/dotfiles
+From <server>:~/git-repos/dotfiles
  - [deleted]         (none)     -> origin/openbsd-thinkpad
-[kevin@f ~]$ git branch -a
+$ git branch -a
 * fedora-laptop
   remotes/origin/HEAD -> origin/main
   remotes/origin/fedora-laptop
