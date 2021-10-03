@@ -232,10 +232,6 @@ to upload a repo: via the command line to a server you can login to
 with SSH (even if you end up using a protocol other than SSH to serve
 the repo).
 
-
-Setup the server this way:
-<https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server>
-
 Login to the server, create a git-repos folder in your home directory
 and cd to it.
 
@@ -283,7 +279,7 @@ done
 ```
 
 Now on the origin, on your local laptop where you first started this
-repo, setup the remote to the server path you just setup..
+repo, setup the remote to the server path you just setup.
 
 ```
 $ git remote add origin <server>:/home/<username>/git-repos/dotfiles.git
@@ -295,7 +291,7 @@ origin  <server>:/home/<username>/git-repos/dotfiles.git (push)
 And push to the server.
 
 ```
-$ git push 9
+$ git push origin
 Enumerating objects: 36, done.
 Counting objects: 100% (36/36), done.
 Delta compression using up to 2 threads
@@ -306,22 +302,30 @@ To <server>:/home/<username>/git-repos/dotfiles.git
  * [new branch]      main -> main
 $
 ```
+The 'git push' command defaults to a target called 'origin'. We chose
+that name 'origin' when setting up the remote with 'git remote' so
+that we can leave off the word 'origin' and justspecify the command as
+'git push'.
+
+```
+$ git push
+```
 
 I plan to use dotfiles for all my local machines and cloud VMs. So
 here I rename the local branch from 'main' to 'openbsd-thinkpad'.
 
 ```
 $ git branch -m openbsd-thinkpad
-$ git push 9
+$ git push
 Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
 To <server>:/home/<username>/git-repos/dotfiles.git
  * [new branch]      openbsd-thinkpad -> openbsd-thinkpad
 $
 ```
 
-On the same machine serving the repo.git repositories, to clone
-dotfiles repo directly into the home directory, the current directory
-and not make a 'dotfiles' directory:
+On the same machine serving the repo.git repositories (such as
+'dotfiles.git'), to clone dotfiles repo directly into the home
+directory, the current directory and not make a 'dotfiles' directory:
 
 ```
 9$ cd ~
