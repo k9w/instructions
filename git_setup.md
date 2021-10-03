@@ -311,6 +311,28 @@ that we can leave off the word 'origin' and justspecify the command as
 $ git push
 ```
 
+<br>
+# Branching
+
+
+One of Git's killer features is the ability to have branches, forked
+tracks of development. Do an internet search for 'git branching' for a
+good visual on what it looks like to really get the concept.
+
+Typically, organizations and open source projects use branches to have
+a 'produciton' default branch called 'master', 'main', or similar, and
+a 'testing' branch, and perhaps a 'hotfix' branch to develop and test
+security and usability patches to the current production release.
+
+This dotfiles repo affords a different opportunity for branches: for
+each machine to have its own exact configuration, but for them all to
+share a limited subset of configuration in common.
+
+The common bits would require 'git merge' operations on an ongoing
+basis to sync changes from one branch to another.
+
+We will explore those concepts with examples in this section.
+
 I plan to use dotfiles for all my local machines and cloud VMs. So
 here I rename the local branch from 'main' to 'openbsd-thinkpad'.
 
@@ -323,17 +345,27 @@ To <server>:/home/<username>/git-repos/dotfiles.git
 $
 ```
 
-On the same machine serving the repo.git repositories (such as
-'dotfiles.git'), to clone dotfiles repo directly into the home
-directory, the current directory and not make a 'dotfiles' directory:
+It turns out this renamed the 'main' branch to 'openbsd-thinkpad' only
+on the local repo. The 'git push' pushed 'openbsd-thinkpad' as a new
+branch to the remote server. It left the 'main' branch on the server
+and did not rename or replace it. We will come back to that.
+
+On the server where we made 'dotfiles.git' earlier, we could clone it
+into your home folder there with.
 
 ```
 9$ cd ~
 9$ git clone git-repos/dotfiles.git .
 ```
 
-On another machine with the same user, home directory, and ssh key for
-the server, to clone the instructions repo:
+Notice the inclusion of the dot (.) at the end of the command
+above. That tells Git to clone the repo into the current directory,
+instead of the default behavior of making a directory called
+'dotfiles' and putting the cloned repo there.
+
+
+On another laptop with the same user, home directory name, and ssh key
+for the server, to clone the instructions repo:
 
 ```
 $ git clone <server>:~/git-repos/instructions.git
