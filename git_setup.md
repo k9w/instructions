@@ -365,7 +365,21 @@ instead of the default behavior of making a directory called
 
 
 On another laptop with the same user, home directory name, and ssh key
-for the server, to clone the instructions repo:
+for the server, to clone the instructions repo, here's what it does:
+
+```
+$ git clone <server>:~/git-repos/dotfiles.git .
+Cloning into '.'...
+remote: Enumerating objects: 41, done.
+remote: Counting objects: 100% (41/41), done.
+remote: Compressing objects: 100% (39/39), done.
+remote: Total 41 (delta 12), reused 0 (delta 0), pack-reused 
+Receiving objects: 100% (41/41), 6.83 KiB | 6.83 MiB/s, done.
+Resolving deltas: 100% (12/12), done.
+```
+
+If I wanted to clone another repo called 'instructions' in the normal
+fashion of making a new folder called 'instructions':
 
 ```
 $ git clone <server>:~/git-repos/instructions.git
@@ -407,6 +421,8 @@ rename files which would have been overwritten by the repo files.
 ```
 $ mv dotfiles/* .
 ```
+
+
 
 
 Unlike Subversion and CVS, Git refers to HEAD as the currently
