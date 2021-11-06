@@ -584,3 +584,70 @@ $ git branch -a
   remotes/origin/openbsd-laptop
 ```
 
+I upgraded OpenBSD on 9.k9w.org from 6.9 to 7.0. The 9 in 9.k9w.org
+referred to the 9 in 6.9. So I renamed its hostname from 9 to r (r is
+for 'release'), and changed its FQDN in at my DNS provider from
+9.k9w.org to r.k9w.org.
+
+The ./.git/config file still points to 9.k9w.org. Here is how to
+update the URL to the new address. Note, everything after the r in
+r.k9w.org is the same as before.
+
+```
+$ git remote set-url origin r.k9w.org:/home/kevin/git-repos/dotfiles.git
+```
+
+Next, compare the main and openbsd-laptop branches. The main branch is
+not on my laptop; the openbsd-laptop branch is. But main is
+still on the origin site. Here's how to compare them.
+
+```
+$ git diff openbsd-laptop..remotes/origin/main
+```
+
+Here's how to compare the remote main branch with the remote
+openbsd-lapotp branch.
+
+```
+$ git diff remotes/origin/fedora-laptop..remotes/origin/main
+```
+
+We don't see any differences, which is good. However, we do see
+differences between fedora-laptop and openbsd-laptop, which is also
+good.
+
+```
+$ git diff remotes/origin/fedora-laptop..remotes/origin/openbsd-laptop
+```
+
+For my purposes, I don't need a master or main branch for the dotfiles
+repo because I would use OpenBSD and Fedora equally.
+
+Later, I will explore how to selectively merge changes between them,
+and among any further branches made in the future, while also keeping
+the differences I want between/among each branch for each laptop, OS
+install, and possibly on cloud-servers too.
+
+Here's how to delete the main branch on the origin.
+
+First change the upstream from main to openbsd-laptop
+
+```
+$ git push --set-upstream origin openbsd-laptop
+```
+
+Check it with:
+
+```
+$ git branch -a
+```
+
+Then delete the old branch:
+
+```
+$ git push origin --delete bad-branch-name
+```
+
+However, I'm not sure if I'll need the main branch later. I'm leaving
+it for now, even if it falls out of date.
+
