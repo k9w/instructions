@@ -651,3 +651,10 @@ $ git push origin --delete bad-branch-name
 However, I'm not sure if I'll need the main branch later. I'm leaving
 it for now, even if it falls out of date.
 
+Here's how to update the remote on fedora laptop from 9.k9w.org to
+r.k9w.org.
+
+```
+git remote set-url origin r.k9w.org:~/git-repos/dotfiles.git
+```
+
