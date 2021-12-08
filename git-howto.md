@@ -658,3 +658,8 @@ r.k9w.org.
 $ git remote set-url origin r.k9w.org:~/git-repos/dotfiles.git
 ```
 
+Be sure to clone from a bare repo, instrucitons.git, rather than the
+regular repo, instructions. Here are details of the error I got and
+how to fix it.
+
+<https://stackoverflow.com/questions/44809486/why-am-i-not-able-to-push-from-a-local-repository-to-a-remote-repository-given>
