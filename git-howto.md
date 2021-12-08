@@ -14,15 +14,15 @@ $ git config --global init.defaultBranch main
 
 On Linux and FreeBSD, 'git diff' passes certain flags to less and
 displays correctly. But on OpenBSD, if the contents fit on one
-screenfull, less filsthe rest of the screen with blanks and exits.
+screenfull, less fills the rest of the screen with blanks and exits.
 
-To fix it on OpenBSD, one option is to set core.pager to pass the correct flags
-to less(1).
+To fix it on OpenBSD, one option is to set core.pager to pass the
+correct flags to less(1).
 
 To find the correct flags to pass to less on OpenBSD, compare is
 manpage with less on FreeBSD.
 
-Or set core.pager to cat(1) instead of less(1) with we do here:
+Or set core.pager to cat(1) instead of less(1):
 
 ```
 $ git config --global core.pager cat
@@ -40,7 +40,7 @@ $ cd
 ```
 
 Initialize the git repository for dotfiles. Don't worry about how to
-name it that yet.
+set its name to 'dotfiles' yet.
 
 ```
 $ git init
@@ -78,8 +78,8 @@ To prevent those files from showing in a 'git status' or be added with
 Next add the initial list of files to be tracked.
 
 ```
-$ git add -f .Xresources .cwmrc .emacs.d/init.el .gitconfig .init.ee \
-.kshrc .mg .nexrc
+$ git add -f .Xresources .cwmrc .emacs.d/init.el .gitconfig .gitignore \
+.init.ee .kshrc .mg .nexrc
 ```
 
 Check to see if you missed any files.
@@ -92,7 +92,7 @@ Add the rest of the files you want. Remember you are not looking to
 necessarily track all dotfiles shipped with the OS.
 
 ```
-$git add .profile .tmux.conf .vimrc .xsession
+$ git add -f .profile .tmux.conf .vimrc .xsession
 ```
 
 Check the status, with 'git status'.
@@ -132,7 +132,7 @@ $ git diff
 ```
 
 Be sure 'git diff' is blank with no output before you commit, to
-ensure no changes are missed.
+ensure no changes are missed. Do so with 'git add'.
 
 To show how currently staged files differ from the latest commit:
 
@@ -150,10 +150,10 @@ $ git mv test-file test-file1
 This changes the file name in the working directory just like mv(1)
 and stages the new filename in the index, ready for the next commit.
 
-You could also just rename the file regularly just with mv, 'git add
--f' the new filename. 'git status' or 'git commit' would then
-auto-detect the file under the old name to be removed and see the file
-under the new name to be committed.
+You could also rename the file regularly with just mv, 'git add -f'
+the new filename. 'git status' or 'git commit' would then auto-detect
+the file under the old name to be removed and see the file under the
+new name to be committed.
 
 Interestingly, if you had already modified the file before renaming
 it, but didn't stage it with 'git add', Git won't stage the changed
@@ -216,6 +216,9 @@ committed version if none is staged:
 $ git checkout -- test-file
 ```
 
+<br>
+# Remotes
+
 
 The distributed nature of Git allows one person to clone another's
 repository, or for one to upload their own repo to a server or another
@@ -227,10 +230,10 @@ on your own laptop. One common way to share a repo with others is to
 upload it to services with web interfaces such as Github, Gitlab, and
 self-hosted solutions such as Gitweb and Gitea.
 
-First start with a method the Git creators likely originally intended
-to upload a repo: via the command line to a server you can login to
-with SSH (even if you end up using a protocol other than SSH to serve
-the repo).
+Let's first start with a method the Git creators likely originally
+intended to upload a repo: via the command line to a server you can
+login to with SSH (even if you end up using a protocol other than SSH
+to serve the repo).
 
 Login to the server, create a git-repos folder in your home directory
 and cd to it.
@@ -302,10 +305,11 @@ To <server>:/home/<username>/git-repos/dotfiles.git
  * [new branch]      main -> main
 $
 ```
+
 The 'git push' command defaults to a target called 'origin'. We chose
 that name 'origin' when setting up the remote with 'git remote' so
-that we can leave off the word 'origin' and justspecify the command as
-'git push'.
+that we can leave off the word 'origin' and just specify the command
+as 'git push'.
 
 ```
 $ git push
@@ -351,7 +355,7 @@ branch to the remote server. It left the 'main' branch on the server
 and did not rename or replace it. We will come back to that.
 
 On the server where we made 'dotfiles.git' earlier, we could clone it
-into your home folder there with.
+into my home folder there with.
 
 ```
 9$ cd ~
@@ -364,8 +368,9 @@ instead of the default behavior of making a directory called
 'dotfiles' and putting the cloned repo there.
 
 
-On another laptop with the same user, home directory name, and ssh key
-for the server, to clone the instructions repo, here's what it does:
+Here's how to clone the repo onto another laptop without a remote
+already specified. Note the use of ~ because the server has my same
+home directory name /home/<user>.
 
 ```
 $ git clone <server>:~/git-repos/dotfiles.git .
@@ -379,10 +384,11 @@ Resolving deltas: 100% (12/12), done.
 ```
 
 If I wanted to clone another repo called 'instructions' in the normal
-fashion of making a new folder called 'instructions':
+fashion of making a new folder called 'instructions' and spell out the
+full directory path on the server:
 
 ```
-$ git clone <server>:~/git-repos/instructions.git
+$ git clone <server>:/home/<user>/git-repos/instructions.git
 Cloning into 'instructions'...
 remote: Enumerating objects: 138, done.
 remote: Counting objects: 100% (138/138), done.
@@ -419,7 +425,7 @@ won't overwrite anything you want to keep. If necessary, move or
 rename files which would have been overwritten by the repo files.
 
 ```
-$ mv dotfiles/* .
+$ cp dotfiles/* .
 ```
 
 
@@ -442,10 +448,16 @@ Rename the currently selected branch:
 $ git branch -m <new-name-of-current-branch>
 ```
 
-To switch HEAD and select another branch
+To switch HEAD and select another branch:
 
 ```
 $ git checkout <other-branch-name>
+```
+
+Or:
+
+```
+$ git switch <other-branch-name>
 ```
 
 
@@ -460,30 +472,18 @@ behind the remote. Here is how I resolved it:
 
 ```
 $ git fetch 9
-o$ git merge
+$ git merge
 fatal: No remote for the current branch.
-o$ git merge 9
+$ git merge 9
 merge: 9 - not something we can merge
-o$ git remote rename 9 origin
-o$ git pus
-git: 'pus' is not a git command. See 'git --help'.
-
-The most similar commands are
-        push
-        pull
-o$ git push
+$ git remote rename 9 origin
+$ git push
 fatal: The current branch main has no upstream branch.
 To push the current branch and set the remote as upstream, use
 
     git push --set-upstream origin main
 
-o$ git push
-fatal: The current branch main has no upstream branch.
-To push the current branch and set the remote as upstream, use
-
-    git push --set-upstream origin main
-
-o$ git push --set-upstream origin main
+$ git push --set-upstream origin main
 To <server>:/home/<username>/git-repos/instructions.git
  ! [rejected]        main -> main (non-fast-forward)
 error: failed to push some refs to '<server>:/home/<username>/git-repos/instructions.git'
@@ -491,7 +491,7 @@ hint: Updates were rejected because the tip of your current branch is behind
 hint: its remote counterpart. Integrate the remote changes (e.g.
 hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
-o$ git pull
+$ git pull
 There is no tracking information for the current branch.
 Please specify which branch you want to merge with.
 See git-pull(1) for details.
@@ -502,7 +502,7 @@ If you wish to set tracking information for this branch you can do so with:
 
     git branch --set-upstream-to=origin/<branch> main
 
-o$ git pull origin main
+$ git pull origin main
 From <server>:/home/<username>/git-repos/instructions
  * branch            main       -> FETCH_HEAD
 Updating 7a15525..6f49420
@@ -512,9 +512,9 @@ Fast-forward
 o$ git status
 On branch main
 nothing to commit, working tree clean
-o$ 
+$ 
 
-o$ git status
+$ git status
 On branch main
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
@@ -522,7 +522,7 @@ Changes not staged for commit:
         modified:   git_setup.md
 
 no changes added to commit (use "git add" and/or "git commit -a")
-o$ git add git_setup.md
+$ git add git_setup.md
 nstead of "git push 9", and resolved a merge conflict.'
            <
 [main c548e11] Added info on how to rename a remote to more easily do
@@ -534,7 +534,7 @@ To push the current branch and set the remote as upstream, use
 
     git push --set-upstream origin main
 
-o$ git push --set-upstream origin main
+$ git push --set-upstream origin main
 Enumerating objects: 5, done.
 Counting objects: 100% (5/5), done.
 Delta compression using up to 2 threads
@@ -544,7 +544,7 @@ Total 3 (delta 2), reused 0 (delta 0), pack-reused 0
 To <server>:/home/<username>/git-repos/instructions.git
    6f49420..c548e11  main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
-o$
+$
 ```
 
 In the 'dotfiles' repo, I had originally called the first, default
@@ -645,16 +645,16 @@ $ git branch -a
 Then delete the old branch:
 
 ```
-$ git push origin --delete bad-branch-name
+$ git push origin --delete <bad-branch-name>
 ```
 
 However, I'm not sure if I'll need the main branch later. I'm leaving
 it for now, even if it falls out of date.
 
-Here's how to update the remote on fedora laptop from 9.k9w.org to
+Here's how to update the remote on fedora-laptop from 9.k9w.org to
 r.k9w.org.
 
 ```
-git remote set-url origin r.k9w.org:~/git-repos/dotfiles.git
+$ git remote set-url origin r.k9w.org:~/git-repos/dotfiles.git
 ```
 
