@@ -216,6 +216,97 @@ committed version if none is staged:
 $ git checkout -- test-file
 ```
 
+
+
+
+<p>
+# Cloning
+
+On the server where we made 'dotfiles.git' earlier, we could clone it
+into my home folder there with.
+
+```
+9$ cd ~
+9$ git clone git-repos/dotfiles.git .
+```
+
+Notice the inclusion of the dot (.) at the end of the command
+above. That tells Git to clone the repo into the current directory,
+instead of the default behavior of making a directory called
+'dotfiles' and putting the cloned repo there.
+
+
+Here's how to clone the repo onto another laptop without a remote
+already specified. Note the use of ~ because the server has my same
+home directory name /home/<user>.
+
+```
+$ git clone <server>:~/git-repos/dotfiles.git .
+Cloning into '.'...
+remote: Enumerating objects: 41, done.
+remote: Counting objects: 100% (41/41), done.
+remote: Compressing objects: 100% (39/39), done.
+remote: Total 41 (delta 12), reused 0 (delta 0), pack-reused 
+Receiving objects: 100% (41/41), 6.83 KiB | 6.83 MiB/s, done.
+Resolving deltas: 100% (12/12), done.
+```
+
+If I wanted to clone another repo called 'instructions' in the normal
+fashion of making a new folder called 'instructions' and spell out the
+full directory path on the server:
+
+```
+$ git clone <server>:/home/<user>/git-repos/instructions.git
+Cloning into 'instructions'...
+remote: Enumerating objects: 138, done.
+remote: Counting objects: 100% (138/138), done.
+remote: Compressing objects: 100% (106/106), done.
+remote: Total 138 (delta 31), reused 126 (delta 25), pack-reused 0
+Receiving objects: 100% (138/138), 71.60 KiB | 748.00 KiB/s, done.
+Resolving deltas: 100% (31/31), done.
+```
+
+When you try to clone into the current directory, git may complain the
+path already exists.
+
+```
+$ git clone <server>:~/git-repos/dotfiles.git .
+fatal: destination path '.' already exists and is not an empty directory.
+```
+
+Instead, leave off the trailing dot and let git clone into a new
+directory called 'dotfiles'.
+
+```
+$ git clone <server>:~/git-repos/dotfiles.git
+Cloning into 'dotfiles'...
+remote: Enumerating objects: 36, done.
+remote: Counting objects: 100% (36/36), done.
+remote: Compressing objects: 100% (34/34), done.
+remote: Total 36 (delta 9), reused 0 (delta 0), pack-reused 0
+Receiving objects: 100% (36/36), 6.25 KiB | 6.25 MiB/s, done.
+Resolving deltas: 100% (9/9), done.
+```
+
+Then copy the files into your intended directory after ensuring it
+won't overwrite anything you want to keep. If necessary, move or
+rename files which would have been overwritten by the repo files.
+
+```
+$ cp dotfiles/* .
+```
+
+Be sure to clone from a bare repo, instrucitons.git, rather than the
+regular repo, instructions. Here are details of the error I got and
+how to fix it.
+
+<https://stackoverflow.com/questions/44809486/why-am-i-not-able-to-push-from-a-local-repository-to-a-remote-repository-given>
+
+
+
+
+
+
 <br>
 # Remotes
 
@@ -354,82 +445,6 @@ on the local repo. The 'git push' pushed 'openbsd-thinkpad' as a new
 branch to the remote server. It left the 'main' branch on the server
 and did not rename or replace it. We will come back to that.
 
-On the server where we made 'dotfiles.git' earlier, we could clone it
-into my home folder there with.
-
-```
-9$ cd ~
-9$ git clone git-repos/dotfiles.git .
-```
-
-Notice the inclusion of the dot (.) at the end of the command
-above. That tells Git to clone the repo into the current directory,
-instead of the default behavior of making a directory called
-'dotfiles' and putting the cloned repo there.
-
-
-Here's how to clone the repo onto another laptop without a remote
-already specified. Note the use of ~ because the server has my same
-home directory name /home/<user>.
-
-```
-$ git clone <server>:~/git-repos/dotfiles.git .
-Cloning into '.'...
-remote: Enumerating objects: 41, done.
-remote: Counting objects: 100% (41/41), done.
-remote: Compressing objects: 100% (39/39), done.
-remote: Total 41 (delta 12), reused 0 (delta 0), pack-reused 
-Receiving objects: 100% (41/41), 6.83 KiB | 6.83 MiB/s, done.
-Resolving deltas: 100% (12/12), done.
-```
-
-If I wanted to clone another repo called 'instructions' in the normal
-fashion of making a new folder called 'instructions' and spell out the
-full directory path on the server:
-
-```
-$ git clone <server>:/home/<user>/git-repos/instructions.git
-Cloning into 'instructions'...
-remote: Enumerating objects: 138, done.
-remote: Counting objects: 100% (138/138), done.
-remote: Compressing objects: 100% (106/106), done.
-remote: Total 138 (delta 31), reused 126 (delta 25), pack-reused 0
-Receiving objects: 100% (138/138), 71.60 KiB | 748.00 KiB/s, done.
-Resolving deltas: 100% (31/31), done.
-```
-
-When you try to clone into the current directory, git may complain the
-path already exists.
-
-```
-$ git clone <server>:~/git-repos/dotfiles.git .
-fatal: destination path '.' already exists and is not an empty directory.
-```
-
-Instead, leave off the trailing dot and let git clone into a new
-directory called 'dotfiles'.
-
-```
-$ git clone <server>:~/git-repos/dotfiles.git
-Cloning into 'dotfiles'...
-remote: Enumerating objects: 36, done.
-remote: Counting objects: 100% (36/36), done.
-remote: Compressing objects: 100% (34/34), done.
-remote: Total 36 (delta 9), reused 0 (delta 0), pack-reused 0
-Receiving objects: 100% (36/36), 6.25 KiB | 6.25 MiB/s, done.
-Resolving deltas: 100% (9/9), done.
-```
-
-Then copy the files into your intended directory after ensuring it
-won't overwrite anything you want to keep. If necessary, move or
-rename files which would have been overwritten by the repo files.
-
-```
-$ cp dotfiles/* .
-```
-
-
-
 
 Unlike Subversion and CVS, Git refers to HEAD as the currently
 selected branch.
@@ -459,6 +474,7 @@ Or:
 ```
 $ git switch <other-branch-name>
 ```
+
 
 
 Here is a case on my openbsd-laptop in the 'instructions' repo branch
@@ -658,8 +674,8 @@ r.k9w.org.
 $ git remote set-url origin r.k9w.org:~/git-repos/dotfiles.git
 ```
 
-Be sure to clone from a bare repo, instrucitons.git, rather than the
-regular repo, instructions. Here are details of the error I got and
-how to fix it.
+If the local branch does not show all remote branches, a shortcut way
+to fix it is to rename the local repo, clone a new repo copy from the
+remote origin, verify it looks good and shows all the remote branches,
+and delete the original local repo.
 
-<https://stackoverflow.com/questions/44809486/why-am-i-not-able-to-push-from-a-local-repository-to-a-remote-repository-given>
