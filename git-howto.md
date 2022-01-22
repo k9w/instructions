@@ -679,3 +679,13 @@ to fix it is to rename the local repo, clone a new repo copy from the
 remote origin, verify it looks good and shows all the remote branches,
 and delete the original local repo.
 
+
+If you find git is not ignoring .*.swp temp files from vim or *~
+auto-save files from Emacs, have git re-assign the ~/.gitignore as the
+default excludes file. 
+
+```
+git config --global core.excludesfile ~/.gitignore
+```
+
+
