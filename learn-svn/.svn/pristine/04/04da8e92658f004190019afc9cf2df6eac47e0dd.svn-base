@@ -1,5 +1,0 @@
-BEGIN { FS=","
-	print "Produce to pick up from the store:" }
-# for lines containing 'produce', print the second word
-/produce/ { print $2 }
-END { print "--------" }
