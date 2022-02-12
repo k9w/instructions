@@ -685,7 +685,37 @@ auto-save files from Emacs, have git re-assign the ~/.gitignore as the
 default excludes file. 
 
 ```
-git config --global core.excludesfile ~/.gitignore
+$ git config --global core.excludesfile ~/.gitignore
 ```
 
+
+To revert to a previous commit, locate the commit ID you want first
+with:
+
+```
+$ git log
+```
+
+Then revert or change the repository to the state it was in at that
+commit with the checkout command. The switch command doesn't work here
+because it expects a branch, not a commit ID.
+
+```
+$ git checkout 844cc47
+```
+
+If you make changes and want to commit them, follow the instructions to
+make a new branch with 'switch -c <new-branch-name>'. Then you can merge
+that new branch into the main branch.
+
+If instead you decide to not make changes and to go back to the most
+recent commit, you can use either the checkout or switch command.
+
+```
+$ git checkout -
+```
+
+```
+$ git switch -
+```
 
