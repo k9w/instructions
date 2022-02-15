@@ -720,3 +720,19 @@ $ git checkout -
 $ git switch -
 ```
 
+
+<p>
+# Stashing changes
+
+If you changed files in a local repo without first running 'git pull',
+you can stash away those changes, do the git pull, then apply them
+back and commit and push.
+
+```
+$ git stash
+$ git pull
+$ git stash apply
+$ git add .
+$ git commit
+$ git push
+```

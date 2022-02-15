@@ -148,3 +148,8 @@ $ ls /usr/local
 bin  etc  games  include  lib  man  sbin  share  src  tarsnap-cache
 $ 
 
+#	$Id$
+
+.cache
+.config
+.mozilla

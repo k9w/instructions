@@ -1,5 +1,0 @@
-#	$Id$
-
-.cache
-.config
-.mozilla
