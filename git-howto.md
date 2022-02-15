@@ -1,5 +1,6 @@
 First tell Git about yourself and set some options.
 
+
 ```
 $ git config --global user.name "Kevin Williams"
 $ git config --global user.email kevin@k9w.org
