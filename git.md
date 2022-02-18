@@ -304,6 +304,58 @@ how to fix it.
 <https://stackoverflow.com/questions/44809486/why-am-i-not-able-to-push-from-a-local-repository-to-a-remote-repository-given>
 
 
+If you want to have a central repo for a repo you'll have cloned
+several places, any one of the clones can serve that purpose, ideally
+one on an accessible server.
+
+For example, ~/instructions/ could be a git repo and also serve as the
+central repo all others clone from, pull from, and push to. But you
+could instead clone ~/instructions/ to an alternate location with
+--bare and use that as the central repo, or the preferred remote for
+all clones.
+
+```
+$ pwd
+~/test-repo
+$ touch test
+$ git init
+$ git add .
+$ git commit -m 'Initial commit.'
+$ git remote add origin ~/git-repos/test-repo
+```
+
+Now setup the empty folder for that repo.
+
+```
+$ cd ~/git-repos
+$ ls test-repo
+$ git clone --bare ~/test-repo
+Cloning into bare repository 'my-setup.git'...
+done.
+$ ls
+test-repo.git
+```
+
+~/test-repo is the original repo, and we've cloned it to a new bare
+repo ~/git-repos/test-repo.git. The --bare option to 'git clone'
+appended .git to the new folder name.
+
+To first time each clone, even the original one, pushes to a remote,
+'git push' needs an additional option.
+
+```
+$ cd ~/test-repo
+$ ls test
+test
+$ cat test
+$ echo "hello" > test
+## git add and commit ##
+$ git push --set-upstream origin main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+Everything up-to-date
+```
+
+From now on, you can just do 'git push' from that clone of the repo.
 
 
 
