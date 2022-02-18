@@ -349,13 +349,29 @@ $ ls test
 test
 $ cat test
 $ echo "hello" > test
-## git add and commit ##
+## git add and commit here ##
 $ git push --set-upstream origin main
-Branch 'main' set up to track remote branch 'main' from 'origin'.
-Everything up-to-date
 ```
 
 From now on, you can just do 'git push' from that clone of the repo.
+
+
+If you have a similar project folder on another host and want to use
+this repo for it and keep the data for both, do this on the other host.
+
+We need a --bare repo as the central repo - if we plan to use the same
+'main' branch in all clones.
+
+```
+$ git clone r.k9w.org:~/git-repos/my-setup.git
+$ mv flap.md my-setup/
+$ cd my-setup/
+$ git add .
+$ git commit -m "Add fedora-laptop file."
+$ git push
+$ ls
+flap.md  r.md
+```
 
 
 
