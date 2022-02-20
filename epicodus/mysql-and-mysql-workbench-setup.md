@@ -29,7 +29,7 @@ Instead, install MySQL Workbench as a SNAP Package.
 
 
 <p>
-# 12-30
+# 12-30-2021
 
 Start, enable, and check mariadb systemd service.
 
@@ -64,7 +64,7 @@ https://snapcraft.io/docs/permission-requests
 
 
 <p>
-# 01-23
+# 01-23-2022
 
 In case you have an existing MariaDB/MySQL database, delete it and start fresh. Remove all data from /var/lib/mysql. It might ask for confirmation on a file or two.
 
@@ -227,3 +227,126 @@ $
 
 And finally, try logging in to 'mysql' user in MySQL Workbench. Screenshots attached.
 
+
+<p>
+# 02-19
+
+Today Discord failed to launch because an update is available. I had
+installed it from DNF in RPM Fusion. That older version is still listed
+there. So today I added the Flathub repo for Flatpak. Flatpak came
+pre-installed on Fedora.
+
+https://docs.flatpak.org/en/latest/getting-started.html
+
+I searched for and installed the flatpak of Discord in Plasma Discover.
+It launched successfully. So I removed the DNF version of Discord and rebooted.
+
+I had also previously installed Postman from their site. Today I
+installed its Flatpak, tested it successfully, and removed the website
+install.
+
+
+I had previously setup most of these tools, including for C#. But today
+while going throught the C# pre-work, I found dotnet 6 from the Fedora
+repos gives errors for the code samples in the lessons. I'll look to
+switch to dotnet 5.
+
+First remove the previously installed dotnet 6.
+
+```
+# dnf remove dotnet-script dotnet
+```
+
+Then follow the instructions for Dotnet SDK 5 at:
+https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora#install-net-5
+
+```
+# dnf install dotnet-sdk-5.0
+Last metadata expiration check: 3:46:10 ago on Sat 19 Feb 2022 10:30:09
+AM PST.
+Package dotnet-sdk-5.0-5.0.206-1.fc35.x86_64 is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+$ dotnet --version
+5.0.206
+```
+
+The 'dnf remove' command removed every dependency for Dotnet 6. But the
+'dnf install' command above shows dotnet-sdk-5.0 was already loaded on
+my Fedora install.
+
+Dotnet-script was also still installed. In learnhowtoprogram.com's test
+instruction, calling the variable 'hello' just using the word 'hello'
+didn't work.
+
+```
+$ dotnet-script
+> string hello = "Hello world!";
+> hello;
+(1,1): error CS0201: Only assignment, call, increment, decrement, await,
+and new object expressions can be used as a statement
+>
+Ctrl-C
+$
+```
+
+This worked instead.
+https://github.com/filipw/dotnet-script#usage
+
+```
+> Console.WriteLine(hello);
+Hello world!
+>
+```
+
+MariaDB was installed and conflicts with MySQL, which is required by
+Epicodus for C$. I thought MariaDB was required by some Fedora system
+service and therefore I couldn't swap it out for MySQL. I emailed
+Epicodus' Brook Kullberg (pronouns they/them). Brooke asked me to try
+some SQL statements in Workkbench and on the command line. I was able
+to create a database on the command line and connect to it in MySQL
+Workbench.
+
+I kept running into syntax errors when setting up a table in that
+database per Brooke's instructions (in my edu email). So I checked
+again if MariaDB was installed by me, according to DNF, and could be
+safely removed.
+
+https://dnf.readthedocs.io/en/latest/command_ref.html
+
+```
+$ dnf history userinstalled | grep mariadb
+```
+
+https://docs.fedoraproject.org/en-US/Fedora_Draft_Documentation/0.1/html/RPM_Guide/ch05s02.html
+
+DNF chapter 5.2 Checking for Dependencies
+
+First, list the capabilities, each package provides.
+
+```
+$ rpm -q --provides mariadb-connector-c
+$ rpm -q --provides mariadb-embedded
+$ rpm -q --provides mariadb-server
+```
+
+Then, find out what other (currently installed?) packages require each
+of those packages.
+
+```
+$ rpm -q --whatrequires mariadb-connector-c
+mariadb-10.5.13-1.fc35.x86_64
+$ rpm -q --whatrequires mariadb-embedded
+no package requires mariadb-embedded
+$ rpm -q --whatrequires mariadb-server
+no package requires mariadb-server
+$ rpm -q --whatrequires mariadb
+no package requires mariadb
+```
+
+mariadb requires mariadb-connector-c. mariadb does not require any
+other package or cabability.
+
+
+In the next lession, I will remove MariaDB and install MySQL.
