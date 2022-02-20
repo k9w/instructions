@@ -1,0 +1,17 @@
+started 02-20-2022
+
+Most of this works in the browser console, but not in NodeJSl
+
+
+https://www.learnhowtoprogram.com/introduction-to-programming/javascript-and-jquery/practice-writing-functions
+
+function aboutYou() {
+  const age = prompt('How old are you?');
+  const name = prompt('What is your name?');
+  const favoriteFood = prompt('What is your favorite food?');
+  alert('Hi ' + name + '. Your age is ' + age + ' and your favorite food is ' + favoriteFood + '.');
+}
+
+aboutYou();
+
+
