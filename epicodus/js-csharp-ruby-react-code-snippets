@@ -1,6 +1,6 @@
 started 02-20-2022
 
-Most of this works in the browser console, but not in NodeJSl
+Most of this works in the browser console. So far, none of it works in NodeJS.
 
 
 https://www.learnhowtoprogram.com/introduction-to-programming/javascript-and-jquery/practice-writing-functions
@@ -14,4 +14,49 @@ function aboutYou() {
 
 aboutYou();
 
+
+https://www.learnhowtoprogram.com/introduction-to-programming/javascript-and-jquery/variable-scope
+
+
+// Example of globally-scoped variable.
+
+let globalString = "This is a global variable.";
+
+function sampleFunction() {
+  alert(globalString + ' - called in function');
+  globalString = 'This is a global variable update.';
+  alert(globalString + ' - called in function after rename');
+}
+      
+alert(globalString + ' - called before function');
+sampleFunction();
+alert(globalString + ' - called after function');
+
+
+// Example of locally-scoped variable.
+
+function sampleFunction() {
+  let localString = 'This is a local variable.';
+  alert(localString + ' - before rename, in function');
+  localString = 'This is a local variable update.';
+  alert(localString + ' - after rename, in function');
+}
+
+sampleFunction();
+alert(localString + ' - outside function, after its called.');
+
+
+
+// The code below works but is wrong, because not using 'const' or 'let'
+// assumes usage of 'var' and makes the variable global, which is bad.
+
+function sampleFunction() {
+  localString = 'This is a local variable.';
+  alert(localString + ' - before rename, in the function');
+  localString = 'This is a local variable update.';
+  alert(localString + ' - after rename, in the function');
+}
+
+sampleFunction();
+alert(localString + ' - outside the function, after its called.');
 
