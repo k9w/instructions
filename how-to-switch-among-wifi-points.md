@@ -1,5 +1,12 @@
 08-20-21
 
+Connect to a wireless SSID with password, independent from any 'join'
+entries in /etc/hostname.iwm0.
+
+```
+# ifconfig iwm0 nwid <SSID-name> wpakey <password>
+```
+
 https://www.reddit.com/r/openbsd/comments/p8ml4g/switch_openbsd_laptop_from_preferred_wifi_to
 
 Thanks guys. I was already using 'join SSID wpakey KEY' in
@@ -102,3 +109,5 @@ file.
 
 I don't recall if dhclient also failed to re-obtain IP address info in
 this case.
+
+
