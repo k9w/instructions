@@ -15,3 +15,7 @@ that it shows up as app/firefox0.level in sndioctl.
 sndioctl
 mixerctl
 audioctl
+
+When resuming from suspend, unplug and replug the USB headset and reload
+sndiod.
+
