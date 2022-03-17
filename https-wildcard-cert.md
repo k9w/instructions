@@ -38,7 +38,7 @@ $ curl -H 'Authorization: Bearer OAUTH-TOKEN' https://api.dnsimple.com/v2/whoami
 That is a GET request. With my OAuth token in place in the command
 above, the API answers the GET request as follows. 
 
-````
+```
 {
   "data": {
     "user": null,

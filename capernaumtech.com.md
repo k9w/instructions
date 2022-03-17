@@ -20,15 +20,17 @@ works with subdomains anyway.
 
 Copy example conf files for acme-client and httpd.
 
+```
 # cp /etc/example/acme-client.conf /etc
 # cp /etc/example/httpd.conf /etc
-
+```
 
 --------
 
 
 Here is what I changed from the acme-client.conf example:
 
+```
 $ diff -u ./examples/acme-client.conf acme-client.conf  
 --- ./examples/acme-client.conf Sat Mar 20 06:20:35 2021
 +++ acme-client.conf    Tue Apr 13 05:07:22 2021
@@ -59,11 +61,12 @@ test.capernaumtech.com }
 +       domain full chain certificate "/etc/ssl/capernaumtech.com.fullchain.pem"
 +       sign with letsencrypt-staging
  }
-
+```
 
 
 Here is what I changed from the httpd.conf example:
 
+```
 $ diff -u ./examples/httpd.conf httpd.conf              
 --- ./examples/httpd.conf       Sat Mar 20 06:20:35 2021
 +++ httpd.conf  Tue Apr 13 05:36:56 2021
@@ -90,7 +93,7 @@ $ diff -u ./examples/httpd.conf httpd.conf
 	}
 	location "/pub/*" {
 		directory auto index
-
+```
 
 --------
 
@@ -99,19 +102,25 @@ I made a simple index.html file and put it into /var/www/capernaumtech.com
 
 Then, to test out regular http, I skiped acme-client and enabled httpd.
 
+```
 # rcctl enable httpd
 # rcctl start httpd
+```
 
 It did not work because httpd.conf had the 302 redirect to https. I
 commented out the redirect block in httpd.conf:
 
+```
 #	location * {
 #		block return 302 "https://$HTTP_HOST$REQUEST_URI"
 #	}
+```
 
 Restarted httpd:
 
+```
 # rcctl restart httpd
+```
 
 And http://capernaumtech.com loaded successfully.
 
@@ -119,7 +128,9 @@ And http://capernaumtech.com loaded successfully.
 Then, with sign with letsencrypt-staging, I ran the acme client to
 generate the cert:
 
+```
 # acme-client capernaumtech.com
+```
 
 In Firefox, that successfully redirected capernaumtech.com to
 https://capernaumtech.com.
@@ -140,11 +151,15 @@ In /etc/acme-client.conf, I changed this:
 
 Re-ran acme-client:
 
+```
 # acme-client capernaumtech.com
+```
 
 And re-loaded httpd:
 
+```
 # rcctl restart httpd
+```
 
 But I still got the same error in Firefox and Chromium.
 
@@ -166,8 +181,10 @@ Next step it to replace the staging cert with a production cert.
 
 Renamed the TLS cert file in /etc/ssl and restarted httpd.
 
+```
 # mv capernaumtech.com.fullchain.pem capernaumtech.com.fullchain.pem-staging 
 # rcctl restart httpd
+```
 
 Reloaded the page in the browser. The error changed from invalid cert
 to site cannot be reached. This is good because it means httpd cannot
@@ -175,8 +192,10 @@ find the cert, which means we can then make the new cert in its place.
 
 Regenerated the cert, for production this time, and restarted httpd.
 
+```
 # acme-client capernaumtech.com
 # rcctl restart httpd
+```
 
 And now the page loads properly with TLS.
 
@@ -187,18 +206,22 @@ Then, automate the renewal of the cert weekly in cron.
 Root's crontab runs /etc/weekly at 03:30 UTC every Saturday.
 /etc/weekly runs /etc/weekly.local which is where we add the following lines.
 
+```
 # Renew the TLS cert for capernaumtech.com and restart httpd.
 acme-client capernaumtech.com && rcctl restart httpd
+```
 
 ----
 
 Then, change the website root from /var/www/htdocs to
 /var/www/capernaumtech.com.
 
+```
 # cd /var/www
 # mkdir capernaumtech.com
-# mv htdocs/index.html capernaumtech.com/                      
+# mv htdocs/index.html capernaumtech.com/
 # rcctl restart httpd
+```
 
 ----
 
@@ -211,13 +234,17 @@ drwxr-xr-x   2 root  daemon  512 Apr 14 03:42 capernaumtech.com
 
 Add group write permission g+w to the existing permissions.
 
+```
 $ pwd
 /var/www
 # chmod -R g+w ./capernaumtech.com
+```
 
 Add your user to the daemon group.
 
+```
 # usermod -G daemon kevin
+```
 
 
 <p>
@@ -227,14 +254,19 @@ Crista suggested the site name metabytes.com, which is taken. But
 metabytesblog.com was free. So I registered it and copyed my setup for
 capernaumtech.com to it and will later generate the TLS cert.
 
+```
 $ cd /var/www
 # cp -R capernaumtech.com metabytesblog.com
+```
 
 capernaumtech.com/index.html had group write. But
 metabytesblog.com/index.html did not have group write.
 
 So I changed the default permissions:
+
+```
 # chmod 2775 /var/www/metabytesblog.com
+```
 
 But the permissions are not working.
 
@@ -263,3 +295,113 @@ dns-01 challenge for a wildcard certificate.
 Here is how to move the site, cert, and private key, from one server
 to another.
 
+/etc/acme/*
+/etc/acme-client.conf
+/etc/httpd.conf
+/etc/monthly.local
+/var/www/capernaumtech.com/*
+
+First, use doas or root to copy all the files and folders above to a
+backup folder in your home directory.
+
+Make a backup folder.
+
+```
+$ pwd
+/home/<user>
+$ mkdir backup-<site-name> && cd backup-<site-name>
+$ mkdir etc
+$ mkdir -p var/www
+```
+
+Use doas or root to copy all the files.
+
+```
+# cp -r /etc/{acme,acme-client.conf,httpd.conf,monthly.local} etc
+# cp -r /var/www/capernaumtech.com ./var/www 
+```
+
+Change the owner of the .pem private key files in etc/acme from root
+to your username. Otherwise, they will not be copied in the following
+steps. (We'll reset or double-check the permissions and owner:group
+later.)
+
+```
+# chown -R <user> etc/acme
+```
+
+Let's assume you'll copy the site files from the old server to the new
+server by sftp-ing the backup folder from the old server to your
+laptop, and then sftp the folder up to the new server.
+
+```
+$ sftp <old-server>
+sftp> get -r <backup-folder>
+sftp> exit
+$ sftp <new-server>
+sftp> put -r <backup-folder>
+sftp> exit
+```
+
+At this point, it's a good idea to delete the backup folder on the old
+server. This is because we left the .pem private keys in an unsecured
+state by switching their owner from root to your user account for the
+copying. Now that the copying is done, the backup folder should be
+deleted. If something goes wrong and you need to copy it again, you
+can use the copy stored on your local laptop (and back that up
+somewhere secured if you like).
+
+Now on the new server, we need to fix the permissions and owner:group.
+
+For var/www, the correct permissions likely were preserved. The owner:group
+needs to be changed back to root:daemon for the www folder
+recursively, but not for var itself.
+
+```
+$ cd ~/<backup-folder>
+# chown -R root:daemon var/www
+```
+
+If permissions were not preserved, set www and <site-name> to:
+drwxr-xr-x (755)
+And the site files/folders in <site-name> to:
+-rw-r--r-- (644)
+
+```
+# chmod -R 755 var/www
+# chmod -R 644 var/www/<site-name>/*
+```
+
+For etc, all files and folders should have owner:group of root:wheel.
+
+```
+$ cd ~/<backup-folder>
+# chown -R root:wheel etc
+```
+
+(continue working below and double check the following)
+If permissions were not preserved, set etc recursively to:
+drwxr-xr-x (755)
+And the site files/folders in <site-name> to:
+-rw-r--r-- (644)
+
+```
+# chmod -R 755 var/www
+# chmod -R 644 var/www/<site-name>/*
+```
+
+
+644 root:wheel
+
+Permissions for .pem private keys in /etc/acme should be only read and
+write for the owner and set owner and group to root:wheel.
+
+Permissions in /var/www can be standard. Owner and group should be
+root:daemon.
+
+You can grant your user write access to your site files in /var/www by
+adding it to the daemon group.
+
+```
+# usermod -G daemon <user>
+```
