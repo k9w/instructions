@@ -353,18 +353,48 @@ somewhere secured if you like).
 
 Now on the new server, we need to fix the permissions and owner:group.
 
-For var/www, the correct permissions likely were preserved. The owner:group
-needs to be changed back to root:daemon for the www folder
-recursively, but not for var itself.
+For etc, the correct permissions likely were preserved. The
+owner:group needs to be changed back to root:wheel for all of etc's
+files and folders. (Note that some files and folders in /etc have
+group names of 'operator' or 'bin'. Be sure to change only the files
+in this etc directory and not all the files in your production /etc
+folder.)
+
+```
+$ cd ~/<backup-folder>
+# chown -R root:wheel etc/*
+```
+
+If permissions were not preserved, set acme folder to:
+drwx------ (700)
+And the .pem private key files in it to:
+-rw------- (600)
+
+```
+# chmod 700 etc/acme
+# chmod 600 etc/acme/*
+```
+
+For the rest of these files in etc, set the permissions to:
+-rw-r--r-- (644)
+
+```
+# chmod 644 etc/{acme-client.conf,httpd.conf,monthly.local}
+```
+
+For var, only the www folder and all files and folders in it should
+have owner:group of root:daemon, not the var folder itself or any
+other folders not in www.
 
 ```
 $ cd ~/<backup-folder>
 # chown -R root:daemon var/www
 ```
 
-If permissions were not preserved, set www and <site-name> to:
+If permissions were not preserved, set var/www recursively to:
 drwxr-xr-x (755)
-And the site files/folders in <site-name> to:
+And the site files/folders in <site-name> (not the site folder itself)
+to not executable:
 -rw-r--r-- (644)
 
 ```
@@ -372,36 +402,36 @@ And the site files/folders in <site-name> to:
 # chmod -R 644 var/www/<site-name>/*
 ```
 
-For etc, all files and folders should have owner:group of root:wheel.
+Next steps are to copy the files into place.
 
 ```
-$ cd ~/<backup-folder>
-# chown -R root:wheel etc
+# cp -R etc/* /etc
+# cp -R var/* /var
 ```
 
-(continue working below and double check the following)
-If permissions were not preserved, set etc recursively to:
-drwxr-xr-x (755)
-And the site files/folders in <site-name> to:
--rw-r--r-- (644)
+(continue working here)
+comment out the redirect from 80 to 443, so that you can test with ip address
+:port80.
+
+
+Start the webserver and acme-client services.
 
 ```
-# chmod -R 755 var/www
-# chmod -R 644 var/www/<site-name>/*
+# rcctl check {httpd,acme-client}
+# rcctl enable {httpd,acme-client}
+# rcctl start {httpd,acme-client}
 ```
 
+If successfull, revert httpd.conf to restore the 443 redirect. Go to
+your DNS provider and switch that domain name from the old server IP
+address to the new one.
 
-644 root:wheel
-
-Permissions for .pem private keys in /etc/acme should be only read and
-write for the owner and set owner and group to root:wheel.
-
-Permissions in /var/www can be standard. Owner and group should be
-root:daemon.
-
-You can grant your user write access to your site files in /var/www by
-adding it to the daemon group.
+Run acme-client to get the fresh cert. That way you don't have to wait
+until the next time cron runs it from /etc/monthly.local.
 
 ```
-# usermod -G daemon <user>
+# acme-client <site-name>
 ```
+
+Wait for the TTL (usually one hour) and confirm the site loads with
+https in the browser.
