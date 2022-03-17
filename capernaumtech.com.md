@@ -1,4 +1,4 @@
-started 04-13-21
+# 04-13-2021
 
 First site is static files with OpenBSD httpd, acme-client, and
 ideally a wildcard certificate.
@@ -159,8 +159,8 @@ acme-client. Or I might need to revoke the staging cert.
 For now, I disabled and stopped httpd until I come back to it.
 
 
---------
-04-14
+<p>
+# 04-14
 
 Next step it to replace the staging cert with a production cert.
 
@@ -220,8 +220,8 @@ Add your user to the daemon group.
 # usermod -G daemon kevin
 
 
---------
-04-16
+<p>
+# 04-16-2021
 
 Crista suggested the site name metabytes.com, which is taken. But
 metabytesblog.com was free. So I registered it and copyed my setup for
@@ -252,4 +252,14 @@ Then you can start in on learning HTML, CSS, and adding content to the site.
 For now, just sync down to your laptop and then up to Github or other
 location. Later, create an SSH key for automation and lock it down to a
 specific git command or other method in MWL's SSH Mastery book.
+
+
+<p>
+# 03-17-2022
+
+OpenBSD's acme-client only supports the http-01 challenge, not the
+dns-01 challenge for a wildcard certificate.
+
+Here is how to move the site, cert, and private key, from one server
+to another.
 
