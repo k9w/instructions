@@ -299,6 +299,8 @@ to another.
 /etc/acme-client.conf
 /etc/httpd.conf
 /etc/monthly.local
+/etc/ssl/$siteName.fullchain.pem
+/etc/ssl/private/$siteName.key
 /var/www/capernaumtech.com/*
 
 First, use doas or root to copy all the files and folders above to a
@@ -309,17 +311,22 @@ Make a backup folder.
 ```
 $ pwd
 /home/<user>
-$ mkdir backup-<site-name> && cd backup-<site-name>
-$ mkdir etc
+$ mkdir backup-$siteName && cd backup-$siteName
+$ mkdir -p etc/ssl
 $ mkdir -p var/www
 ```
 
-Use doas or root to copy all the files.
+Use doas or root to copy all the files. Replace $siteName below with your domain name, or set it as a variable.
 
 ```
+# export siteName=<your-site-name>
+# echo $siteName
 # cp -r /etc/{acme,acme-client.conf,httpd.conf,monthly.local} etc
-# cp -r /var/www/capernaumtech.com ./var/www 
+# cp -r /etc/ssl/{$siteName.fullchain.pem,private} etc/ssl
+# cp -r /var/www/$siteName var/www
 ```
+
+(continue the re-work from here)
 
 Change the owner of the .pem private key files in etc/acme from root
 to your username. Otherwise, they will not be copied in the following
@@ -393,13 +400,13 @@ $ cd ~/<backup-folder>
 
 If permissions were not preserved, set var/www recursively to:
 drwxr-xr-x (755)
-And the site files/folders in <site-name> (not the site folder itself)
+And the site files/folders in $siteName (not the site folder itself)
 to not executable:
 -rw-r--r-- (644)
 
 ```
 # chmod -R 755 var/www
-# chmod -R 644 var/www/<site-name>/*
+# chmod -R 644 var/www/$siteName/*
 ```
 
 Next steps are to copy the files into place.
@@ -430,7 +437,7 @@ Run acme-client to get the fresh cert. That way you don't have to wait
 until the next time cron runs it from /etc/monthly.local.
 
 ```
-# acme-client <site-name>
+# acme-client $siteName
 ```
 
 Wait for the TTL (usually one hour) and confirm the site loads with
