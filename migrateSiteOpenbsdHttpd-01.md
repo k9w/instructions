@@ -293,7 +293,9 @@ OpenBSD's acme-client only supports the http-01 challenge, not the
 dns-01 challenge for a wildcard certificate.
 
 Here is how to move the site, cert, and private key, from one server
-to another.
+to another, with $siteName equaling your domain, such as k9w.org
+
+Here is the list of folders to backup.
 
 /etc/acme/*
 /etc/acme-client.conf
