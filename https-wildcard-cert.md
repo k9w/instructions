@@ -111,6 +111,51 @@ $ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email kevin.willi
 2022/03/27 22:31:44 [INFO] [k9w.org] Server responded with a certificate.
 $ 
 
+This generated files in ~/.lego/certificates
+
+example.com.crt        example.com.issuer.crt example.com.json      example.com.key
+
+
+
 Once I find out how to use the certificate on multiple servers, I need to add that same command to /etc/monthly.local with 'renew' instead of 'run'.
 
 First thing to check is: based on the documentation at lets encrypt, dnsimple, or lego, how do I start using that cert with k9w.org and OpenBSD httpd?
+
+
+I disabled capernaumtech.com entirely in httpd.conf, tested c.k9w.org and with https, it said the cert was only valid for k9w.org, not c.k9w.org. I added an A record for k9w.org and confirmed that worked.
+
+So I listed the k9w.org certificate, revoked, it, and ran lego this time for *.k9w.org. Strangely, *.k9w.org was the first method I tried last week, and it failed. But today, it worked; likely because I had already made the cert for just k9w.org.
+
+
+
+$ DNSIMPLE_OAUTH_TOKEN=QQNeuBtXBEna518dIZ61vOMLuqAEhvGf lego --email kevin.williams.edu@gmail.com --dns dnsimple --domains k9w.org list
+Found the following certs:
+  Certificate Name: k9w.org
+    Domains: k9w.org
+    Expiry Date: 2022-06-25 21:31:43 +0000 UTC
+    Certificate Path: /home/kevin/.lego/certificates/k9w.org.crt
+
+c$ lego | less                                                                                                                           
+c$ DNSIMPLE_OAUTH_TOKEN=QQNeuBtXBEna518dIZ61vOMLuqAEhvGf lego --email kevin.williams.edu@gmail.com --dns dnsimple --domains k9w.org revoke
+2022/03/31 00:54:23 Trying to revoke certificate for domain k9w.org
+2022/03/31 00:54:23 Certificate was revoked.
+2022/03/31 00:54:23 Certificate was archived for domain: k9w.org
+c$ DNSIMPLE_OAUTH_TOKEN=QQNeuBtXBEna518dIZ61vOMLuqAEhvGf lego --email kevin.williams.edu@gmail.com --dns dnsimple --domains *.k9w.org run  
+2022/03/31 00:54:46 [INFO] [*.k9w.org] acme: Obtaining bundled SAN certificate
+2022/03/31 00:54:47 [INFO] [*.k9w.org] AuthURL: https://acme-v02.api.letsencrypt.org/acme/authz-v3/93170724640
+2022/03/31 00:54:47 [INFO] [*.k9w.org] acme: use dns-01 solver
+2022/03/31 00:54:47 [INFO] [*.k9w.org] acme: Preparing to solve DNS-01
+2022/03/31 00:54:48 [INFO] [*.k9w.org] acme: Trying to solve DNS-01
+2022/03/31 00:54:48 [INFO] [*.k9w.org] acme: Checking DNS record propagation using [23.239.24.5:53 72.14.179.5:53 72.14.188.5:53]
+2022/03/31 00:54:50 [INFO] Wait for propagation [timeout: 1m0s, interval: 2s]
+2022/03/31 00:54:58 [INFO] [*.k9w.org] The server validated our request
+2022/03/31 00:54:58 [INFO] [*.k9w.org] acme: Cleaning DNS-01 challenge
+2022/03/31 00:54:59 [INFO] [*.k9w.org] acme: Validations succeeded; requesting certificates
+2022/03/31 00:55:00 [INFO] [*.k9w.org] Server responded with a certificate.
+
+The prior files in ~/.lego/certificates were replaced with the following:
+
+_.k9w.org.crt        _.k9w.org.issuer.crt _.k9w.org.json       _.k9w.org.key
+
+Next step is to deploy .crt and .key to /etc/ssl as before, and retest.
+
