@@ -180,6 +180,14 @@ If that works for example.com and its subdomains, then re-enable
 example1.com in /etc/httpd.conf and play with the settings until both
 domains work.
 
+Now that that works too, add the renewal commands to
+/etc/monthly.local for example.com and *.example.com.
+
+```
+c$ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hidden --dns dnsimple --domains example.com renew
+
+c$ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hidden --dns dnsimple --domains *.example.com renew
+```
 
 Your /etc/httpd.conf should look like this:
 
