@@ -223,7 +223,7 @@ server "example.com" {
 }
 
 server "example1.com" {
-        listen on * port 80
+        listen on "example1.com" port 80
         location "/.well-known/acme-challenge/*" {
                 root "/acme"
                 request strip 2
@@ -234,7 +234,7 @@ server "example1.com" {
 }
 
 server "example1.com" {
-        listen on * tls port 443
+        listen on "example1.com" tls port 443
 		        tls {
                 certificate "/etc/ssl/example1.com.fullchain.pem"
                 key "/etc/ssl/private/example1.com.key"
