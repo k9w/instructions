@@ -2,6 +2,8 @@
 
 https://www.openbsdhandbook.com/services/webserver/nginx
 https://nginx.org/en/docs
+https://nginx.org/en/docs/beginners_guide.html
+https://nginx.org/en/docs/http/server_names.html
 
 Install nginx from packages.
 
