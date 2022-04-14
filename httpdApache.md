@@ -28,3 +28,9 @@ The page should display now.
 
 Next step is to use the pre-generated wildcard TLS cert to configure
 https.
+
+https://httpd.apache.org/docs/2.4/mod/quickreference.html
+https://community.letsencrypt.org/t/recommended-apache-config/58294/2
+
+SSLCertificateFile
+
