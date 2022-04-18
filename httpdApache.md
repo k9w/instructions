@@ -30,7 +30,15 @@ Next step is to use the pre-generated wildcard TLS cert to configure
 https.
 
 https://httpd.apache.org/docs/2.4/mod/quickreference.html
+https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
 https://community.letsencrypt.org/t/recommended-apache-config/58294/2
 
-SSLCertificateFile
+LoadModule ssl_module modules/mod_ssl.so
 
+Listen 443
+<VirtualHost *:443>
+    ServerName www.example.com
+    SSLEngine on
+    SSLCertificateFile "/path/to/www.example.com.cert"
+    SSLCertificateKeyFile "/path/to/www.example.com.key"
+</VirtualHost>
