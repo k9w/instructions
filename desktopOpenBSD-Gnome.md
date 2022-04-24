@@ -71,6 +71,12 @@ start it with them. Leave it off.
 # rcctl start messagebus avahi_daemon gdm
 ```
 
+You can also switch to Gnome at the X terminal.
+
+```
+# rcctl stop xenodm && rcctl start messagebus avahi_daemon gdm
+```
+
 To switch from Gnome back to any other DE or WM which doesn't need GDM,
 disable the GDM services, and enable xenodm.
 
@@ -84,6 +90,12 @@ And switch to a tty to stop and start them.
 ```
 # rcctl start xenodm
 # rcctl stop messagebus avahi_daemon gdm
+```
+
+You can also switch from Gnome at the X terminal.
+
+```
+# rcctl stop messagebus avahi_daemon gdm && rcctl start xenodm
 ```
 
 Gnome uses its Keyring to cache SSH keys and other credentials. I've
@@ -134,4 +146,3 @@ it.
 Even though I turned off the keyboard bell in Terminal, it does not
 respect that setting in Emacs and gVim. NeoVim and non-GUI Vim don't
 have the bell.
-
