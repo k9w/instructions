@@ -127,9 +127,11 @@ The Fn screen brigitness keys work fine. But the Gnome brightness
 control disappears if turned all the way down.
 
 Suspend on lid close does not work even when turned on in Tweaks. It
-also warns of its own suspend due to inactivity. But I haven't let it
-suspend yet.
+also warns of its own suspend due to inactivity. But it does not suspend
+on its own and I've found no place in Settings or Tweaks to configure
+it.
 
 Even though I turned off the keyboard bell in Terminal, it does not
 respect that setting in Emacs and gVim. NeoVim and non-GUI Vim don't
 have the bell.
+
