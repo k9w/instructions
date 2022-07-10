@@ -76,6 +76,10 @@ Start the server.
 # apachectl start
 ```
 
+Note that starting apache with doas does not let it see into
+/etc/ssl/private and the certificate key therein. It needs to be started
+as root, not with doas.
+
 The page should display now.
 
 Reference:
