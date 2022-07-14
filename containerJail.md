@@ -1,6 +1,8 @@
 started 07-10-22
 
-FreeBSD containerizes apps using [Jails](https://docs.freebsd.org/en/books/handbook/jails), similar to Linux containers such as Podman and Docker. 
+FreeBSD containerizes apps using
+[Jails](https://docs.freebsd.org/en/books/handbook/jails), similar to
+Linux containers such as Podman and Docker. 
 
 Why containerize an application or process?
 * Protect other apps, services, and the host system from accidental or
@@ -12,7 +14,11 @@ Why containerize an application or process?
   Nginx, Caddy and other web servers could all serve requests incoming
   to the host on the same port 80 and 443, but to their own URLs.
 
-A jail builds on the concept of a [chroot(2)](https://www.freebsd.org/cgi/man.cgi?query=chroot&sektion=2), or change root environment, made by the root user with the [chroot(8)](https://www.freebsd.org/cgi/man.cgi?query=chroot&sektion=8) command.
+A jail builds on the concept of a
+[chroot(2)](https://www.freebsd.org/cgi/man.cgi?query=chroot&sektion=2),
+or change root environment, made by the root user with the
+[chroot(8)](https://www.freebsd.org/cgi/man.cgi?query=chroot&sektion=8)
+command.
 
 ## How a chroot works on OpenBSD and FreeBSD
 
@@ -24,9 +30,9 @@ password for the user.
 # useradd -m chrootedUser
 ```
 
-Write a shell script that echoes a sentense. Don't bother setting the
-file owner. Just turn on the execute bit for all users. We'll use this
-script later.
+As a regular user (not the chrootedUser), write a shell script that
+echoes a sentense. Don't bother setting the file owner. Just turn on
+the execute bit for all users. We'll use this script later.
 
 ```
 $ cd
@@ -35,24 +41,28 @@ $ chmod +x test.sh
 ```
 
 Give the chroot environment basic commands, such as pwd, ls, echo, and
-the shell it will execute when you change root in a bit.
+the shell executed in the environment when you change root in a bit.
+
 ```
 # cp -R /bin /home/chrootedUser
 ```
 
 Give the chroot environment other commands too, such as whoami, and
 grep. For /usr/bin, you need to create the usr folder first.
+
 ```
 # mkdir /home/chrootedUser/usr
 # cp -R /usr/bin /home/chrootedUser/usr
 ```
 
 Give it some networking commands too, such as ping and ifconfig.
+
 ```
 # cp -R /sbin /home/chrootedUser
 ```
 
 Change root to that user in that directory.
+
 ```
 # chroot -u chrootedUser /home/chrootedUser
 ```
@@ -64,10 +74,10 @@ $ whoami
 Abort trap
 ```
 
-The 'Abort trap' error means something else in OpenBSD prevents the 
+The 'Abort trap' error means something else in OpenBSD prevents the
 chrooted user from executing usr/bin/whoami. That's okay for this
-exercise. It demonstrates the 'whoami' command is there and would work,
-unlike an absent or fake command.
+exercise. It demonstrates the 'whoami' command is there and would
+work, unlike an absent or fake command.
 
 ```
 $ asdf
@@ -82,12 +92,12 @@ $ pwd
 /
 ```
 
-The sentense printed. Note the working directory is / because the change
-root environment cannot see any of the file system outside the chrooted
-directory.
+The sentense printed. Note the working directory is / because the
+change root environment cannot see any of the file system outside the
+chrooted directory.
 
 Now it's time to use the shell script we made earlier. Exit out of the
-chroot, copy in the file, change the file's owner to the chroot user, 
+chroot, copy in the file, change the file's owner to the chroot user,
 re-enter the chroot, and run the script. That should work.
 
 ```
@@ -102,7 +112,7 @@ $ ./test.sh
 This is a test in a chrooted environment.
 ```
 
-Try editing test.sh with vi. It should fail with the 'Abort trap' 
+Try editing test.sh with vi. It should fail with the 'Abort trap'
 error.
 
 ```
@@ -110,7 +120,7 @@ $ vi test.sh
 Abort trap
 ```
 
-Try editing it with the ed line editor. It should fail unless you 
+Try editing it with the ed line editor. It should fail unless you
 added a tmp directory, which we didn't.
 
 ```
@@ -129,14 +139,12 @@ $ ed test.sh
 It worked. But the chroot stopped ed without killing it, for the same
 reason we don't have job control in the chroot (won't have full job
 control).
-When you're done with this test, exit out of the chroot. Delete the
-chroot test user and its home folder.
 
 The chroot can append to its own file and view it.
 
 ```
 $ echo 'echo "This is a second line."' >> test.sh
-test-chroot$ cat test.sh
+$ cat test.sh
 echo "This is a test in a chrooted environment."
 echo "This is a second line."
 ```
@@ -194,8 +202,8 @@ pflog0: flags=141<UP,RUNNING,PROMISC> mtu 33136
         groups: pflog
 ```
 
-When you're done testing, exit the chroot, and delete the chrootedUser
-and its home directory.
+When you're done with this test, exit out of the chroot. Delete the
+chroot test user and its home folder.
 
 ```
 $ exit
@@ -204,7 +212,8 @@ $ exit
 
 This works on OpenBSD. Need to test it on FreeBSD and Linux.
 
-
-A [jail(8)](https://www.freebsd.org/cgi/man.cgi?query=jail&sektion=8&format=html) can be 'complete', 'service', or 'linux'.
+A
+[jail(8)](https://www.freebsd.org/cgi/man.cgi?query=jail&sektion=8&format=html)
+can be 'complete', 'service', or 'linux'.
 
 
