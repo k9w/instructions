@@ -146,3 +146,27 @@ it.
 Even though I turned off the keyboard bell in Terminal, it does not
 respect that setting in Emacs and gVim. NeoVim and non-GUI Vim don't
 have the bell.
+
+
+When I removed Gnome, I kept the gnome custom class in /etc/login.conf.
+When I reverted that file to its original version, the next time I tried
+to login, it would not work. I logged in as root then tried to su to my
+standard account. It said,
+```
+su: no such login class: gnome
+```
+
+I had set the login class with:
+
+```
+# usermod -L gnome <username>
+```
+
+To fix it, I set my regular user's login class to one of the pre-defined
+classes in /etc/login.conf. It was likely previously assigned to the
+'default' login class. I took this opportunity to add it to the 'staff'
+login class, so that firefox and other applications could take up more
+processes and memory.
+
+It worked.
+
