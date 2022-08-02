@@ -7,6 +7,16 @@ entries in /etc/hostname.iwm0.
 # ifconfig iwm0 nwid <SSID-name> wpakey <password>
 ```
 
+Disconnect from the SSID that you joined using nwid above.
+
+```
+# ifconfig iwm0 -nwid
+```
+
+It will return to scanning for any preconfigured SSIDs in
+/etc/hostname.iwm0.
+
+
 https://www.reddit.com/r/openbsd/comments/p8ml4g/switch_openbsd_laptop_from_preferred_wifi_to
 
 Thanks guys. I was already using 'join SSID wpakey KEY' in
