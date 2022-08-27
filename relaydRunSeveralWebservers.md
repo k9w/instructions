@@ -24,6 +24,6 @@ I checked for the following ports in /etc/services and they are free.
 The 443 likely won't be needed on each server since relayd is taking 
 care of TLS.
 
-Each webserver can, of course, server multiple websites and URLs based
+Each webserver can, of course, serve multiple websites and URLs based
 on the fqdn in the packet header.
 
