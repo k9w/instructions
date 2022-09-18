@@ -20,7 +20,7 @@ screenfull, less fills the rest of the screen with blanks and exits.
 To fix it on OpenBSD, one option is to set core.pager to pass the
 correct flags to less(1).
 
-To find the correct flags to pass to less on OpenBSD, compare is
+To find the correct flags to pass to less on OpenBSD, compare its
 manpage with less on FreeBSD.
 
 Or set core.pager to cat(1) instead of less(1):
@@ -34,7 +34,7 @@ log' that you choose to pipe it into less, you'll lose the color
 highlighting Git provides.
 
 
-To make a Git repo of your dotfiles, start in you home directory:
+To make a Git repo of your dotfiles, start in your home directory:
 
 ```
 $ cd
@@ -76,7 +76,8 @@ To prevent those files from showing in a 'git status' or be added with
 
 ```
 
-Next add the initial list of files to be tracked.
+Next add the initial list of files to be tracked. Here's what I started
+with.
 
 ```
 $ git add -f .Xresources .cwmrc .emacs.d/init.el .gitconfig .gitignore \
@@ -125,6 +126,16 @@ To show files currently tracked by git:
 $ git ls-tree -r main
 ```
 
+If you chose custom branch names, but not 'main', the above command
+won't work. List your branches, then pick a branch name and list the
+tracked files in that branch.
+
+```
+$ git branch
+* openbsd-laptop
+$ git ls-tree -r openbsd-laptop
+```
+
 To see what already-tracked files have been modified since they were
 last staged:
 
@@ -133,7 +144,8 @@ $ git diff
 ```
 
 Be sure 'git diff' is blank with no output before you commit, to
-ensure no changes are missed. Do so with 'git add'.
+ensure no changes are missed. Do so with 'git add' and the name of any
+modified files you want to commit.
 
 To show how currently staged files differ from the latest commit:
 
@@ -224,7 +236,7 @@ $ git checkout -- test-file
 # Cloning
 
 On the server where we made 'dotfiles.git' earlier, we could clone it
-into my home folder there with.
+into my home folder on the same server.
 
 ```
 9$ cd ~
