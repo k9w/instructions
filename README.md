@@ -4,9 +4,9 @@
 
 I've used Linux, OpenBSD, and open source tools for several years and
 documented how I did many things along the way. On September 10 2021, I
-started tracking my documentation in Git. On September 19 2922, I added
-cloned this repo from a cloud VM where I had been self-hosting it over
-to Github in the hope that you might benefit from it too.
+started tracking my documentation in Git. On September 19 2022, I cloned
+this repo from a cloud VM where I had been self-hosting it over to Github
+in the hope that you might benefit from it too.
 
 ## Current state and level of polish
 
@@ -16,7 +16,7 @@ very rough, unpolished state. I plan to clean it up as I have time.
 
 ## Tools covered
 
-Many of these tools are 
+Many of these tools are:
 
 * Version control: git, svn, cvs
 * Webservers: Apache, Nginx, OpenBSD's httpd
@@ -28,13 +28,14 @@ Many of these tools are
 
 The content which originated in this project is covered by the [ISC
 License](https://choosealicense.com/licenses/isc). See the file called
-[LICENSE](https://github.com/k9w/learning-project-template-repo/blob/main/LICENSE)
+[LICENSE](https://github.com/k9w/instructions/blob/main/LICENSE)
 in this same folder for distribution and liability terms as well as
 copyright holder info.
 
 _Third-party packages are subject to their own license and copyright._
 
 ## Contact Information
+
  - <https://twitter.com/k9w>
 
  - <https://linkedin.com/in/k9w>
