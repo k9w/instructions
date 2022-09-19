@@ -397,6 +397,12 @@ repository, or for one to upload their own repo to a server or another
 machine they can access. Git supports a number of workflows around
 this.
 
+First, list any existing remotes for the current repo.
+
+```
+$ git remote -v
+```
+
 The examples thus far in this guide assume you started the repo above
 on your own laptop. One common way to share a repo with others is to
 upload it to services with web interfaces such as Github, Gitlab, and
@@ -463,6 +469,12 @@ origin  <server>:/home/<username>/git-repos/dotfiles.git (fetch)
 origin  <server>:/home/<username>/git-repos/dotfiles.git (push)
 ```
 
+If you want to add Github as an origin, create an empty repo with that
+name on your Github profile.
+
+<https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository>
+<https://github.com/new>
+
 And push to the server.
 
 ```
@@ -486,6 +498,18 @@ as 'git push'.
 ```
 $ git push
 ```
+
+If have 'origin' as a self-hosted remote on your server, you could add
+your new blank repo on github as a remote called 'github'.
+
+Before you push, be sure your local repo has all branches up to date.
+
+Then push.
+
+```
+$ git push github --all
+```
+
 
 <br>
 # Branching
