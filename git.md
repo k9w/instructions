@@ -394,7 +394,7 @@ flap.md  r.md
 
 The distributed nature of Git allows one person to clone another's
 repository, or for one to upload their own repo to a server or another
-machine they can access. Git supports a number fo workflows around
+machine they can access. Git supports a number of workflows around
 this.
 
 The examples thus far in this guide assume you started the repo above
