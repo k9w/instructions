@@ -27,3 +27,6 @@ care of TLS.
 Each webserver can, of course, serve multiple websites and URLs based
 on the fqdn in the packet header.
 
+Start with this guide:
+<https://citizen428.net/blog/self-hosting-static-site-openbsd-httpd-relayd>
+
