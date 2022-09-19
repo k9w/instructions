@@ -1,46 +1,41 @@
-# _Instructions for Version Control, Backup Utilities, and More_
+# _Instructions for my future self, and maybe for you too_
 
-#### By _**Kevin Williams**_
+## Backstory
 
-#### _{Brief description of application}_
+I've used Linux, OpenBSD, and open source tools for several years and
+documented how I did many things along the way. On September 10 2021, I
+started tracking my documentation in Git. On September 19 2922, I added
+cloned this repo from a cloud VM where I had been self-hosting it over
+to Github in the hope that you might benefit from it too.
 
-## Technologies Used
+## Current state and level of polish
 
-* _List all_
-* _the major technologies_
-* _you used in your project_
-* _here_
+For much of this repo's commit history, I quickly posted content as I
+went and intended it for my personal use. Therefore, some of it is in a
+very rough, unpolished state. I plan to clean it up as I have time.
 
-## Description
+## Tools covered
 
-_{This is a detailed description of your application. Give as much
-detail as needed to explain what the application does as well as any
-other information you want users or other developers to have.}_
+Many of these tools are 
 
-## Setup/Installation Requirements
-
-* _This is a great place_
-* _to list setup instructions_
-* _in a simple_
-* _easy-to-understand_
-* _format_
-
-_{Leave nothing to chance! You want it to be easy for potential users,
-employers and collaborators to run your app. Do I need to run a
-server? How should I set up my databases? Is there other code this
-application depends on? We recommend deleting the project from your
-desktop, re-cloning the project from GitHub, and writing down all the
-steps necessary to get the project working again.}_
-
-## Known Bugs
-
-* _Any known issues_
-* _should go here_
+* Version control: git, svn, cvs
+* Webservers: Apache, Nginx, OpenBSD's httpd
+* Shell scripting, backups, environment setups (epicodus)
+* Sound and wifi setup specific to OpenBSD
+* Other topics not listed here
 
 ## License
 
-_{Let people know what to do if they run into any issues or have
-questions, ideas or concerns.  Encourage them to contact you or make a
-contribution to the code.}_
+The content which originated in this project is covered by the [ISC
+License](https://choosealicense.com/licenses/isc). See the file called
+[LICENSE](https://github.com/k9w/learning-project-template-repo/blob/main/LICENSE)
+in this same folder for distribution and liability terms as well as
+copyright holder info.
 
-Copyright (c) _date_ _author name(s)_
+_Third-party packages are subject to their own license and copyright._
+
+## Contact Information
+ - <https://twitter.com/k9w>
+
+ - <https://linkedin.com/in/k9w>
+
