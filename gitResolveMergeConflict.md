@@ -43,6 +43,15 @@ at all. We can see that with 'git branch'.
 $ git branch
 ```
 
+Next merge this detached branch into the main branch.
+
+```
+$ git merge main
+```
+
+Now you can delete the temporary branch.
+
+
 This next step might be optional. I'll find out with more practice.
 Pull the latest changes from the remote into this detached HEAD state.
 
