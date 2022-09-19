@@ -8,6 +8,11 @@ started tracking my documentation in Git. On September 19 2022, I cloned
 this repo from a cloud VM where I had been self-hosting it over to Github
 in the hope that you might benefit from it too.
 
+Starting in April 2022, I have also written Linux documentation as part
+of my job at C-Tran, including a detailed guide on tmux with ample
+screenshots. I hope to secure my employer's permission to post it here
+too.
+
 ## Current state and level of polish
 
 For much of this repo's commit history, I quickly posted content as I
