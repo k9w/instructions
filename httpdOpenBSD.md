@@ -1,5 +1,9 @@
 # 04-13-2021
 
+Host a website on OpenBSD's httpd webserver and configure a TLS
+certificate for https on it with acme-client, both in the base system.
+
+
 First site is static files with OpenBSD httpd, acme-client, and
 ideally a wildcard certificate.
 
