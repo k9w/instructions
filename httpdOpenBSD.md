@@ -448,3 +448,84 @@ until the next time cron runs it from /etc/monthly.local.
 
 Wait for the TTL (usually one hour) and confirm the site loads with
 https in the browser.
+
+
+```
+$ cat /etc/acme-clent.conf
+```
+
+```
+server "metabytesblog.com" {
+	listen on "metabytesblog.com" port 80
+	root "/metabytesblog.com"
+	location "/.well-known/acme-challenge/*" {
+		root "/acme"
+		request strip 2
+	}
+	location * {
+		block return 302 "https://$HTTP_HOST$REQUEST_URI"
+	}
+}
+
+server "metabytesblog.com" {
+	listen on "metabytesblog.com" tls port 443
+	root "/metabytesblog.com"
+	tls {
+		certificate "/etc/ssl/metabytesblog.com.crt"
+		key "/etc/ssl/private/metabytesblog.com.key"
+	}
+}
+```
+
+
+```
+$ cat /etc/acme-client.conf
+```
+
+```
+authority letsencrypt {
+	api url "https://acme-v02.api.letsencrypt.org/directory"
+	account key "/etc/acme/letsencrypt-privkey.pem"
+}
+
+domain metabytesblog.com {
+	alternative names { www.metabytesblog.com }
+	domain key "/etc/ssl/private/metabytesblog.com.key" ecdsa
+	domain certificate "/etc/ssl/metabytesblog.com.crt"
+	sign with letsencrypt
+}
+```
+
+Enable httpd to auto-start at boot time. Without it enabled, you'd
+also have to specify the -f flag to manually start it too.
+
+```
+# rcctl enable httpd
+```
+
+Manually run httpd with debugging to see why it won't start.
+
+```
+# httpd -d
+```
+
+
+
+```
+a$ doas acme-client -v metabytesblog.com
+acme-client: https://acme-v02.api.letsencrypt.org/directory: directories
+acme-client: acme-v02.api.letsencrypt.org: DNS: 172.65.32.248
+acme-client: dochngreq: https://acme-v02.api.letsencrypt.org/acme/authz-v3/160169565936
+acme-client: challenge, token: HbDBXzzBCHABm0E4r34nkOddY-Z25OM1elibl_9f4Dc, uri: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565936/1vDAqg, status: 0
+acme-client: /var/www/acme/HbDBXzzBCHABm0E4r34nkOddY-Z25OM1elibl_9f4Dc: created
+acme-client: dochngreq: https://acme-v02.api.letsencrypt.org/acme/authz-v3/160169565946
+acme-client: challenge, token: nGVVQrZo37-w9yqlNRw5YbuI6DZNQV_jKCmSu8A1Xn0, uri: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565946/o4rZDQ, status: 0
+acme-client: /var/www/acme/nGVVQrZo37-w9yqlNRw5YbuI6DZNQV_jKCmSu8A1Xn0: created
+acme-client: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565936/1vDAqg: challenge
+acme-client: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565946/o4rZDQ: challenge
+acme-client: order.status 1
+acme-client: https://acme-v02.api.letsencrypt.org/acme/finalize/119176435/130997223986: certificate
+acme-client: order.status 3
+acme-client: https://acme-v02.api.letsencrypt.org/acme/cert/042629603e4e38b7833d1ec06b9f96f422f5: certificate
+acme-client: /etc/ssl/metabytesblog.com.crt: created
+```
