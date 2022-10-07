@@ -25,15 +25,56 @@ Edit the main configuration file at:
 ```
 
 In the http block, in the port 80 server block, change server_name from
-localhost to your domain name.
+localhost to your domain name, and the root from htdocs to your site
+folder name if you want.
 
 ```
 	server_name	localhost;
+	root		/var/www/htdocs;
 ```
 
 ```
 	server_name	example.com;
+	root		/var/www/example.com;
 ```
+
+At this point, go ahead and save the file and test out the site. 
+
+
+You can test the nginx configuraiton without starting the service.
+
+```
+# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+Enable nginx to start on each boot.
+
+```
+# rcctl enable nginx
+# rcctl start nginx
+```
+
+At this point, the site should work with standard http, not https yet. 
+(Firefox complains about no https; but chrome should load the page fine.)
+
+
+Next, we need to configure https and generate a TLS certificate. Here we
+use Let's Encrypte and OpenBSD's acme-client.
+
+Add a location block in the http server section for the
+.well-known/acme-challenge path needed by acme-client.
+
+
+
+
+
+
+
+
+
+
 
 Add a line to redirect to https. (Comment it out until you setup https below.)
 
@@ -51,12 +92,6 @@ location of your TLS cert and key.
 ```
 
 
-Enable nginx to start on each boot.
-
-```
-# rcctl enable nginx
-# rcctl start nginx
-```
 
 After editing the configuration file, reload or restart nginx to apply
 the changes.
