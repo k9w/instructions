@@ -63,12 +63,23 @@ At this point, the site should work with standard http, not https yet.
 Next, we need to configure https and generate a TLS certificate. Here we
 use Let's Encrypte and OpenBSD's acme-client.
 
-Add a location block in the http server section for the
-.well-known/acme-challenge path needed by acme-client.
+acme-client requires a 'well-known' location block in the webserver
+config file. Other acme TLS tools such as Lego and Certbot might as
+well.
 
+Add a location block in the http server section per acme-client(1). The
+example in the manpage is for OpenBSD's default httpd webserver. Here is
+how it would look for nginx.conf, in the http server block, ideally
+right after the 'root' path line.
 
+```
+location /.well-known/acme-challenge/  {
+    rewrite ^/.well-known/acme-challenge/(.*) /$1 break;
+    root /acme;
+}
+```
 
-
+Credit to <https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
 
 
 
