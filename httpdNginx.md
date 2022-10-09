@@ -28,11 +28,13 @@ In the http block, in the port 80 server block, change server_name from
 localhost to your domain name, and the root from htdocs to your site
 folder name if you want.
 
+Before:
 ```
 	server_name	localhost;
 	root		/var/www/htdocs;
 ```
 
+After:
 ```
 	server_name	example.com;
 	root		/var/www/example.com;
@@ -64,8 +66,8 @@ Next, we need to configure https and generate a TLS certificate. Here we
 use Let's Encrypte and OpenBSD's acme-client.
 
 acme-client requires a 'well-known' location block in the webserver
-config file. Other acme TLS tools such as Lego and Certbot might as
-well.
+config file. Other acme TLS tools such as Lego and Certbot might also
+require this..
 
 Add a location block in the http server section per acme-client(1). The
 example in the manpage is for OpenBSD's default httpd webserver. Here is
