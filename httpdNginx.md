@@ -67,7 +67,7 @@ use Let's Encrypte and OpenBSD's acme-client.
 
 acme-client requires a 'well-known' location block in the webserver
 config file. Other acme TLS tools such as Lego and Certbot might also
-require this..
+require this.
 
 Add a location block in the http server section per acme-client(1). The
 example in the manpage is for OpenBSD's default httpd webserver. Here is
@@ -83,6 +83,8 @@ location /.well-known/acme-challenge/  {
 
 Credit to <https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
 
+In some cases, acme-client successfully obtained the cert without the
+'location' block present in nginx.conf.
 
 
 
@@ -92,19 +94,52 @@ Credit to <https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
 Add a line to redirect to https. (Comment it out until you setup https below.)
 
 ```
-	return 301 https://example.com;
+#	return 301 https://example.com;
 ```
 
-For https, uncomment the example server block for port 443. Change its
-server name from localhost to example.com like port 80, and set the
-location of your TLS cert and key.
+Leave the whole https port 443 server block commented out for now.
+
+
+The 'ssl' on/off directive is deprecated. Remove it and add it to the
+'listen' directive.
+
+Before:
+```
+	listen		443;
+...
+	ssl		on;
+```
+
+After:
+````
+	listen		443 ssl;
+```
+
+Like port 80, change its server_name from localhost to example.com and
+root from htdocs to example.com.
+
+Set the location of your TLS cert and key.
 
 ```
 	ssl_certificate		/etc/ssl/example.com.crt;
 	ssl_certificate_key	/etc/ssl/private/example.com.key;
 ```
 
+It's also a good idea to set the 'ssl_protocols' directive to enable TLSv1.3.
 
+```
+	ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
+```
+
+Save the file, reload nignx. If it works, try issuing the tls cert. If
+that works, uncomment the redirect and https server block. Reload nginx.
+
+
+
+
+
+Uncomment the example server block for port 443 and the redirect line in
+http port 80.
 
 After editing the configuration file, reload or restart nginx to apply
 the changes.
