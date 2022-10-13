@@ -15,12 +15,6 @@ Configuration is in /etc/apache2:
 - extra/httpd-vhosts.conf
 - extra/httpd-ssl.conf
 
-You can check the configuration without starting or altering the running
-apache2 server with:
-```
-# httpd -n
-configuration OK
-```
 
 ## Enable basic http before https
 
@@ -34,11 +28,21 @@ In ```/etc/apache2/extra/httpd-vhosts.conf```, replace the two
 
 ```
 <VirtualHost *:80>
-    DocumentRoot "/var/www/htdocs"
+    DocumentRoot "/var/www/example.com"
     ServerName example.com
-    Redirect / https://example.com
+#    Redirect / https://example.com
 </VirtualHost>
 ```
+
+We'll uncomment the redirect later.
+
+Save the config files and test the configuration.
+
+```
+# httpd2 -t
+Syntax OK
+```
+
 
 ## Generate your TLS certificate
 
