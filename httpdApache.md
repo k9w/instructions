@@ -10,22 +10,111 @@ you use OpenBSD.
 One of the files this installs is /var/www/htdocs/index.html with 'It
 works!'
 
-Configuration is in /etc/apache2: 
+Configuration is in /etc/apache2. This guide uses:
 - httpd2.conf
 - extra/httpd-vhosts.conf
 - extra/httpd-ssl.conf
 
+It's a good idea to backup the original files, so that you can go back
+to a default clean-install. For example:
+
+```
+$ cd /etc/apache2
+# cp httpd2.conf httpd2.conf.orig
+```
 
 ## Enable basic http before https
 
-In httpd2.conf, uncomment the following lines.
+Edit httpd2.conf.
+
+```
+# mg httpd2.conf
+```
+
+Find the line starting with DocumentRoot using Ctrl-s or manually.
+Commnet out the whole line. We'll specify the DocumentRoot in
+extra/httpd-vhosts.conf.
+
+From:
+```
+DocumentRoot "/var/www/htdocs"
+```
+
+To:
+```
+#DocumentRoot "/var/www/htdocs"
+```
+
+On the very next line, change the Directory from "/var/www/htdocs" to
+"/var/www/example.com".
+
+From:
+```
+<Directory "/var/www/htdocs">
+```
+
+To:
+```
+<Directory "/var/www/example.com">
+```
+
+Find the Include line for httpd-vhosts.conf. Uncomment the line.
+
+From:
+```
+#Include /etc/apache2/extra/httpd-vhosts.conf
+```
+
+To:
 ```
 Include /etc/apache2/extra/httpd-vhosts.conf
 ```
 
-In ```/etc/apache2/extra/httpd-vhosts.conf```, replace the two
-<VitualHost> blocks with this:
+Save the file and exit. Your changes from the .orig should look like this.
 
+```
+$ diff httpd2.conf.orig httpd2.conf
+248,249c248,249
+< DocumentRoot "/var/www/htdocs"
+< <Directory "/var/www/htdocs">
+---
+> #DocumentRoot "/var/www/htdocs"
+> <Directory "/var/www/example.com">
+507c507
+< #Include /etc/apache2/extra/httpd-vhosts.conf
+---
+> Include /etc/apache2/extra/httpd-vhosts.conf
+```
+
+Next, edit extra/httpd-vhosts.conf.
+
+```
+$ cd /etc/apache2/extra
+# mg httpd-vhosts.conf
+```
+
+
+Replace the two <VitualHost> blocks:
+```
+<VirtualHost *:80>
+    ServerAdmin webmaster@dummy-host.example.com
+    DocumentRoot "/var/www/docs/dummy-host.example.com"
+    ServerName dummy-host.example.com
+    ServerAlias www.dummy-host.example.com
+    ErrorLog "logs/dummy-host.example.com-error_log"
+    CustomLog "logs/dummy-host.example.com-access_log" common
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@dummy-host2.example.com
+    DocumentRoot "/var/www/docs/dummy-host2.example.com"
+    ServerName dummy-host2.example.com
+    ErrorLog "logs/dummy-host2.example.com-error_log"
+    CustomLog "logs/dummy-host2.example.com-access_log" common
+</VirtualHost>
+```
+
+With this:
 ```
 <VirtualHost *:80>
     DocumentRoot "/var/www/example.com"
@@ -34,13 +123,49 @@ In ```/etc/apache2/extra/httpd-vhosts.conf```, replace the two
 </VirtualHost>
 ```
 
-We'll uncomment the redirect later.
+We'll uncomment the redirect later, after we generate our TLS
+certificate for https.
 
-Save the config files and test the configuration.
+Save and exit httpd-vhosts.conf.
+
+Here are the changes we made compared to httpd-vhosts.conf.orig.
 
 ```
-# httpd2 -t
+$ diff httpd-vhosts.conf.orig httpd-vhosts.conf
+24,29c24,26
+<     ServerAdmin webmaster@dummy-host.example.com
+<     DocumentRoot "/var/www/docs/dummy-host.example.com"
+<     ServerName dummy-host.example.com
+<     ServerAlias www.dummy-host.example.com
+<     ErrorLog "logs/dummy-host.example.com-error_log"
+<     CustomLog "logs/dummy-host.example.com-access_log" common
+---
+>     DocumentRoot "/var/www/example.com"
+>     ServerName example.com
+> #    Redirect / https://example.com
+31,41d27
+< 
+< <VirtualHost *:80>
+<     ServerAdmin webmaster@dummy-host2.example.com
+<     DocumentRoot "/var/www/docs/dummy-host2.example.com"
+<     ServerName dummy-host2.example.com
+<     ErrorLog "logs/dummy-host2.example.com-error_log"
+<     CustomLog "logs/dummy-host2.example.com-access_log" common
+< </VirtualHost>
+```
+
+the config files and test the configuration.
+
+```
+$ httpd2 -t
 Syntax OK
+```
+
+## Enable and start Apache
+
+```
+# rcctl enable apache2
+# rcctl start apache2
 ```
 
 
