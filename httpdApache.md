@@ -171,6 +171,14 @@ Syntax OK
 
 ## Generate your TLS certificate
 
+OpenBSD's built-in acme-client requires a location directive for
+'.well-known/acme-challenge' in order to generate the TLS certificate.
+
+
+
+Next steps here?
+<https://www.phcomp.co.uk/Tutorials/Web-Technologies/Configure-Apache-for-Lets-Encrypt-challenge-response.html>
+
 
 
 ## Enable https
