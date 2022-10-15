@@ -15,13 +15,18 @@ Configuration is in /etc/apache2. This guide uses:
 - extra/httpd-vhosts.conf
 - extra/httpd-ssl.conf
 
-It's a good idea to backup the original files, so that you can go back
-to a default clean-install. For example:
+Backup the original files, so that you can go back to a default
+clean-install.
 
 ```
 $ cd /etc/apache2
 # cp httpd2.conf httpd2.conf.orig
 ```
+
+Optionally, remove all the comments, that aren't commented out code, so
+that you can read the file better. You can refer to the .orig to read
+the comments when needed.
+
 
 ## Enable basic http before https
 
@@ -31,60 +36,48 @@ Edit httpd2.conf.
 # mg httpd2.conf
 ```
 
-Find the line starting with DocumentRoot using Ctrl-s or manually.
-Commnet out the whole line. We'll specify the DocumentRoot in
-extra/httpd-vhosts.conf.
+Comment out the DocumentRoot and the <Directory "/var/www/htdocs"> block.
 
-From:
-```
-DocumentRoot "/var/www/htdocs"
-```
+We'll specify them both for each site later in httpd-vhosts.conf.
 
-To:
-```
-#DocumentRoot "/var/www/htdocs"
-```
+Uncomment the Include line for httpd-vhosts.conf.
 
-On the very next line, change the Directory from "/var/www/htdocs" to
-"/var/www/example.com".
+Save the file and exit.
 
-From:
-```
-<Directory "/var/www/htdocs">
-```
-
-To:
-```
-<Directory "/var/www/example.com">
-```
-
-Find the Include line for httpd-vhosts.conf. Uncomment the line.
-
-From:
-```
-#Include /etc/apache2/extra/httpd-vhosts.conf
-```
-
-To:
-```
-Include /etc/apache2/extra/httpd-vhosts.conf
-```
-
-Save the file and exit. Your changes from the .orig should look like this.
+Throughout this setup, and for later review, you can compare the
+differences in your file from the original. Ideally specify the original
+file as the first argument to diff, and your modified file second. That
+way, the differences on the left (<) are the original, and the
+differences on the right (>) are your changes.
 
 ```
-$ diff httpd2.conf.orig httpd2.conf
+$ diff httpd2.conf.orig httpd2.conf 
 248,249c248,249
 < DocumentRoot "/var/www/htdocs"
 < <Directory "/var/www/htdocs">
 ---
 > #DocumentRoot "/var/www/htdocs"
-> <Directory "/var/www/example.com">
+> #<Directory "/var/www/htdocs">
+262c262
+<     Options Indexes FollowSymLinks
+---
+> #    Options Indexes FollowSymLinks
+269c269
+<     AllowOverride None
+---
+> #    AllowOverride None
+274,275c274,275
+<     Require all granted
+< </Directory>
+---
+> #    Require all granted
+> #</Directory>
 507c507
 < #Include /etc/apache2/extra/httpd-vhosts.conf
 ---
 > Include /etc/apache2/extra/httpd-vhosts.conf
 ```
+
 
 Next, edit extra/httpd-vhosts.conf.
 
@@ -94,31 +87,21 @@ $ cd /etc/apache2/extra
 ```
 
 
-Replace the two <VitualHost> blocks:
-```
-<VirtualHost *:80>
-    ServerAdmin webmaster@dummy-host.example.com
-    DocumentRoot "/var/www/docs/dummy-host.example.com"
-    ServerName dummy-host.example.com
-    ServerAlias www.dummy-host.example.com
-    ErrorLog "logs/dummy-host.example.com-error_log"
-    CustomLog "logs/dummy-host.example.com-access_log" common
-</VirtualHost>
+Remove the two <VitualHost> blocks.
 
-<VirtualHost *:80>
-    ServerAdmin webmaster@dummy-host2.example.com
-    DocumentRoot "/var/www/docs/dummy-host2.example.com"
-    ServerName dummy-host2.example.com
-    ErrorLog "logs/dummy-host2.example.com-error_log"
-    CustomLog "logs/dummy-host2.example.com-access_log" common
-</VirtualHost>
-```
+Add your own <VirtualHost> block containing a <Directory> block with the
+same options you commented out from httpd2.conf. Also add a redirect
+statement for https and comment it out for now.
 
-With this:
 ```
 <VirtualHost *:80>
     DocumentRoot "/var/www/example.com"
     ServerName example.com
+    <Directory "/var/www/example.com">
+	Options Indexes FollowSymLinks
+	AllowOverride None
+	Require all granted
+    </Directory>
 #    Redirect / https://example.com
 </VirtualHost>
 ```
@@ -131,8 +114,10 @@ Save and exit httpd-vhosts.conf.
 Here are the changes we made compared to httpd-vhosts.conf.orig.
 
 ```
-$ diff httpd-vhosts.conf.orig httpd-vhosts.conf
-24,29c24,26
+$ diff httpd-vhosts.conf.orig httpd-vhost.conf
+diff: httpd-vhost.conf: No such file or directory
+b$ diff httpd-vhosts.conf.orig httpd-vhosts.conf
+24,29c24,31
 <     ServerAdmin webmaster@dummy-host.example.com
 <     DocumentRoot "/var/www/docs/dummy-host.example.com"
 <     ServerName dummy-host.example.com
@@ -142,8 +127,13 @@ $ diff httpd-vhosts.conf.orig httpd-vhosts.conf
 ---
 >     DocumentRoot "/var/www/example.com"
 >     ServerName example.com
+>     <Directory "/var/www/example.com">
+>       Options Indexes FollowSymLinks
+>       AllowOverride None
+>       Require all granted
+>     </Directory>
 > #    Redirect / https://example.com
-31,41d27
+31,41d32
 < 
 < <VirtualHost *:80>
 <     ServerAdmin webmaster@dummy-host2.example.com
@@ -154,7 +144,9 @@ $ diff httpd-vhosts.conf.orig httpd-vhosts.conf
 < </VirtualHost>
 ```
 
-the config files and test the configuration.
+We are ready to serve the site with basic http.
+
+Test the configuration.
 
 ```
 $ httpd2 -t
@@ -171,13 +163,10 @@ Syntax OK
 
 ## Generate your TLS certificate
 
-OpenBSD's built-in acme-client requires a location directive for
-'.well-known/acme-challenge' in order to generate the TLS certificate.
-
-
-
-Next steps here?
-<https://www.phcomp.co.uk/Tutorials/Web-Technologies/Configure-Apache-for-Lets-Encrypt-challenge-response.html>
+OpenBSD's built-in acme-client requires a location directive in nginx
+and OpenBSD's httpd for '.well-known/acme-challenge' in order to
+generate the TLS certificate. Apache allows hidden directories by
+default and does not need such an explicit directive.
 
 
 
