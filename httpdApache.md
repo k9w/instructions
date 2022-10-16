@@ -45,10 +45,11 @@ Uncomment the Include line for httpd-vhosts.conf.
 Save the file and exit.
 
 Throughout this setup, and for later review, you can compare the
-differences in your file from the original. Ideally specify the original
-file as the first argument to diff, and your modified file second. That
-way, the differences on the left (<) are the original, and the
-differences on the right (>) are your changes.
+differences in your file from the original using the diff(1) command.
+It is best practice to specify the original file as the first argument
+to diff, and your modified file second. That way, the differences on
+the left (<) are the original, and the differences on the right (>)
+are your changes.
 
 ```
 $ diff httpd2.conf.orig httpd2.conf 
@@ -87,7 +88,7 @@ $ cd /etc/apache2/extra
 ```
 
 
-Remove the two <VitualHost> blocks.
+Remove the two '<VitualHost>' blocks.
 
 Add your own <VirtualHost> block containing a <Directory> block with the
 same options you commented out from httpd2.conf. Also add a redirect
