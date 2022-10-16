@@ -231,6 +231,70 @@ as root, not with doas.
 
 The page should display now.
 
+
+## Command invocation and a deeper look at what's installed
+
+httpd2 and apachectl are the two main commands. I haven't referenced
+apachectl because rcctl * apache2 is just a wrapper around apachectl.
+
+```
+$ which apachectl
+/usr/local/sbin/apachectl
+$ which apachectl2
+/usr/local/sbin/apachectl2
+$ ls -al /usr/local/sbin/apachectl*
+-rwxr-xr-x  1 root  bin    3470 Oct  8 15:09 /usr/local/sbin/apachectl
+lrwxr-xr-x  1 root  wheel     9 Oct 11 06:53 /usr/local/sbin/apachectl2
+-> apachectl
+$ which httpd2
+/usr/local/sbin/httpd2
+$ ls -al /usr/local/sbin/httpd2
+-rwxr-xr-x  1 root  bin  988577 Oct  8 15:12 /usr/local/sbin/httpd2
+$ rcctl ls all | grep apache
+apache2
+$ ls -al /etc/rc.d/apache2 
+-rwxr-xr-x  1 root  bin  295 Oct  8 15:12 /etc/rc.d/apache2
+$ cat /etc/rc.d/apache2
+#!/bin/ksh
+
+daemon="/usr/local/sbin/httpd2"
+
+. /etc/rc.d/rc.subr
+
+# mod_perl resets $0 to argv[0]
+pexp=".*${daemon}.*"
+rc_reload=NO
+
+rc_start() {
+        rc_exec "/usr/local/sbin/apachectl2 graceful ${daemon_flags}"
+}
+	
+rc_stop() {
+        /usr/local/sbin/apachectl2 graceful-stop ${daemon_flags}
+}
+
+rc_cmd $1
+```
+
+The package also installs other executables, and manpages for each.
+
+You can see the full list of files installed with apache-httpd with:
+```
+$ pkg_info -f apache-httpd | less
+```
+Some highlights:
+
+Headers and modules are installed to:
+- `/usr/local/include/apache2`
+- `/usr/local/lib/apache2`
+- `/usr/local/share/examples/apache2` - has same files in `/etc/apache2` and more
+- `/usr/local/share/doc/apache2` mirors docs site from
+<https://httpd.apache.org/docs/2.4> 
+- `/var/www/error`
+- `/var/www/htdocs`
+- `/var/www/icons`
+
+
 Reference:
 https://httpd.apache.org/docs/2.4/mod/quickreference.html
 https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
