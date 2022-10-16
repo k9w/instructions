@@ -23,9 +23,11 @@ $ cd /etc/apache2
 # cp httpd2.conf httpd2.conf.orig
 ```
 
-Optionally, remove all the comments, that aren't commented out code, so
-that you can read the file better. You can refer to the .orig to read
-the comments when needed.
+Some people remove all the comments, that aren't commented out code,
+so they can read the file better and refer to the .orig to read the
+comments when needed. I left the comments in, to make the diffs
+smaller. See the [diff(1)](https://man.openbsd.org/diff) command
+below.
 
 
 ## Enable basic http before https
@@ -36,20 +38,21 @@ Edit httpd2.conf.
 # mg httpd2.conf
 ```
 
-Comment out the DocumentRoot and the <Directory "/var/www/htdocs"> block.
+Comment out the `DocumentRoot` and the `<Directory "/var/www/htdocs">`
+block.
 
 We'll specify them both for each site later in httpd-vhosts.conf.
 
-Uncomment the Include line for httpd-vhosts.conf.
+Uncomment the `Include` line for httpd-vhosts.conf.
 
 Save the file and exit.
 
 Throughout this setup, and for later review, you can compare the
-differences in your file from the original using the diff(1) command.
-It is best practice to specify the original file as the first argument
-to diff, and your modified file second. That way, the differences on
-the left (<) are the original, and the differences on the right (>)
-are your changes.
+differences in your file from the original using the
+[diff(1)](https://man.openbsd.org/diff) command.  It is best practice
+to specify the original file as the first argument to diff, and your
+modified file second. That way, the differences on the left `<` are
+the original, and the differences on the right `>` are your changes.
 
 ```
 $ diff httpd2.conf.orig httpd2.conf 
@@ -92,7 +95,7 @@ Remove the two `<VitualHost>` blocks.
 
 Add your own `<VirtualHost>` block containing a `<Directory>` block
 with the same options you commented out from httpd2.conf. Also add a
-redirect statement for https and comment it out for now.
+`Redirect` statement for https and comment it out for now.
 
 ```
 <VirtualHost *:80>
@@ -107,7 +110,7 @@ redirect statement for https and comment it out for now.
 </VirtualHost>
 ```
 
-We'll uncomment the redirect later, after we generate our TLS
+We'll uncomment the `Redirect` later, after we generate our TLS
 certificate for https.
 
 Save and exit httpd-vhosts.conf.
@@ -154,7 +157,7 @@ $ httpd2 -t
 Syntax OK
 ```
 
-## Enable and start Apache
+Enable and start Apache
 
 ```
 # rcctl enable apache2
