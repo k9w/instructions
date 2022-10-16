@@ -13,8 +13,8 @@ you use OpenBSD.
 # pkg_add apache-httpd
 ```
 
-One of the files this installs is /var/www/htdocs/index.html with 'It
-works!'
+One of the files this installs is `/var/www/htdocs/index.html` with "It
+works!"
 
 Configuration is in /etc/apache2. This guide uses:
 - httpd2.conf
