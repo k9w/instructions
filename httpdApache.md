@@ -88,11 +88,11 @@ $ cd /etc/apache2/extra
 ```
 
 
-Remove the two '<VitualHost>' blocks.
+Remove the two `<VitualHost>` blocks.
 
-Add your own <VirtualHost> block containing a <Directory> block with the
-same options you commented out from httpd2.conf. Also add a redirect
-statement for https and comment it out for now.
+Add your own `<VirtualHost>` block containing a `<Directory>` block
+with the same options you commented out from httpd2.conf. Also add a
+redirect statement for https and comment it out for now.
 
 ```
 <VirtualHost *:80>
