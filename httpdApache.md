@@ -178,9 +178,22 @@ and OpenBSD's httpd for '.well-known/acme-challenge' in order to
 generate the TLS certificate. Apache allows hidden directories by
 default and does not need such an explicit directive.
 
+With the setup above, generating the TLS cert should just work.
+
+```
+# acme-client -v example.com
+```
 
 
 ## Enable https
+
+Now that we have our TLS certificate, we need to:
+- Edit httpd2.conf to Load the SSL and Rewrite modulse and Include
+  extra/httpd-ssl.conf
+- Edit extra/httpd-ssl.conf to point to our TLS cert and key
+- Restart the apache service to load the changes
+
+Edit httpd2.conf.
 
 Load the ssl module to to enable https.
 ```
@@ -192,19 +205,26 @@ To enable redirecting http to https.
 LoadModule rewrite_module /usr/local/lib/apache2/mod_rewrite.so
 ```
 
-
 This included file will hold the https port 443 configuration.
 ```
 Include /etc/apache2/extra/httpd-ssl.conf
 ```
 
+Save the file.
 
-
-In ```/etc/apache2/extra/httpd-ssl.conf```
+Edit extra/httpd-ssl.conf.
 
 Comment out SSLSessionCache. (It gave me an error with it active.)
 ```
 #SSLSessionCache        "shmcb:/var/www/logs/ssl_scache(512000)"
+```
+
+Otherwise, you'll get this error.
+```
+$ httpd2 -t
+AH00526: Syntax error on line 92 of /etc/apache2/extra/httpd-ssl.conf:
+SSLSessionCache: 'shmcb' session cache not supported (known names: ).
+Maybe you need to load the appropriate socache module (mod_socache_shmcb?).
 ```
 
 Set SSLCertificateFile and KeyFile to the location of your wildcard
@@ -219,11 +239,30 @@ SSLCertificateKeyFile "/etc/ssl/private/example.com.key"
 ```
 
 
-Start the server.
+Restart the server.
 
 ```
-# apachectl start
+# apachectl graceful
 ```
+
+Here are the changes we made to extra/httpd-ssl.conf
+
+```
+$ diff httpd-ssl.conf.orig httpd-ssl.conf
+92c92
+< SSLSessionCache        "shmcb:/var/www/logs/ssl_scache(512000)"
+---
+> #SSLSessionCache        "shmcb:/var/www/logs/ssl_scache(512000)"
+144c144
+< SSLCertificateFile "/etc/apache2/server.crt"
+---
+> SSLCertificateFile "/etc/ssl/example.com.crt"
+154c154
+< SSLCertificateKeyFile "/etc/apache2/server.key"
+---
+> SSLCertificateKeyFile "/etc/ssl/private/example.com.key"
+```
+
 
 Note that starting apache with doas does not let it see into
 /etc/ssl/private and the certificate key therein. It needs to be started
