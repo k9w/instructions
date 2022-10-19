@@ -32,10 +32,10 @@ Edit the main configuration file.
 ```
 
 For hosting just one site, change server.document-root from `htdocs/`
-to `example.com/`.
+to the complete filesystem path for `example.com/`.
 
 ```
-server.document-root        = "example.com/"
+server.document-root        = "/var/www/example.com"
 ```
 
 Save the file.
