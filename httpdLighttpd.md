@@ -57,3 +57,8 @@ Enable and start lighttpd.
 # rcctl start lighttpd
 ```
 
+See also:
+- Manpage: lighttpd(8)
+- Local documentation in text format: /usr/local/share/doc/lighttpd
+- [Online documentation at
+lighttpd.net](https://redmine.lighttpd.net/projects/lighttpd/wiki)
