@@ -6,8 +6,7 @@ This guide describes how to install and configure
 
 ## Installation & configuration files
 
-Install the apache webserver. The commands and file paths assume
-you use OpenBSD.
+Install the apache webserver from packages. 
 
 ```
 # pkg_add apache-httpd
@@ -45,7 +44,7 @@ Edit httpd2.conf.
 ```
 
 Comment out the `DocumentRoot` and the `<Directory "/var/www/htdocs">`
-block.
+block, including any uncommented lines and the closing `</Directory>` tag.
 
 We'll specify them both for each site later in httpd-vhosts.conf.
 
