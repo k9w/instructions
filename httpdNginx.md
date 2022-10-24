@@ -90,6 +90,19 @@ In some cases, acme-client successfully obtained the cert without the
 
 
 
+It is not required for staging. But it is required for production.
+
+
+Additionally, multiple domain names on the same IP need to be specified
+differently.
+
+<https://stackoverflow.com/questions/69318127/nginx-2-different-domains-on-one-server>
+<https://nginx.org/en/docs/http/request_processing.html>
+
+
+
+
+
 
 Add a line to redirect to https. (Comment it out until you setup https below.)
 

@@ -46,9 +46,31 @@ Edit httpd2.conf.
 Comment out the `DocumentRoot` and the `<Directory "/var/www/htdocs">`
 block, including any uncommented lines and the closing `</Directory>` tag.
 
-We'll specify them both for each site later in httpd-vhosts.conf.
+```
+#DocumentRoot "/var/www/htdocs"
+#<Directory "/var/www/htdocs">
+
+...
+
+#    Options Indexes FollowSymLinks
+
+...
+
+#    AllowOverride None
+
+...
+
+#    Require all granted
+#</Directory>
+```
+
+We'll specify them for each site later in httpd-vhosts.conf.
 
 Uncomment the `Include` line for httpd-vhosts.conf.
+
+```
+Include /etc/apache2/extra/httpd-vhosts.conf
+```
 
 Save the file and exit.
 
@@ -98,9 +120,10 @@ $ cd /etc/apache2/extra
 
 Remove the two `<VitualHost>` blocks.
 
-Add your own `<VirtualHost>` block containing a `<Directory>` block
-with the same options you commented out from httpd2.conf. Also add a
-`Redirect` statement for https and comment it out for now.
+Add a `<VirtualHost>` block containing a `<Directory>` block with the
+same options you commented out from httpd2.conf.
+
+Also add a `Redirect` statement for https and comment it out for now.
 
 ```
 <VirtualHost *:80>
@@ -115,10 +138,34 @@ with the same options you commented out from httpd2.conf. Also add a
 </VirtualHost>
 ```
 
+Between the `ServerName` and `<Directory>` block, add an `Alias` and a
+seocnd `<Directory>` block.
+
+The `Alias` directive specifies the `.well-known/acme-challenge` folder
+to  `/var/www/acme/.well-known/acme-challenge` needed by Let's Encrypt
+to issue a TLS certificate.
+
+```
+    Alias /.well-known/acme-challenge /var/www/acme/.well-known/acme-challenge
+    <Directory "/var/www/acme/.well-known/acme-challenge">
+	Options None
+	AllowOverride None
+	ForceType text/plain
+	RedirectMatch 404 "^(?!/\.well-known/acme-challenge/[\w-]{43}$)"
+	Require all granted
+    </Directory>
+
+```
+
 We'll uncomment the `Redirect` later, after we generate our TLS
 certificate for https.
 
 Save and exit httpd-vhosts.conf.
+
+
+[10-23-22 not working yet]
+
+
 
 Here are the changes we made compared to httpd-vhosts.conf.orig.
 
@@ -334,6 +381,8 @@ Headers and modules are installed to:
 
 
 Reference:
-https://httpd.apache.org/docs/2.4/mod/quickreference.html
-https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html
-https://community.letsencrypt.org/t/recommended-apache-config/58294/2
+<https://httpd.apache.org/docs/2.4/mod/quickreference.html>
+<https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html>
+<https://community.letsencrypt.org/t/recommended-apache-config/58294/2>
+<https://doc.owncloud.com/server/next/admin_manual/installation/letsencrypt/apache.html#lets-encrypt-acme-challenge>
+
