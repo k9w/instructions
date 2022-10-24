@@ -15,7 +15,7 @@ Install nginx from packages.
 The package added html/{50x.html,index.html} to /var/www. It did not add
 anything to htdocs. But nginx.conf's root defaults to htdocs.
 
-Copy or symlink the files from html to htdocs, or make your own index.html.
+This guide assumes your site lives at /var/www/example.com
 
 
 Edit the main configuration file at:
@@ -24,9 +24,15 @@ Edit the main configuration file at:
 /etc/nginx/nginx.conf
 ```
 
-In the http block, in the port 80 server block, change server_name from
+In the http block, in the first server block, change server_name from
 localhost to your domain name, and the root from htdocs to your site
-folder name if you want.
+complete folder path.
+
+If you use Let's Encrypt or another ACME protocol TLS provider, add a
+location block here for the [http-01
+challenge](https://letsencrypt.org/docs/challenge-types).
+
+Add a redirect to https and comment it out for now.
 
 Before:
 ```
@@ -36,8 +42,15 @@ Before:
 
 After:
 ```
-	server_name	example.com;
-	root		/var/www/example.com;
+        server_name	example.com;
+        root		/var/www/example.com;
+
+	location /.well-known/acme-challenge/ {
+	    rewrite ^/.well-known/acme-challenge/(.*) /$1 break;
+	    root /acme;
+	}
+
+#	return 301 https://example.com;
 ```
 
 At this point, go ahead and save the file and test out the site. 
@@ -59,38 +72,22 @@ Enable nginx to start on each boot.
 ```
 
 At this point, the site should work with standard http, not https yet. 
-(Firefox complains about no https; but chrome should load the page fine.)
+(Firefox complains about no https; but Chrome should load the page fine.)
 
 
 Next, we need to configure https and generate a TLS certificate. Here we
-use Let's Encrypte and OpenBSD's acme-client.
+use Let's Encrypt and OpenBSD's acme-client.
 
-acme-client requires a 'well-known' location block in the webserver
-config file. Other acme TLS tools such as Lego and Certbot might also
+The 'well-known' location block we added above is required by
+acme-client. Other acme TLS tools such as Lego and Certbot might also
 require this.
 
-Add a location block in the http server section per acme-client(1). The
-example in the manpage is for OpenBSD's default httpd webserver. Here is
-how it would look for nginx.conf, in the http server block, ideally
-right after the 'root' path line.
-
-```
-location /.well-known/acme-challenge/  {
-    rewrite ^/.well-known/acme-challenge/(.*) /$1 break;
-    root /acme;
-}
-```
 
 Credit to <https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
 
-In some cases, acme-client successfully obtained the cert without the
-'location' block present in nginx.conf.
+Let's Encrypt only requires the location block for production 'sign
+with letsencrypt', not staging 'sign with letsencrypt-staging'.
 
-
-
-
-
-It is not required for staging. But it is required for production.
 
 
 Additionally, multiple domain names on the same IP need to be specified
@@ -104,11 +101,6 @@ differently.
 
 
 
-Add a line to redirect to https. (Comment it out until you setup https below.)
-
-```
-#	return 301 https://example.com;
-```
 
 Leave the whole https port 443 server block commented out for now.
 
@@ -162,3 +154,89 @@ the changes.
 # rcctl restart nginx
 ```
 
+45,46c45,46
+<         server_name  localhost;
+<         root         /var/www/htdocs;
+---
+>         server_name  example.com;
+>         root         /var/www/example.com;
+47a48,54
+> 	location /.well-known/acme-challenge/ {
+> 	    rewrite ^/.well-known/acme-challenge/(.*) /$1 break;
+> 	    root /acme;
+> 	}
+> 
+> #	return 301 https://example.com;
+> 
+107,110c114,117
+<     #server {
+<     #    listen       443;
+<     #    server_name  localhost;
+<     #    root         /var/www/htdocs;
+---
+>     server {
+>         listen       443 ssl;
+>         server_name  example.com;
+>         root         /var/www/example.com;
+112,114c119,120
+<     #    ssl                  on;
+<     #    ssl_certificate      /etc/ssl/server.crt;
+<     #    ssl_certificate_key  /etc/ssl/private/server.key;
+---
+>         ssl_certificate      /etc/ssl/example.com.crt;
+>         ssl_certificate_key  /etc/ssl/private/example.com.key;
+116,117c122
+<     #    ssl_session_timeout  5m;
+<     #    ssl_session_cache    shared:SSL:1m;
+---
+> 	ssl_protocols	     TLSv1.1 TLSv1.2 TLSv1.3;
+119,121c124,125
+<     #    ssl_ciphers  HIGH:!aNULL:!MD5:!RC4;
+<     #    ssl_prefer_server_ciphers   on;
+<     #}
+---
+>         ssl_session_timeout  5m;
+>         ssl_session_cache    shared:SSL:1m;
+122a127,130
+>         ssl_ciphers  HIGH:!aNULL:!MD5:!RC4;
+>         ssl_prefer_server_ciphers   on;
+>     }
+> 
+123a132,168
+> 
+> #    server {
+> #        listen       80;
+> #        listen       [::]:80;
+> #        server_name  b.metabytesblog.com;
+> #        root         /var/www/b.metabytesblog.com;
+> 
+> #	location /.well-known/acme-challenge/ {
+> #	    rewrite ^/.well-known/acme-challenge/(.*) /$1 break;
+> #	    root /acme;
+> #	}
+> 
+> #	return 301 https://b.metabytesblog.com;
+> 
+> #        error_page   500 502 503 504  /50x.html;
+> #        location = /50x.html {
+> #            root  /var/www/htdocs;
+> #        }
+> 
+> #    }
+> 
+> #    server {
+> #        listen       443 ssl;
+> #        server_name  b.metabytesblog.com;
+> #        root         /var/www/b.metabytesblog.com;
+> 
+> #        ssl_certificate      /etc/ssl/b.metabytesblog.com.crt;
+> #        ssl_certificate_key  /etc/ssl/private/b.metabytesblog.com.key;
+> 
+> #	ssl_protocols	     TLSv1.1 TLSv1.2 TLSv1.3;
+> 
+> #        ssl_session_timeout  5m;
+> #        ssl_session_cache    shared:SSL:1m;
+> 
+> #        ssl_ciphers  HIGH:!aNULL:!MD5:!RC4;
+> #        ssl_prefer_server_ciphers   on;
+> #    }
