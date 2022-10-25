@@ -183,44 +183,6 @@ Your completed `<VirtualHost>` block should look like this:
 
 Save and exit httpd-vhosts.conf.
 
-
-[10-23-22 not working yet]
-
-
-
-Here are the changes we made compared to httpd-vhosts.conf.orig.
-
-```
-$ diff httpd-vhosts.conf.orig httpd-vhost.conf
-diff: httpd-vhost.conf: No such file or directory
-b$ diff httpd-vhosts.conf.orig httpd-vhosts.conf
-24,29c24,31
-<     ServerAdmin webmaster@dummy-host.example.com
-<     DocumentRoot "/var/www/docs/dummy-host.example.com"
-<     ServerName dummy-host.example.com
-<     ServerAlias www.dummy-host.example.com
-<     ErrorLog "logs/dummy-host.example.com-error_log"
-<     CustomLog "logs/dummy-host.example.com-access_log" common
----
->     DocumentRoot "/var/www/example.com"
->     ServerName example.com
->     <Directory "/var/www/example.com">
->       Options Indexes FollowSymLinks
->       AllowOverride None
->       Require all granted
->     </Directory>
-> #    Redirect / https://example.com
-31,41d32
-< 
-< <VirtualHost *:80>
-<     ServerAdmin webmaster@dummy-host2.example.com
-<     DocumentRoot "/var/www/docs/dummy-host2.example.com"
-<     ServerName dummy-host2.example.com
-<     ErrorLog "logs/dummy-host2.example.com-error_log"
-<     CustomLog "logs/dummy-host2.example.com-access_log" common
-< </VirtualHost>
-```
-
 We are ready to serve the site with basic http.
 
 Test the configuration.
