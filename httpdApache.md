@@ -3,7 +3,6 @@
 This guide describes how to install and configure
 [Apache](https://httpd.apache.org) on [OpenBSD](https://openbsd.org).
 
-
 ## Installation & configuration files
 
 Install the apache webserver from packages. 
@@ -33,7 +32,6 @@ so they can read the file better and refer to the .orig to read the
 comments when needed. I left the comments in, to make the diffs
 smaller. See the [diff(1)](https://man.openbsd.org/diff) command
 below.
-
 
 ## Enable basic http before https
 

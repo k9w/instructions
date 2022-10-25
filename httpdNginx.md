@@ -1,10 +1,9 @@
-04-13-22
+# Nginx webserver on OpenBSD
 
-https://www.openbsdhandbook.com/services/webserver/nginx
-https://nginx.org/en/docs
-https://nginx.org/en/docs/beginners_guide.html
-https://nginx.org/en/docs/http/server_names.html
-https://www.hostiserver.com/community/articles/how-to-redirect-301-in-apache-and-ngninx
+This guide describes how to install and configure
+[Nginx](https://nginx.org) on [OpenBSD](https://openbsd.org).
+
+## Installation & configuration files
 
 Install nginx from packages.
 
@@ -15,13 +14,12 @@ Install nginx from packages.
 The package added html/{50x.html,index.html} to /var/www. It did not add
 anything to htdocs. But nginx.conf's root defaults to htdocs.
 
-This guide assumes your site lives at /var/www/example.com
+This guide assumes your site lives at `/var/www/example.com`
 
-
-Edit the main configuration file at:
+Edit the main configuration file.
 
 ```
-/etc/nginx/nginx.conf
+# vi /etc/nginx/nginx.conf
 ```
 
 In the http block, in the first server block, change server_name from
@@ -74,7 +72,6 @@ Enable nginx to start on each boot.
 At this point, the site should work with standard http, not https yet. 
 (Firefox complains about no https; but Chrome should load the page fine.)
 
-
 Next, we need to configure https and generate a TLS certificate. Here we
 use Let's Encrypt and OpenBSD's acme-client.
 
@@ -82,28 +79,13 @@ The 'well-known' location block we added above is required by
 acme-client. Other acme TLS tools such as Lego and Certbot might also
 require this.
 
-
-Credit to <https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
-
 Let's Encrypt only requires the location block for production 'sign
 with letsencrypt', not staging 'sign with letsencrypt-staging'.
-
-
 
 Additionally, multiple domain names on the same IP need to be specified
 differently.
 
-<https://stackoverflow.com/questions/69318127/nginx-2-different-domains-on-one-server>
-<https://nginx.org/en/docs/http/request_processing.html>
-
-
-
-
-
-
-
 Leave the whole https port 443 server block commented out for now.
-
 
 The 'ssl' on/off directive is deprecated. Remove it and add it to the
 'listen' directive.
@@ -139,10 +121,6 @@ It's also a good idea to set the 'ssl_protocols' directive to enable TLSv1.3.
 Save the file, reload nignx. If it works, try issuing the tls cert. If
 that works, uncomment the redirect and https server block. Reload nginx.
 
-
-
-
-
 Uncomment the example server block for port 443 and the redirect line in
 http port 80.
 
@@ -154,6 +132,13 @@ the changes.
 # rcctl restart nginx
 ```
 
+## Summary of changes
+
+Here is a diff of the changes made with the original nginx.conf on the
+left and the production version on the right.
+
+```
+$ diff nginx.conf.orig nginx.conf
 45,46c45,46
 <         server_name  localhost;
 <         root         /var/www/htdocs;
@@ -240,3 +225,16 @@ the changes.
 > #        ssl_ciphers  HIGH:!aNULL:!MD5:!RC4;
 > #        ssl_prefer_server_ciphers   on;
 > #    }
+```
+
+## See also
+
+<https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
+<https://stackoverflow.com/questions/69318127/nginx-2-different-domains-on-one-server>
+<https://nginx.org/en/docs/http/request_processing.html>
+<https://www.openbsdhandbook.com/services/webserver/nginx>
+<https://nginx.org/en/docs>
+<https://nginx.org/en/docs/beginners_guide.html>
+<https://nginx.org/en/docs/http/server_names.html>
+<https://www.hostiserver.com/community/articles/how-to-redirect-301-in-apache-and-ngninx>
+
