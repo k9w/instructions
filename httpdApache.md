@@ -138,8 +138,9 @@ Also add a `Redirect` statement for https and comment it out for now.
 </VirtualHost>
 ```
 
-Between the `ServerName` and `<Directory>` block, add an `Alias` and a
-seocnd `<Directory>` block.
+Between the example.com closing `</Directory>` block and `Redirect`,
+add an `Alias` directive and `<Directory>` block for Let's Encrypt ACME
+http-01 challenge with the hidden directory `.well-known/acme-challenge`.
 
 The `Alias` directive specifies the `.well-known/acme-challenge` folder
 to  `/var/www/acme/.well-known/acme-challenge` needed by Let's Encrypt
@@ -154,11 +155,33 @@ to issue a TLS certificate.
 	RedirectMatch 404 "^(?!/\.well-known/acme-challenge/[\w-]{43}$)"
 	Require all granted
     </Directory>
-
 ```
 
 We'll uncomment the `Redirect` later, after we generate our TLS
 certificate for https.
+
+Your completed `<VirtualHost>` block should look like this:
+
+```
+<VirtualHost *:80>
+    DocumentRoot "/var/www/example.com"
+    ServerName example.com
+    <Directory "/var/www/example.com">
+	Options Indexes FollowSymLinks
+	AllowOverride None
+	Require all granted
+    </Directory>
+    Alias /.well-known/acme-challenge /var/www/acme/.well-known/acme-challenge
+    <Directory "/var/www/acme/.well-known/acme-challenge">
+	Options None
+	AllowOverride None
+	ForceType text/plain
+	RedirectMatch 404 "^(?!/\.well-known/acme-challenge/[\w-]{43}$)"
+	Require all granted
+    </Directory>
+#    Redirect / https://example.com
+</VirtualHost>
+```
 
 Save and exit httpd-vhosts.conf.
 
