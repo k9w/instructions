@@ -72,6 +72,10 @@ Enable nginx to start on each boot.
 At this point, the site should work with standard http, not https yet. 
 (Firefox complains about no https; but Chrome should load the page fine.)
 
+To host multiple sites, move the second example server block up into
+the http block (so that it works and won't error out) and uncomment it.
+
+
 Next, we need to configure https and generate a TLS certificate. Here we
 use Let's Encrypt and OpenBSD's acme-client.
 
