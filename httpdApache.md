@@ -145,6 +145,10 @@ to  `/var/www/acme/.well-known/acme-challenge` needed by Let's Encrypt
 to issue a TLS certificate.
 
 ```
+    Alias "/.well-known/acme-challenge" "/var/www/acme"
+```
+
+```
     Alias /.well-known/acme-challenge /var/www/acme/.well-known/acme-challenge
     <Directory "/var/www/acme/.well-known/acme-challenge">
 	Options None
