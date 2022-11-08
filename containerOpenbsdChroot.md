@@ -19,6 +19,10 @@ binary to ~/bin or /usr/local/bin on the host, verify it works, and
 delete the chroot, or keep the chroot for the next time you want to
 update build the updated application from source.
 
+## Build the chroot
+
+
+
 Initial setup of the chroot:
 <https://eradman.com/posts/chroot-builds.html>
 
@@ -73,3 +77,11 @@ b0:~/bin $
 ```
 
 You can install 
+
+
+## See also
+
+* [Building Software on OpenBSD in a chroot](https://eradman.com/posts/chroot-builds.html)
+* [Creating a Chroot in OpenBSD](https://www.tubsta.com/2020/01/creating-a-chroot-in-openbsd)
+* [chroot(8)](https://man.openbsd.org/chroot) - Userspace command
+* [chroot(2)](https://man.openbsd.org/chroot.2) - Kernel system call
