@@ -21,16 +21,52 @@ update build the updated application from source.
 
 ## Build the chroot
 
+### Partition mount requirements
 
+Building software on OpenBSD often requires certain filesystem mount
+flags to be present, and others to be absent.
 
-Initial setup of the chroot:
-<https://eradman.com/posts/chroot-builds.html>
+Specifically, an OpenBSD chroot needs to have:
+
+It needs to allow processes to ask for memory to be made writable and
+executable and therefore should have `wxallowed`
+
+It needs to interpret character and block devices in /dev and
+therefore should not have `nodev`
+
+It needs to allow set-user-identifier and set-group-identifier bits to
+be set and therefore should not have `nosuid`
+
+`/etc/fstab` shows the OpenBSD partitions on the system and the mount
+flags used with them.
+
+If you use the default partition layout of OpenBSD, it's recommended
+you make a new partition mapped to /build dedicated just to chroot environments.
+
+If however you use one single partition for your entire OpenBSD
+install, not recommended, ensure it has those flags set or not set
+accordingly.
+
+Here is my fstab entry. 
+
+```
+$ cat /etc/fstab
+245f04ba1667c1de.a / ffs rw,wxallowed,noatime 1 1
+```
+
+### Make the chroot folder
+
+### Fetch install sets for the chroot
 
 I only used base, comp, and man, not game or any of the x sets.
 
 I put mine at /build/b0
 
-Change root into it.
+### Add any files or customizations
+
+Customize the prompt.
+
+### Change root into it
 
 ```
 # cd /build/b0
