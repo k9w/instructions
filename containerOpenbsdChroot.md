@@ -26,16 +26,16 @@ update build the updated application from source.
 Building software on OpenBSD often requires certain filesystem mount
 flags to be present, and others to be absent.
 
-Specifically, an OpenBSD chroot needs to have:
+Specifically, an OpenBSD chroot needs to:
 
-It needs to allow processes to ask for memory to be made writable and
-executable and therefore should have `wxallowed`
+- Allow processes to ask for memory to be made writable and
+executable and therefore should have `wxallowed`.
 
-It needs to interpret character and block devices in /dev and
-therefore should not have `nodev`
+- Interpret character and block devices in /dev and
+therefore should not have `nodev`.
 
-It needs to allow set-user-identifier and set-group-identifier bits to
-be set and therefore should not have `nosuid`
+- Allow set-user-identifier and set-group-identifier bits to
+be set and therefore should not have `nosuid`.
 
 `/etc/fstab` shows the OpenBSD partitions on the system and the mount
 flags used with them.
