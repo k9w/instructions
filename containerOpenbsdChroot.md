@@ -1,4 +1,33 @@
-# Using a chroot on OpenBSD
+# Containerizing apps with chroot on OpenBSD
+
+Modern web and server application deployments predominently use
+containers to run app components:
+
+- securely - Isolate with only the access and permissions necessary to
+  function.
+
+
+- efficiently - Scale up and down and only pay for resources used.
+
+- conveniently - Run apps developed for a different, obsolete, or
+  obscure environment from the host environment, or just for
+  convenience and repeatability even if it's built for the same
+  environment as the host.
+
+Some notable tools for this include:
+
+- [https://illumos.org/docs/about/features/#native-zones](zones) on
+  [https://illumos.org](illumos)
+
+- [https://docs.freebsd.org/en/books/handbook/jails](jails) and
+  [https://wiki.freebsd.org/Docker](Docker on FreeBSD)
+
+- [https://www.docker.com](Docker) and
+  [https://kubernetes.io](Kubernetes) on Linux
+
+OpenBSD doesn't currently have container environments at that
+scale. But it does have chroot, which those containers were modeled
+after.
 
 OpenBSD chroots are best for building software, and lack security
 features of FreeBSD jails and Linux containers to justify running apps
@@ -23,7 +52,8 @@ update build the updated application from source.
 
 ### Partition mount requirements
 
-Building software on OpenBSD often requires certain filesystem mount
+Building software on OpenBSD often requires certain filesystem
+[https://man.openbsd.org/mount](mount(8)) 
 flags to be present, and others to be absent.
 
 Specifically, an OpenBSD chroot needs to:
