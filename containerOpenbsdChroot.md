@@ -3,20 +3,20 @@
 Modern web and server application deployments predominently use
 containers to run app components:
 
-- securely - Isolate with only the access and permissions necessary to
+- Securely: Isolate with only the access and permissions necessary to
   function.
 
 
-- efficiently - Scale up and down and only pay for resources used.
+- Efficiently: Scale up and down and only pay for resources used.
 
-- conveniently - Run apps developed for a different, obsolete, or
-  obscure environment from the host environment, or just for
+- Conveniently: Run apps developed for an obsolete, obscure, or just a
+  different environment from the host environment, or just for
   convenience and repeatability even if it's built for the same
   environment as the host.
 
 Some notable tools for this include:
 
-- [https://illumos.org/docs/about/features/#native-zones](zones) on
+- [Zones](https://illumos.org/docs/about/features/#native-zones) on
   [https://illumos.org](illumos)
 
 - [https://docs.freebsd.org/en/books/handbook/jails](jails) and
