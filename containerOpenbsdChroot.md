@@ -6,7 +6,6 @@ containers to run app components:
 - Securely: Isolate with only the access and permissions necessary to
   function.
 
-
 - Efficiently: Scale up and down and only pay for resources used.
 
 - Conveniently: Run apps developed for an obsolete, obscure, or just a
@@ -17,27 +16,47 @@ containers to run app components:
 Some notable tools for this include:
 
 - [Zones](https://illumos.org/docs/about/features/#native-zones) on
-  [https://illumos.org](illumos)
+  [illumos](https://illumos.org)
 
-- [https://docs.freebsd.org/en/books/handbook/jails](jails) and
-  [https://wiki.freebsd.org/Docker](Docker on FreeBSD)
+- [Jails](https://docs.freebsd.org/en/books/handbook/jails) and
+  [Docker on FreeBSD](https://wiki.freebsd.org/Docker)
 
-- [https://www.docker.com](Docker) and
-  [https://kubernetes.io](Kubernetes) on Linux
+- [Docker](https://www.docker.com) and
+  [Kubernetes](https://kubernetes.io) on Linux
 
 OpenBSD doesn't currently have container environments at that
 scale. But it does have chroot, which those containers were modeled
 after.
 
-OpenBSD chroots are best for building software, and lack security
-features of FreeBSD jails and Linux containers to justify running apps
-in chroots.
+OpenBSD chroots only restrict filesystem access. Any operation that
+deals with the kernel and not the filesystem, such as listing or
+configuring network interfaces, performed in the chroot affects the
+host environment as if there was no chroot. Defining and loading an
+alternate pf.conf inside the chroot would override any firewall rules
+defined on the host.
 
-ifconfig, df, rcctl and any command that deals directly with the
-kernel (even read-only as a regular user), has full access to
-everything as in the host system.
+Other kernel operations by root equally apply. ifconfig, df, rcctl and
+any command that deals directly with the kernel (even read-only as a
+regular user), has full access to everything as in the host system.
 
-However, the packages and ports systems, and other userspace software
+OpenBSD has other security mechanisms for areas like this:
+
+- [Pledge(2)](https://man.openbsd.org/pledge): A process defines a
+  list of intended capabilities. If the process tries to do anything
+  else, the kernel kills it.
+
+- [Unveil(2)](https://man.openbsd.org/unveil): A process starts in a
+  chroot-like environment with only a subset of the host filesystem
+  visible. Unveil selectively reveals more of the filesystem to the
+  process if conditions are met.
+
+One great use of a basic chroot is to build software, where a build
+script can pull in any dependencies needed to complete its job. The
+completed binary can be copied from the chroot to the host environment
+and function perfectly if the same shared libraries are in host and
+chroot.
+
+The packages and ports systems, and other userspace software
 builds use files and directories that ar not usually shared in the
 kernel with the host system.
 
@@ -53,19 +72,19 @@ update build the updated application from source.
 ### Partition mount requirements
 
 Building software on OpenBSD often requires certain filesystem
-[https://man.openbsd.org/mount](mount(8)) 
+[mount(8)](https://man.openbsd.org/mount) 
 flags to be present, and others to be absent.
 
 Specifically, an OpenBSD chroot needs to:
 
-- Allow processes to ask for memory to be made writable and
-executable and therefore should have `wxallowed`.
+- Allow processes to ask that memory be made writable and executable
+  and therefore should have `wxallowed`.
 
-- Interpret character and block devices in /dev and
-therefore should not have `nodev`.
+- Interpret character and block devices in /dev and therefore should
+  not have `nodev`.
 
-- Allow set-user-identifier and set-group-identifier bits to
-be set and therefore should not have `nosuid`.
+- Allow set-user-identifier and set-group-identifier bits to be set
+  and therefore should not have `nosuid`.
 
 `/etc/fstab` shows the OpenBSD partitions on the system and the mount
 flags used with them.
