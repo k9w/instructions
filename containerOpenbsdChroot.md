@@ -39,7 +39,7 @@ Other kernel operations by root equally apply. ifconfig, df, rcctl and
 any command that deals directly with the kernel (even read-only as a
 regular user), has full access to everything as in the host system.
 
-OpenBSD has other security mechanisms for areas like this:
+OpenBSD has other security mechanisms for related areas:
 
 - [Pledge(2)](https://man.openbsd.org/pledge): A process defines a
   list of intended capabilities. If the process tries to do anything
@@ -56,16 +56,17 @@ completed binary can be copied from the chroot to the host environment
 and function perfectly if the same shared libraries are in host and
 chroot.
 
-The packages and ports systems, and other userspace software
-builds use files and directories that ar not usually shared in the
-kernel with the host system.
+The packages and ports systems, and other userspace software builds
+such as from [Github](https://github.com), use files and directories
+that are not usually shared in the kernel with the host system.
 
-So for example, you can install git and go from packages, clone a go
-application from source on Github, and build it using the go compiler
-in the chroot, check its library dependencies with ldd, copy the
-binary to ~/bin or /usr/local/bin on the host, verify it works, and
-delete the chroot, or keep the chroot for the next time you want to
-update build the updated application from source.
+So for example, you can install [Git](https://git-scm.com) and
+[Go](https://go.dev) from packages, clone a go application from source
+on Github, and build it using the go compiler in the chroot, check its
+library dependencies with ldd, copy the binary to ~/bin or
+/usr/local/bin on the host, verify it works, and delete the chroot, or
+keep the chroot for the next time you want to update build the updated
+application from source.
 
 ## Build the chroot
 
@@ -77,7 +78,7 @@ flags to be present, and others to be absent.
 
 Specifically, an OpenBSD chroot needs to:
 
-- Allow processes to ask that memory be made writable and executable
+- Allow a process to ask that memory be made writable and executable
   and therefore should have `wxallowed`.
 
 - Interpret character and block devices in /dev and therefore should
@@ -107,13 +108,29 @@ $ cat /etc/fstab
 
 ### Fetch install sets for the chroot
 
+Only install sets that match your host. If you run release on the
+host, use sets from that release in the chroot. If you run a snapshot
+on the host, you can safely have your chroot sets be a few weeks ahead
+or behind.
+
+
 I only used base, comp, and man, not game or any of the x sets.
+
+On the host:
+
+```
+$ cd <download-location>
+$ ftp 
+```
 
 I put mine at /build/b0
 
-### Add any files or customizations
 
-Customize the prompt.
+### Add any files before entering the chroot
+
+I added my ~/.tmux.conf from the host, which sets the tmux prefix key
+from the default Ctrl-B to ` (backtick).
+
 
 ### Change root into it
 
@@ -133,6 +150,8 @@ $ export HOME=/home/<regular-user>
 $ export USER=<regular-user>
 $ tmux
 ```
+
+# After entering the chroot, customize the prompt
 
 So that I can tell when I'm in a chroot, I modified my prompt to show
 the current working directory.
