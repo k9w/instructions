@@ -108,10 +108,10 @@ $ cat /etc/fstab
 
 ### Fetch install sets for the chroot
 
-Only install sets that match your host. If you run release on the
-host, use sets from that release in the chroot. If you run a snapshot
-on the host, you can safely have your chroot sets be a few weeks ahead
-or behind.
+Only install set versions that match your host. If you run release on
+the host, use sets from that release in the chroot. If you run a
+snapshot on the host, you can safely have your chroot sets be a few
+weeks ahead or behind.
 
 
 I only used base, comp, and man, not game or any of the x sets.
@@ -120,7 +120,7 @@ On the host:
 
 ```
 $ cd <download-location>
-$ ftp 
+$ ftp https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/{base,comp,man}72.tgz
 ```
 
 I put mine at /build/b0
