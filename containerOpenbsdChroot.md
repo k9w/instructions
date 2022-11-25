@@ -1,5 +1,7 @@
 # Containerizing apps with chroot on OpenBSD
 
+## Introduction
+
 Modern web and server application deployments predominently use
 containers to run app components:
 
@@ -21,23 +23,31 @@ Some notable tools for this include:
 - [Jails](https://docs.freebsd.org/en/books/handbook/jails) and
   [Docker on FreeBSD](https://wiki.freebsd.org/Docker)
 
-- [Docker](https://www.docker.com) and
+- [Podman](https://podman.io), [Docker](https://www.docker.com) and
   [Kubernetes](https://kubernetes.io) on Linux
 
-OpenBSD doesn't currently have container environments at that
-scale. But it does have chroot, which those containers were modeled
-after.
+[OpenBSD](https://openbsd.org) doesn't currently have container
+environments at that scale. But it does have
+[chroot(8)](https://man.openbsd.org/chroot), which those tools were
+modeled after.
 
-OpenBSD chroots only restrict filesystem access. Any operation that
-deals with the kernel and not the filesystem, such as listing or
-configuring network interfaces, performed in the chroot affects the
-host environment as if there was no chroot. Defining and loading an
-alternate pf.conf inside the chroot would override any firewall rules
-defined on the host.
+## Limitations
 
-Other kernel operations by root equally apply. ifconfig, df, rcctl and
-any command that deals directly with the kernel (even read-only as a
-regular user), has full access to everything as in the host system.
+The [chroot(2)](https://man.openbsd.org/chroot.2) system call only
+restricts filesystem access. Any operation that deals with the kernel
+and not the filesystem, such as listing or configuring network
+interfaces, performed in the chroot affects the host environment as if
+there was no chroot. Using [pfctl(8)](https://man.openbsd.org/pfctl)
+to load an alternate [pf.conf(5)](https://man.openbsd.org/pf.conf.5)
+inside the chroot would override any firewall rules defined on the
+host.
+
+Other kernel operations by root equally
+apply. [ifconfig(8)](https://man.openbsd.org/ifconfig),
+[df(1)](https://man.openbsd.org/df),
+[rcctl(8)](https://man.openbsd.org/rcctl) and any command that deals
+directly with the kernel (even read-only as a regular user), has full
+access to everything as in the host system.
 
 OpenBSD has other security mechanisms for related areas:
 
@@ -49,6 +59,8 @@ OpenBSD has other security mechanisms for related areas:
   chroot-like environment with only a subset of the host filesystem
   visible. Unveil selectively reveals more of the filesystem to the
   process if conditions are met.
+
+## Use Case
 
 One great use of a basic chroot is to build software, where a build
 script can pull in any dependencies needed to complete its job. The
@@ -65,10 +77,10 @@ So for example, you can install [Git](https://git-scm.com) and
 on Github, and build it using the go compiler in the chroot, check its
 library dependencies with ldd, copy the binary to ~/bin or
 /usr/local/bin on the host, verify it works, and delete the chroot, or
-keep the chroot for the next time you want to update build the updated
+keep the chroot for the next time you want to build the updated
 application from source.
 
-## Build the chroot
+## How to build the chroot
 
 ### Partition mount requirements
 
@@ -84,17 +96,22 @@ Specifically, an OpenBSD chroot needs to:
 - Interpret character and block devices in /dev and therefore should
   not have `nodev`.
 
-- Allow set-user-identifier and set-group-identifier bits to be set
+- Allow [set-user-identifier and
+  set-group-identifier](https://man.openbsd.org/setuid) bits to be set
   and therefore should not have `nosuid`.
 
-`/etc/fstab` shows the OpenBSD partitions on the system and the mount
-flags used with them.
+[/etc/fstab](https://man.openbsd.org/fstab) shows the OpenBSD
+partitions on the system and the mount flags used with them.
 
 If you use the default partition layout of OpenBSD, it's recommended
-you make a new partition mapped to /build dedicated just to chroot environments.
+you make a new partition mapped to /build dedicated just to chroot
+environments.
+
+The easiest way to do this is at the beginning when first installing
+OpenBSD.
 
 If however you use one single partition for your entire OpenBSD
-install, not recommended, ensure it has those flags set or not set
+install (not recommended) ensure it has those flags set or not set
 accordingly.
 
 Here is my fstab entry. 
@@ -106,12 +123,82 @@ $ cat /etc/fstab
 
 ### Make the chroot folder
 
-### Fetch install sets for the chroot
+In my /build, I call my first chroot 'b0'.
 
-Only install set versions that match your host. If you run release on
-the host, use sets from that release in the chroot. If you run a
-snapshot on the host, you can safely have your chroot sets be a few
-weeks ahead or behind.
+```
+# mkdir -p /build/b0
+```
+
+### Fetch file sets for the chroot
+
+Stock OpenBSD comes as a base system, a core group of files mainly
+developed in the OpenBSD project's own source code repository [with
+documented third-party
+additions](https://www.openbsd.org/faq/faq1.html#WhatIs). This base
+system consists of [sets of
+files](https://www.openbsd.org/faq/faq4.html#FilesNeeded).
+
+> The complete OpenBSD installation is broken up into a number of file sets:
+>
+> `bsd` 	The kernel (required)
+> `bsd.mp` 	The multi-processor kernel (only on some platforms)
+> `bsd.rd` 	The ramdisk kernel
+> `base72.tgz` 	The base system (required)
+> `comp72.tgz` 	The compiler collection, headers and libraries
+> `man72.tgz` 	Manual pages
+> `game72.tgz` 	Text-based games
+> `xbase72.tgz` 	Base libraries and utilities for X11 (requires xshare72.tgz)
+> `xfont72.tgz` 	Fonts used by X11
+> `xserv72.tgz` 	X11's X servers
+> `xshare72.tgz` 	X11's man pages, locale settings and includes
+
+A chroot doesn't need any of the kernel sets. The chroot environment
+is managed by the kernel and, in OpenBSD's case, has full access to
+the kernel's facilities as covered above.
+
+Technically, you could put some files and a fully-standalone
+executable (not depending on any shared libraries, not calling any
+standard utilities) into the chroot and call it good. But that's
+usually not very useful.
+
+For most use cases, you'll want a full OpenBSD environment with all
+the commands, libraries, character devices, etc, that you'd have on
+the host. However, if you don't plan to use the BSD games or run an
+app in the chroot that depends on X11 or any of its facilities, you
+can safely exclude those sets and save disk space and attack surface
+(though the X11 facilities are regularly audited by the OpenBSD
+developers and are reasonably safe).
+
+Therefore, in this guide, I install base, comp and man into the chroot.
+
+Only install set versions that match your host. From OpenBSD's
+[favors](https://www.openbsd.org/faq/faq5.html#Flavors), the project
+supports the three following versions at any given time:
+
+- The most recent snapshot from the current branch - built and
+  published every few hours or days depending on the hardware platform
+  and the stage of the release cycle.
+- The most recent release ([7.3](https://www.openbsd.org/73.html)).
+- The release right before that ([7.2](https://www.openbsd.org/72.html)).
+
+Current is what the OpenBSD developers generally run on their
+production machines, including their servers and laptops, and is
+therefore the best tested and stable.
+
+Releases come out every 6 months, generally in May and October. Each
+release receives security and reliability updates for [1 year for the
+base system](https://www.openbsd.org/faq/faq10.html#Patches), and for
+[6 months for third-party packages and
+ports](https://www.openbsd.org/faq/ports/ports.html#PortsSecurity).
+
+The sets installed in the chroot must not be newer than the kernel
+running on the host.
+
+- If you run release on the host, use sets from that release in the
+chroot.
+- If you run a snapshot on the host from OpenBSD's current branch,
+only install sets in the chroot that match the version on the host or
+are older.
 
 
 I only used base, comp, and man, not game or any of the x sets.
