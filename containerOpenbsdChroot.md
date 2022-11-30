@@ -65,12 +65,12 @@ OpenBSD has other security mechanisms for related areas:
 One great use of a basic chroot is to build software, where a build
 script can pull in any dependencies needed to complete its job. The
 completed binary can be copied from the chroot to the host environment
-and function perfectly if the same shared libraries are in host and
+and function identically if the same shared libraries are in host and
 chroot.
 
 The packages and ports systems, and other userspace software builds
-such as from [Github](https://github.com), use files and directories
-that are not usually shared in the kernel with the host system.
+such as from [Github](https://github.com), often use files and
+directories that are not shared in the kernel with the host system.
 
 So for example, you can install [Git](https://git-scm.com) and
 [Go](https://go.dev) from packages, clone a go application from source
@@ -111,7 +111,7 @@ The easiest way to do this is at the beginning when first installing
 OpenBSD.
 
 If however you use one single partition for your entire OpenBSD
-install (not recommended) ensure it has those flags set or not set
+install (not recommended), ensure it has those flags set or not set
 accordingly.
 
 Here is my fstab entry. 
@@ -131,6 +131,8 @@ In my /build, I call my first chroot 'b0'.
 
 ### Fetch file sets for the chroot
 
+#### Which sets to install?
+
 Stock OpenBSD comes as a base system, a core group of files mainly
 developed in the OpenBSD project's own source code repository [with
 documented third-party
@@ -138,28 +140,30 @@ additions](https://www.openbsd.org/faq/faq1.html#WhatIs). This base
 system consists of [sets of
 files](https://www.openbsd.org/faq/faq4.html#FilesNeeded).
 
-> The complete OpenBSD installation is broken up into a number of file sets:
->
-> `bsd` 	The kernel (required)
-> `bsd.mp` 	The multi-processor kernel (only on some platforms)
-> `bsd.rd` 	The ramdisk kernel
-> `base72.tgz` 	The base system (required)
-> `comp72.tgz` 	The compiler collection, headers and libraries
-> `man72.tgz` 	Manual pages
-> `game72.tgz` 	Text-based games
-> `xbase72.tgz` 	Base libraries and utilities for X11 (requires xshare72.tgz)
-> `xfont72.tgz` 	Fonts used by X11
-> `xserv72.tgz` 	X11's X servers
-> `xshare72.tgz` 	X11's man pages, locale settings and includes
+ The complete OpenBSD installation is broken up into a number of file sets:
 
-A chroot doesn't need any of the kernel sets. The chroot environment
-is managed by the kernel and, in OpenBSD's case, has full access to
-the kernel's facilities as covered above.
+```
+bsd             The kernel (required)
+bsd.mp 	        The multi-processor kernel (only on some platforms)
+bsd.rd          The ramdisk kernel
+base72.tgz 	    The base system (required)
+comp72.tgz 	    The compiler collection, headers and libraries
+man72.tgz 	    Manual pages
+game72.tgz 	    Text-based games
+xbase72.tgz 	Base libraries and utilities for X11 (requires xshare72.tgz)
+xfont72.tgz 	Fonts used by X11
+xserv72.tgz 	X11's X servers
+xshare72.tgz 	X11's man pages, locale settings and includes
+```
+
+A chroot doesn't need any of the bsd kernel sets. The chroot
+environment is managed by the kernel and, in OpenBSD's case, has full
+access to the kernel's facilities as covered above.
 
 Technically, you could put some files and a fully-standalone
-executable (not depending on any shared libraries, not calling any
-standard utilities) into the chroot and call it good. But that's
-usually not very useful.
+executable into the chroot and call it good if it does not depend on
+any shared libraries or standard utility commands. But that is usually
+not very useful.
 
 For most use cases, you'll want a full OpenBSD environment with all
 the commands, libraries, character devices, etc, that you'd have on
@@ -171,19 +175,32 @@ developers and are reasonably safe).
 
 Therefore, in this guide, I install base, comp and man into the chroot.
 
+```
+base72.tgz 	    The base system (required)
+comp72.tgz 	    The compiler collection, headers and libraries
+man72.tgz 	    Manual pages
+```
+
+#### What set versions to install?
+
 Only install set versions that match your host. From OpenBSD's
 [favors](https://www.openbsd.org/faq/faq5.html#Flavors), the project
 supports the three following versions at any given time:
 
-- The most recent snapshot from the current branch - built and
-  published every few hours or days depending on the hardware platform
-  and the stage of the release cycle.
-- The most recent release ([7.3](https://www.openbsd.org/73.html)).
-- The release right before that ([7.2](https://www.openbsd.org/72.html)).
+- **-current** - The most recent snapshot from the current branch - built
+  and published every few hours or days depending on the hardware
+  platform and the stage of the release cycle.
+  
+- **Latest -release** - The most recent release
+  ([7.3](https://www.openbsd.org/73.html)).
+
+- **Last prior -release** - The release right before that
+  ([7.2](https://www.openbsd.org/72.html)).
 
 Current is what the OpenBSD developers generally run on their
 production machines, including their servers and laptops, and is
-therefore the best tested and stable.
+therefore the best tested with the latest software in base, ports, and
+packages.
 
 Releases come out every 6 months, generally in May and October. Each
 release receives security and reliability updates for [1 year for the
@@ -191,17 +208,16 @@ base system](https://www.openbsd.org/faq/faq10.html#Patches), and for
 [6 months for third-party packages and
 ports](https://www.openbsd.org/faq/ports/ports.html#PortsSecurity).
 
-The sets installed in the chroot must not be newer than the kernel
-running on the host.
+***The sets installed in the chroot must not be newer than the kernel
+running on the host.***
 
-- If you run release on the host, use sets from that release in the
-chroot.
+- If you run release on the host, use sets from that same release in
+the chroot.
+
 - If you run a snapshot on the host from OpenBSD's current branch,
 only install sets in the chroot that match the version on the host or
 are older.
 
-
-I only used base, comp, and man, not game or any of the x sets.
 
 On the host:
 
