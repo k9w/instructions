@@ -184,7 +184,7 @@ man72.tgz 	    Manual pages
 #### What set versions to install?
 
 Only install set versions that match your host. From OpenBSD's
-[favors](https://www.openbsd.org/faq/faq5.html#Flavors), the project
+[flavors](https://www.openbsd.org/faq/faq5.html#Flavors), the project
 supports the three following versions at any given time:
 
 - **-current** - The most recent snapshot from the current branch - built
@@ -199,8 +199,8 @@ supports the three following versions at any given time:
 
 Current is what the OpenBSD developers generally run on their
 production machines, including their servers and laptops, and is
-therefore the best tested with the latest software in base, ports, and
-packages.
+therefore the best tested with the latest software and firmware in
+base, ports, and packages.
 
 Releases come out every 6 months, generally in May and October. Each
 release receives security and reliability updates for [1 year for the
@@ -216,17 +216,38 @@ the chroot.
 
 - If you run a snapshot on the host from OpenBSD's current branch,
 only install sets in the chroot that match the version on the host or
-are older.
+older.
 
 
-On the host:
+Download the sets on the host:
 
 ```
-$ cd <download-location>
-$ ftp https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/{base,comp,man}72.tgz
+$ cd ~/Downloads
+$ ftp https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/{base,comp,man}73.tgz
 ```
 
-I put mine at /build/b0
+Uncompress the tar'ed gzip'ed sets into your chroot directory,
+/build/b0 in my case with the following tar(1) flags.
+
+`-C` - Specify the destination directory.
+
+`-x` - Extract files from the archive.
+
+`-z` - (Un)compress files with gzip(1).
+
+`-p` - Preserve user/group owner, other file attributes.
+
+`-h` - Follow symbolic links.
+
+`-f` - Specify the archive (tgz file) to read from, in our case.
+
+Options x through f can be combined together:
+
+```
+$ pwd
+~/Downloads
+# tar -C /build/b0 -xzphf {base,comp,man}73.tgz
+```
 
 
 ### Add any files before entering the chroot
