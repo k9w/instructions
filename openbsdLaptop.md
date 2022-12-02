@@ -1,5 +1,12 @@
 12-01-2022
 
+This guide explains how to configure a fresh OpenBSD install for common
+laptop usage.
+
+
+
+# Video conferencing with Firefox or Chromium
+
 Want to use audio, video, and screensharing with Jitsi on Firefox and
 Chromium for softPLUG meetings.
 
@@ -43,4 +50,28 @@ qbit
 but you could just make it r for that one file, no? 
 landry
 yeah , i'll test that :)
+
+
+
+
+https://www.reddit.com/r/openbsd/comments/li0fcd/disabling_pledge_in_firefox
+
+As per /usr/local/share/doc/pkg-readmes/firefox:
+
+To disable pledge and/or unveil support when troubleshooting, set the
+corresponding pledge or unveil file in
+/etc/firefox/{unveil,pledge}.{main,content,gpu} to contain
+just "disable".
+
+So it looks like you need just disable in all three files - /etc/firefox/pledge.{main,content,gpu}.
+
+
+
+cd /etc/firefox
+cp pledge.main pledge.main.bak
+cp pledge.content pledge.content.bak
+cp pledge.gpu pledge.gpu.bak
+
+For each file, remove all lines and replace with 'disable' on its own
+line. Commenting out the other lines wont' work.
 
