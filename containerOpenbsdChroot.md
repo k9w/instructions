@@ -229,17 +229,17 @@ $ ftp https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/{base,comp,man}73.tgz
 Uncompress the tar'ed gzip'ed sets into your chroot directory,
 /build/b0 in my case, with the following tar(1) flags.
 
-`-C` - Specify the destination directory.
+- `-C` - Specify the destination directory.
 
-`-x` - Extract files from the archive.
+- `-x` - Extract files from the archive.
 
-`-z` - (Un)compress files with gzip(1).
+- `-z` - (Un)compress files with gzip(1).
 
-`-p` - Preserve user/group owner, other file attributes.
+- `-p` - Preserve user/group owner, other file attributes.
 
-`-h` - Follow symbolic links.
+- `-h` - Follow symbolic links.
 
-`-f` - Specify the archive (tgz file) to read from, in our case.
+- `-f` - Specify the archive (tgz file) to read from, in our case.
 
 Options x through f can be combined together:
 
@@ -278,16 +278,16 @@ the same name and password as your host.
 Set the accounts, passwords, and user groups by copying these three
 files from /etc on the host to /etc in the chroot.
 
-[master.passwd(5)](https://man.openbsd.org/master.passwd) - Contains
+- [master.passwd(5)](https://man.openbsd.org/master.passwd) - Contains
 the encrypted password and account info for all accounts, readable
 only by root.
 
-[passwd(5)](https://man.openbsd.org/passwd.5) - Generated from
+- [passwd(5)](https://man.openbsd.org/passwd.5) - Generated from
 master.passwd by [pwd_mkdb(8)](https://man.openbsd.org/pwd_mkdb) with
 the class, change, and expire fields removed and the password replaced
 by an asterisk (*), readable by all users.
 
-[group(5)](https://man.openbsd.org/group.5) - group permissions file
+- [group(5)](https://man.openbsd.org/group.5) - group permissions file
 
 ```
 # cp /etc/{master.passwd,passwd,group} /build/b0/etc
@@ -306,11 +306,11 @@ want, and set the permissions accordingly.
 Since the chroot interacts with the same kernel as the host, copy the
 following two files from /etc on the host to /etc in the chroot.
 
-[installurl(5)](https://man.openbsd.org/installurl) - Contains the
+- [installurl(5)](https://man.openbsd.org/installurl) - Contains the
 package mirror location, usually
 <https://cdn.openbsd.org/pub/OpenBSD>.
 
-[resolv.conf(5)](https://man.openbsd.org/resolv.conf) - Contains the
+- [resolv.conf(5)](https://man.openbsd.org/resolv.conf) - Contains the
 [DNS
 nameservers](https://kinsta.com/knowledgebase/what-is-a-nameserver) to
 use.
