@@ -227,7 +227,7 @@ $ ftp https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/{base,comp,man}73.tgz
 ```
 
 Uncompress the tar'ed gzip'ed sets into your chroot directory,
-/build/b0 in my case with the following tar(1) flags.
+/build/b0 in my case, with the following tar(1) flags.
 
 `-C` - Specify the destination directory.
 
@@ -247,6 +247,76 @@ Options x through f can be combined together:
 $ pwd
 ~/Downloads
 # tar -C /build/b0 -xzphf {base,comp,man}73.tgz
+```
+
+### Configure and activate the container
+
+These steps performed manually below are likely the same ones
+performed by the OpenBSD installer. Some of the steps are necessary
+for the container to function at all like an OpenBSD system, others
+are essential if you want it to match the host, such as having the
+same user account and home folder.
+
+#### Populate the device files in /dev
+
+Run the [MAKEDEV(8)](https://man.openbsd.org/MAKEDEV) script (related
+to the [makedev(3)](https://man.openbsd.org/makedev) system call). The
+script is located at /dev and applies to the current working
+directory. So you must CD to it first.
+
+```
+$ cd /build/b0/dev
+# ./MAKEDEV all
+```
+
+#### Populate user accounts and home folder
+
+This is important even if you'll only start out with just a root
+account. Copying the files from your host will add a user account with
+the same name and password as your host.
+
+Set the accounts, passwords, and user groups by copying these three
+files from /etc on the host to /etc in the chroot.
+
+[master.passwd(5)](https://man.openbsd.org/master.passwd) - Contains
+the encrypted password and account info for all accounts, readable
+only by root.
+
+[passwd(5)](https://man.openbsd.org/passwd.5) - Generated from
+master.passwd by [pwd_mkdb(8)](https://man.openbsd.org/pwd_mkdb) with
+the class, change, and expire fields removed and the password replaced
+by an asterisk (*), readable by all users.
+
+[group(5)](https://man.openbsd.org/group.5) - group permissions file
+
+```
+# cp /etc/{master.passwd,passwd,group} /build/b0/etc
+```
+
+Add the home folder for your user account and any other users you
+want, and set the permissions accordingly.
+
+```
+# mkdir -p /build/b0/home/<username>
+# chown <username>:<groupname> /build/b0/home/<username>
+```
+
+#### Add package path and resolv.conf
+
+Since the chroot interacts with the same kernel as the host, copy the
+following two files from /etc on the host to /etc in the chroot.
+
+[installurl(5)](https://man.openbsd.org/installurl) - Contains the
+package mirror location, usually
+<https://cdn.openbsd.org/pub/OpenBSD>.
+
+[resolv.conf(5)](https://man.openbsd.org/resolv.conf) - Contains the
+[DNS
+nameservers](https://kinsta.com/knowledgebase/what-is-a-nameserver) to
+use.
+
+```
+# cp /etc/{installurl,resolv.conf} /build/b0/etc
 ```
 
 
