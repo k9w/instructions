@@ -132,7 +132,7 @@ In my /build, I call my first chroot 'b0'.
 ### Fetch file sets for the chroot
 
 #### Which sets to install?
-
+x
 Stock OpenBSD comes as a base system, a core group of files mainly
 developed in the OpenBSD project's own source code repository [with
 documented third-party
@@ -257,7 +257,7 @@ for the container to function at all like an OpenBSD system, others
 are essential if you want it to match the host, such as having the
 same user account and home folder.
 
-#### Populate the device files in /dev
+### Populate the device files in /dev
 
 Run the [MAKEDEV(8)](https://man.openbsd.org/MAKEDEV) script (related
 to the [makedev(3)](https://man.openbsd.org/makedev) system call). The
@@ -269,7 +269,7 @@ $ cd /build/b0/dev
 # ./MAKEDEV all
 ```
 
-#### Populate user accounts and home folder
+### Populate user accounts and home folder
 
 This is important even if you'll only start out with just a root
 account. Copying the files from your host will add a user account with
@@ -301,7 +301,7 @@ want, and set the permissions accordingly.
 # chown <username>:<groupname> /build/b0/home/<username>
 ```
 
-#### Add package path and resolv.conf
+### Add package path and resolv.conf
 
 Since the chroot interacts with the same kernel as the host, copy the
 following two files from /etc on the host to /etc in the chroot.
@@ -319,40 +319,18 @@ use.
 # cp /etc/{installurl,resolv.conf} /build/b0/etc
 ```
 
+### Add further customizations
 
-### Add any files before entering the chroot
+#### Set a different prompt
 
-I added my ~/.tmux.conf from the host, which sets the tmux prefix key
-from the default Ctrl-B to ` (backtick).
-
-
-### Change root into it
-
-```
-# cd /build/b0
-# chroot -u <regular-user> .
-```
-
-From the host, the chroot inherits the HOME and USER variables of the
-root or doas user that executed the chroot command.
-
-cd to the your regular user directory, set HOME and USER, and start a
-tmux session.
-```
-$ cd /home/<regular-user>
-$ export HOME=/home/<regular-user>
-$ export USER=<regular-user>
-$ tmux
-```
-
-# After entering the chroot, customize the prompt
-
-So that I can tell when I'm in a chroot, I modified my prompt to show
-the current working directory.
+One way to remind yourself you're in a chroot is to set a prompt
+different from your host, for example, to show the current working
+directory.
 
 ```
-$ echo 'export ENV=~/.kshrc' >> ~/.profile
-$ echo "export PS1='b0:\w \$ '" >> ~/.kshrc
+$ cd /build/b0/home/<username>
+$ echo 'export ENV=~/.kshrc' >> ./.profile
+$ echo "export PS1='b0:\w \$ '" >> ./.kshrc
 ```
 
 So if the prompt in the host system is:
@@ -367,15 +345,36 @@ The prompt in the chroot, when in the home directory would be:
 b0:~ $ 
 ```
 
-If you change directory to /home/<regular-user>/bin, the prompt
-reflects the changed directory.
+If you change directory to `/home/<username>/bin`, the prompt reflects
+the changed directory.
 
 ```
 b0:~/bin $ 
 ```
 
-You can install 
+#### Change tmux prefix key
 
+I added my ~/.tmux.conf from the host, which sets the tmux prefix key
+from the default Ctrl-B to ` (backtick).
+
+## Change root into your new chroot environment
+
+```
+# cd /build/b0
+# chroot -u <username> .
+```
+
+From the host, the chroot inherits the HOME and USER variables of the
+root or doas user that executed the chroot command.
+
+cd to the your regular user directory, set HOME and USER, and start a
+tmux session.
+```
+$ cd /home/<username>
+$ export HOME=/home/<username>
+$ export USER=<username>
+$ tmux
+```
 
 ## See also
 
