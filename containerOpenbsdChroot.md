@@ -334,7 +334,7 @@ use.
 # cp /etc/{installurl,resolv.conf} /build/b0/etc
 ```
 
-### Add standard dotfiles
+### Add dotfiles
 
 Home folders on most all versions of Linux and the BSDs contain
 'dotfiles', hidden files whose names start with a dot (.), such as
@@ -483,11 +483,42 @@ from the default Ctrl-B to ` (backtick).
 # chroot -u <username> .
 ```
 
+## First time setup in the chroot
+
+Build the password database from `/etc/master.passwd` with
+[pwd_mkdb(8)](https://man.openbsd.org/pwd_mkdb).
+
+```
+# pwd_mkdb /etc/master.passwd
+```
+
+Refresh the shared library cache with
+[ldconfig(8)](https://man.openbsd.org/ldconfig).
+
+```
+# ldocnfig /usr/local/lib
+```
+
+Populate `/etc` with [sysmerge(8)](https://man.openbsd.org/sysmerge).
+
+```
+# sysmerge
+```
+
+## Caveats
+
+### HOME and USER
+
 From the host, the chroot inherits the HOME and USER variables of the
 root or doas user that executed the chroot command.
 
-cd to the your regular user directory, set HOME and USER, and start a
-tmux session.
+To set them properly (like in the host environment), you need to
+export their values each time you enter the chroot (unless you save
+the environment in a tmux session).
+
+To fix, cd to the your regular user directory, set HOME and USER, and
+start a tmux session.
+
 ```
 $ cd /home/<username>
 $ export HOME=/home/<username>
@@ -495,9 +526,35 @@ $ export USER=<username>
 $ tmux
 ```
 
+### .profile not sourced in chroot's first shell
+
+One affect of this is you won't see the customized prompt you set
+until you launch a subshell. The best way to do this is to launch a
+tmux session. If you plan to leave the chroot running, you can save
+the environment and any running processes by disconnecting from the
+tmux session before exiting the chroot.
+
+### tmux sessions in host and chroot don't know about each other
+
+Normally if you run two tmux sessions on the same system, you can
+switch between them with Ctrl-B ) (next session), or Ctrl-B (
+(previous session).
+
+tmux inside the chroot cannot see any sessions running outside the
+chroot on the host because the file(s) tracking the host session(s) is
+not visible to the chroot.
+
+Likewise, tmux run on the host cannot see any sessions running inside
+the chroot because tmux in the chroot tracks its sessions in a file
+inside the chroot, not in the default location on the host used by the
+host's tmux.
+
+There is no fix. This is intentional.
+
 ## See also
 
-* [Building Software on OpenBSD in a chroot](https://eradman.com/posts/chroot-builds.html)
+* [Building Software on OpenBSD in a
+  chroot](https://eradman.com/posts/chroot-builds.html)
 * [Creating a Chroot in OpenBSD](https://www.tubsta.com/2020/01/creating-a-chroot-in-openbsd)
 * [chroot(8)](https://man.openbsd.org/chroot) - Userspace command
 * [chroot(2)](https://man.openbsd.org/chroot.2) - Kernel system call
