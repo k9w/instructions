@@ -249,6 +249,21 @@ $ pwd
 # tar -C /build/b0 -xzphf {base,comp,man}73.tgz
 ```
 
+If you get an error:
+```
+tar: WARNING! These patterns were not matched:
+comp73.tgz
+man73.tgz
+```
+
+Then you need to untar one set at a time.
+
+```
+# tar -C /build/b0 -xzphf base73.tgz
+# tar -C /build/b0 -xzphf comp73.tgz
+# tar -C /build/b0 -xzphf man73.tgz
+```
+
 ### Configure and activate the container
 
 These steps performed manually below are likely the same ones
@@ -319,7 +334,91 @@ use.
 # cp /etc/{installurl,resolv.conf} /build/b0/etc
 ```
 
-### Add further customizations
+### Add standard dotfiles
+
+Home folders on most all versions of Linux and the BSDs contain
+'dotfiles', hidden files whose names start with a dot (.), such as
+`.profile`. On the host they are added by the Linux or *BSD
+installer.
+
+Dotfiles are not added automatically into the chroot by sets or any
+other automatic method thus far. You need dotfiles to set things such
+as environment variables including $PATH, which tells the shell where
+to find any non-builtin commands, such as /bin, /sbin, /usr/bin,
+/usr/sbin, etc.
+
+#### Standard OpenBSD dotfiles
+
+- `.Xdefaults` - Not needed unless running X. We didn't install the X
+  sets.
+  
+- `.cshrc` - Startup file executed each time
+  [csh(1)](https://man.openbsd.org/csh) is invoked, not just on
+  initial login. If you only use
+  [ksh(1)](https://man.openbsd.org/ksh), you don't need it.
+  
+- `.cvsrc` - Customization file for
+  [cvs(1)](https://man.openbsd.org/cvs). If you don't use cvs, you
+  don't need it.
+  
+- `.login` - Startup file executed upon login if the user shell is set
+  to csh(1), not needed if you only use ksh(1).
+  
+- `.mailrc` - Statup file for the
+  [mail(1)](https://man.openbsd.org/mail) utility. Not needed if you
+  don't read email using mail(1).
+  
+- `.profile` - Startup file executed upon login with the default shell
+  ksh(1).
+  
+#### Non-standard dotfiles
+
+- `.kshrc` - We'll do that in the next section when we set a different prompt.
+
+- `.mg` - Startup file for [mg(1)](https://man.openbsd.org/mg) to set
+  line wrap at 72 characters, etc.
+
+- `.nexrc` - Startup file for [vi(1)](https://man.openbsd.org/vi), to
+  set line wrap, etc.
+
+- `.ssh` - This directory is almost certainly not needed since you
+  don't [ssh(1)](https://man.openbsd.org/ssh) directly into the
+  chroot. You login to the host first, and then chang root into the
+  chroot. Therefore, ssh doesn't apply to chroots.
+
+- `.tmux.conf` - Startup file for
+  [tmux(1)](https://man.openbsd.org/tmux), to change defaults such as
+  setting the prefix key from Ctrl-B to ` (backtick). (We'll demo that
+  in a section below.)
+
+- If you have other dotfiles on your host for Emacs, Vim, NeoVim, etc
+  and want to use them in the chroot, you'll need to copy those
+  dotfiles and install the packages that use them.
+
+#### Copy needed dotfiles into the chroot
+
+Copy `.profile` and other desired dotfiles from your host home
+directory to your user folder in the chroot. 
+
+Notice the copy below does not need root or
+[doas(1)](https://man.openbsd.org/doas) because we earlier changed the
+owner and group to `<username>` so that our regular user can write to
+it, even before we change root into the chroot environmentt.
+
+```
+$ cd /build/b0/home/<username>
+```
+
+You can copy just .profile.
+```
+$ cp /home/<username>/.profile .
+```
+
+Or you can copy most of the dotfiles listed above.
+
+```
+$ cp ~/.{cshrc,cvsrc,login,mailrc,mg,nexrc,profile,tmux.conf} .
+```
 
 #### Set a different prompt
 
@@ -327,9 +426,29 @@ One way to remind yourself you're in a chroot is to set a prompt
 different from your host, for example, to show the current working
 directory.
 
+First tell ./.profile to execute ./.kshrc if it detects it.
+
 ```
 $ cd /build/b0/home/<username>
 $ echo 'export ENV=~/.kshrc' >> ./.profile
+```
+
+Then set PS1 in ./.kshrc.
+
+`b0` is the name we chose for the chroot environment.
+
+The colon `:` is a nice delimiter.
+
+`\w` means 'the current working directory, as reported by
+[pwd(1)](https://man.openbsd.org/pwd).
+
+The space ` ` is interpreted literally.
+
+`\$` prints a literal '$'.
+
+We include a space ` ` after the '$'.
+
+```
 $ echo "export PS1='b0:\w \$ '" >> ./.kshrc
 ```
 
