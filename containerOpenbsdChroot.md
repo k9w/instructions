@@ -132,7 +132,7 @@ In my /build, I call my first chroot 'b0'.
 ### Fetch file sets for the chroot
 
 #### Which sets to install?
-x
+
 Stock OpenBSD comes as a base system, a core group of files mainly
 developed in the OpenBSD project's own source code repository [with
 documented third-party
@@ -269,15 +269,15 @@ Then you need to untar one set at a time.
 These steps performed manually below are likely the same ones
 performed by the OpenBSD installer. Some of the steps are necessary
 for the container to function at all like an OpenBSD system, others
-are essential if you want it to match the host, such as having the
-same user account and home folder.
+simply march the container environment to the host, such as having the
+same user account, home folder, and $PATH.
 
 ### Populate the device files in /dev
 
 Run the [MAKEDEV(8)](https://man.openbsd.org/MAKEDEV) script (related
 to the [makedev(3)](https://man.openbsd.org/makedev) system call). The
-script is located at /dev and applies to the current working
-directory. So you must CD to it first.
+script is located at [/dev](https://man.openbsd.org/hier) and applies
+to the current working directory. So you must CD to it first.
 
 ```
 $ cd /build/b0/dev
