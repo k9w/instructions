@@ -42,9 +42,9 @@ to load an alternate [pf.conf(5)](https://man.openbsd.org/pf.conf.5)
 inside the chroot would override any firewall rules defined on the
 host.
 
-Other kernel operations by root equally
-apply. [ifconfig(8)](https://man.openbsd.org/ifconfig),
-[df(1)](https://man.openbsd.org/df),
+Other kernel operations by root equally apply.
+[ifconfig(8)](https://man.openbsd.org/ifconfig),
+vv[df(1)](https://man.openbsd.org/df),
 [rcctl(8)](https://man.openbsd.org/rcctl) and any command that deals
 directly with the kernel (even read-only as a regular user), has full
 access to everything as in the host system.
@@ -72,21 +72,31 @@ The packages and ports systems, and other userspace software builds
 such as from [Github](https://github.com), often use files and
 directories that are not shared in the kernel with the host system.
 
-So for example, you can install [Git](https://git-scm.com) and
-[Go](https://go.dev) from packages, clone a go application from source
-on Github, and build it using the go compiler in the chroot, check its
-library dependencies with ldd, copy the binary to ~/bin or
-/usr/local/bin on the host, verify it works, and delete the chroot, or
-keep the chroot for the next time you want to build the updated
-application from source.
+So for example, you can:
+
+- Install [Git](https://git-scm.com) and [Go](https://go.dev) from
+  packages
+
+- Clone a Go application from source on Github
+
+- Build it using the Go compiler in the chroot
+
+- Check its library dependencies with ldd
+
+- Copy the binary to ~/bin or /usr/local/bin on the host
+
+- Verify the compiled binary works
+
+- Delete the chroot, or keep the chroot for the next time you want to
+  build the updated application from source
 
 ## How to build the chroot
 
 ### Partition mount requirements
 
 Building software on OpenBSD often requires certain filesystem
-[mount(8)](https://man.openbsd.org/mount) 
-flags to be present, and others to be absent.
+[mount(8)](https://man.openbsd.org/mount) flags to be present, and
+others to be absent.
 
 Specifically, an OpenBSD chroot needs to:
 
@@ -104,7 +114,7 @@ Specifically, an OpenBSD chroot needs to:
 partitions on the system and the mount flags used with them.
 
 If you use the default partition layout of OpenBSD, it's recommended
-you make a new partition mapped to /build dedicated just to chroot
+you make a new partition mapped to `/build` dedicated just to chroot
 environments.
 
 The easiest way to do this is at the beginning when first installing
@@ -123,7 +133,7 @@ $ cat /etc/fstab
 
 ### Make the chroot folder
 
-In my /build, I call my first chroot 'b0'.
+In my `/build`, I call my first chroot `b0`.
 
 ```
 # mkdir -p /build/b0
@@ -226,8 +236,19 @@ $ cd ~/Downloads
 $ ftp https://cdn.openbsd.org/pub/OpenBSD/snapshots/amd64/{base,comp,man}73.tgz
 ```
 
+Or, if you're running current and are ready to upgrade to a new
+snapshot, save the downloaded sets with the -k flag to sysmerge.
+
+```
+# sysmerge -k
+```
+
+Then after the reboot, you can use the sets saved to
+`/home/_sysupgrade`.
+
 Uncompress the tar'ed gzip'ed sets into your chroot directory,
-/build/b0 in my case, with the following tar(1) flags.
+/build/b0 in my case, with the following
+[tar(1)](https://man.openbsd.org/tar) flags.
 
 - `-C` - Specify the destination directory.
 
@@ -241,27 +262,36 @@ Uncompress the tar'ed gzip'ed sets into your chroot directory,
 
 - `-f` - Specify the archive (tgz file) to read from, in our case.
 
-Options x through f can be combined together:
+Options x through f can be combined together.
 
-```
-$ pwd
-~/Downloads
-# tar -C /build/b0 -xzphf {base,comp,man}73.tgz
-```
+Untaring multiple archives in one command usually returns the error:
 
-If you get an error:
 ```
 tar: WARNING! These patterns were not matched:
 comp73.tgz
 man73.tgz
 ```
 
-Then you need to untar one set at a time.
+Instead, [wrap the tar command in a shell for
+loop](https://www.cyberciti.biz/faq/how-to-extract-multiple-tar-ball-tar-gz-files-in-directory-on-linux-or-unix).
+
+The first time the for loop runs, `$f` equals `base73.tgz`. The second
+time, the for loop runs `$f` equals `comp72.tgz`. The for loop keeps
+running until it finds no more files in the current directory matching
+`*.tgz`.
+
+```
+$ cd /home/_sysupgrade
+# for f in *.tgz; do tar -C /build/b0 -xzphf "$f"; done
+```
+
+If you prefer to untar one archive at a time, this is how it looks:
 
 ```
 # tar -C /build/b0 -xzphf base73.tgz
 # tar -C /build/b0 -xzphf comp73.tgz
 # tar -C /build/b0 -xzphf man73.tgz
+...
 ```
 
 ### Configure and activate the container
@@ -269,7 +299,7 @@ Then you need to untar one set at a time.
 These steps performed manually below are likely the same ones
 performed by the OpenBSD installer. Some of the steps are necessary
 for the container to function at all like an OpenBSD system, others
-simply march the container environment to the host, such as having the
+simply match the container environment to the host, such as having the
 same user account, home folder, and $PATH.
 
 ### Populate the device files in /dev
@@ -284,14 +314,15 @@ $ cd /build/b0/dev
 # ./MAKEDEV all
 ```
 
-### Populate user accounts and home folder
+### Add /etc files
 
 This is important even if you'll only start out with just a root
 account. Copying the files from your host will add a user account with
 the same name and password as your host.
 
-Set the accounts, passwords, and user groups by copying these three
-files from /etc on the host to /etc in the chroot.
+Set the accounts, passwords, user groups, default gateway, package
+download path, and doas permission by copying these `/etc` files from
+the host to the chroot.
 
 - [master.passwd(5)](https://man.openbsd.org/master.passwd) - Contains
 the encrypted password and account info for all accounts, readable
@@ -304,34 +335,31 @@ by an asterisk (*), readable by all users.
 
 - [group(5)](https://man.openbsd.org/group.5) - group permissions file
 
-```
-# cp /etc/{master.passwd,passwd,group} /build/b0/etc
-```
-
-Add the home folder for your user account and any other users you
-want, and set the permissions accordingly.
-
-```
-# mkdir -p /build/b0/home/<username>
-# chown <username>:<groupname> /build/b0/home/<username>
-```
-
-### Add package path and resolv.conf
-
-Since the chroot interacts with the same kernel as the host, copy the
-following two files from /etc on the host to /etc in the chroot.
-
-- [installurl(5)](https://man.openbsd.org/installurl) - Contains the
-package mirror location, usually
-<https://cdn.openbsd.org/pub/OpenBSD>.
-
 - [resolv.conf(5)](https://man.openbsd.org/resolv.conf) - Contains the
 [DNS
 nameservers](https://kinsta.com/knowledgebase/what-is-a-nameserver) to
 use.
 
+- [installurl(5)](https://man.openbsd.org/installurl) - Contains the
+package mirror location, usually
+<https://cdn.openbsd.org/pub/OpenBSD>.
+
+- [doas.conf(5)](https://man.openbsd.org/doas.conf) - Specifies your
+  regular user can run commands as root using
+  [doas(1)](https://man.openbsd.org/doas).
+
 ```
-# cp /etc/{installurl,resolv.conf} /build/b0/etc
+# cp /etc/{master.passwd,passwd,group,resolv.conf,installurl,doas.conf} /build/b0/etc
+```
+
+### Add home folder for regular user
+
+Add the home folder for your user account and any other users you
+want, and set the user owner and group owner permissions accordingly.
+
+```
+# mkdir -p /build/b0/home/<username>
+# chown <username>:<groupname> /build/b0/home/<username>
 ```
 
 ### Add dotfiles
@@ -341,16 +369,17 @@ Home folders on most all versions of Linux and the BSDs contain
 `.profile`. On the host they are added by the Linux or *BSD
 installer.
 
-Dotfiles are not added automatically into the chroot by sets or any
-other automatic method thus far. You need dotfiles to set things such
-as environment variables including $PATH, which tells the shell where
-to find any non-builtin commands, such as /bin, /sbin, /usr/bin,
-/usr/sbin, etc.
+Dotfiles are not added into the chroot by sets or any other automatic
+method thus far (except for `/root` with
+[sysmerge(8)](https://man.openbsd.org/sysmerge) covered below). You
+need dotfiles to set things such as environment variables including
+`$PATH`, which tells the shell where to find any non-[builtin shell
+commands](https://man.openbsd.org/sh#BUILTINS), such as `/bin`,
+`/sbin`, `/usr/bin`, `/usr/sbin`, etc.
 
 #### Standard OpenBSD dotfiles
 
-- `.Xdefaults` - Not needed unless running X. We didn't install the X
-  sets.
+- `.Xdefaults` - Not needed unless running X.
   
 - `.cshrc` - Startup file executed each time
   [csh(1)](https://man.openbsd.org/csh) is invoked, not just on
@@ -362,7 +391,9 @@ to find any non-builtin commands, such as /bin, /sbin, /usr/bin,
   don't need it.
   
 - `.login` - Startup file executed upon login if the user shell is set
-  to csh(1), not needed if you only use ksh(1).
+  to csh(1), not needed if you only use ksh(1). You can check what
+  your default shell is with
+  [userinfo(8)](https://man.openbsd.org/userinfo).
   
 - `.mailrc` - Statup file for the
   [mail(1)](https://man.openbsd.org/mail) utility. Not needed if you
@@ -373,7 +404,8 @@ to find any non-builtin commands, such as /bin, /sbin, /usr/bin,
   
 #### Non-standard dotfiles
 
-- `.kshrc` - We'll do that in the next section when we set a different prompt.
+- `.kshrc` - We'll create or edit this file later in this guide when
+  we set a custom shell prompt.
 
 - `.mg` - Startup file for [mg(1)](https://man.openbsd.org/mg) to set
   line wrap at 72 characters, etc.
@@ -381,19 +413,23 @@ to find any non-builtin commands, such as /bin, /sbin, /usr/bin,
 - `.nexrc` - Startup file for [vi(1)](https://man.openbsd.org/vi), to
   set line wrap, etc.
 
-- `.ssh` - This directory is almost certainly not needed since you
-  don't [ssh(1)](https://man.openbsd.org/ssh) directly into the
-  chroot. You login to the host first, and then chang root into the
-  chroot. Therefore, ssh doesn't apply to chroots.
+- `.ssh` - This directory is almost certainly not needed unless you
+  plan to [ssh(1)](https://man.openbsd.org/ssh) from this host (and
+  from inside this chroot) to another host, since you don't ssh
+  directly into the chroot from another host. You login to the host
+  first, and then change root into this chroot. Therefore, you might
+  or might not need this folder in the chroot.
 
 - `.tmux.conf` - Startup file for
   [tmux(1)](https://man.openbsd.org/tmux), to change defaults such as
   setting the prefix key from Ctrl-B to ` (backtick). (We'll demo that
   in a section below.)
 
-- If you have other dotfiles on your host for Emacs, Vim, NeoVim, etc
-  and want to use them in the chroot, you'll need to copy those
-  dotfiles and install the packages that use them.
+- If you have other dotfiles on your host for
+  [Emacs](https://www.gnu.org/software/emacs),
+  [Vim](https://www.vim.org/), [NeoVim](https://neovim.io/), etc and
+  want to use them in the chroot, you'll need to copy those dotfiles
+  and install the packages into the chroot that use them.
 
 #### Copy needed dotfiles into the chroot
 
@@ -426,14 +462,14 @@ One way to remind yourself you're in a chroot is to set a prompt
 different from your host, for example, to show the current working
 directory.
 
-First tell ./.profile to execute ./.kshrc if it detects it.
+First tell `./.profile` to execute `./.kshrc` if it detects it.
 
 ```
 $ cd /build/b0/home/<username>
 $ echo 'export ENV=~/.kshrc' >> ./.profile
 ```
 
-Then set PS1 in ./.kshrc.
+Then set PS1 in `./.kshrc`.
 
 `b0` is the name we chose for the chroot environment.
 
@@ -442,11 +478,11 @@ The colon `:` is a nice delimiter.
 `\w` means 'the current working directory, as reported by
 [pwd(1)](https://man.openbsd.org/pwd).
 
-The space ` ` is interpreted literally.
+The space ` `  is interpreted literally.
 
-`\$` prints a literal '$'.
+`\$` prints a literal `$`.
 
-We include a space ` ` after the '$'.
+We include a space ` `  after the `$`.
 
 ```
 $ echo "export PS1='b0:\w \$ '" >> ./.kshrc
