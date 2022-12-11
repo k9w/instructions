@@ -294,13 +294,34 @@ If you prefer to untar one archive at a time, this is how it looks:
 ...
 ```
 
-### Configure and activate the container
+### Set doas on the host to maintain default environment for chroot
 
-These steps performed manually below are likely the same ones
-performed by the OpenBSD installer. Some of the steps are necessary
-for the container to function at all like an OpenBSD system, others
-simply match the container environment to the host, such as having the
-same user account, home folder, and $PATH.
+OpenBSD by default uses [doas(1)](https://man.openbsd.org/doas)
+instead of [sudo](https://www.sudo.ws). It normally sets environmental
+variables `$LOGNAME`, `$HOME`, `$USER`, and `$PATH` to the target user
+(root), which is not what we want for chroot.
+
+For most commands, I set
+[doas.conf(5)](https://man.openbsd.org/doas.conf) to allow wheel group
+members to execute any command without password.
+
+```
+permit nopass :wheel
+```
+
+Here we make a special rule for `<username>` running `chroot` to set
+those four variables back to the default for `<username>`. Place the
+rule below the defautl rule above in `doas.conf`.
+
+```
+# Default rule from wheel group members.
+permit nopass :wheel
+
+# Permit without password and set variables when kevin runs chroot cmd.
+permit nopass setenv { LOGNAME=kevin HOME=/home/kevin USER=kevin \
+PATH=/home/kevin/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games \
+} kevin cmd chroot
+```
 
 ### Populate the device files in /dev
 
@@ -545,10 +566,11 @@ Populate `/etc` with [sysmerge(8)](https://man.openbsd.org/sysmerge).
 
 ### HOME and USER
 
-From the host, the chroot inherits the HOME and USER variables of the
-root or doas user that executed the chroot command.
+If you don't set a `doas.conf` rule for chroot that sets those
+variables, the chroot inherits the HOME and USER variables of the root
+or doas user that executed the chroot command.
 
-To set them properly (like in the host environment), you need to
+To set them manually6 (like in the host environment), you need to
 export their values each time you enter the chroot (unless you save
 the environment in a tmux session).
 
