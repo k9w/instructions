@@ -1,5 +1,39 @@
 # Containerizing apps with chroot on OpenBSD
 
+## TL;DR
+
+```
+$ cat /etc/fstab
+245f04ba1667c1de.a / ffs rw,wxallowed,noatime 1 1
+# mkdir -p /build/b0
+# sysmerge -k
+$ cd /home/_sysupgrade
+# for f in *.tgz; do tar -C /build/b0 -xzphf "$f"; done
+$ /etc/doas.conf
+# Default rule from wheel group members.
+permit nopass :wheel
+
+# Permit without password and set variables when <username> runs chroot cmd.
+permit nopass setenv { LOGNAME=<username> HOME=/home/<username> USER=<username> \
+PATH=/home/<username>/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games \
+} <username> cmd chroot
+$ cd /build/b0/dev
+# ./MAKEDEV all
+# cp /etc/{master.passwd,passwd,group,resolv.conf,installurl,doas.conf} /build/b0/etc
+# mkdir -p /build/b0/home/<username>
+# chown <username>:<groupname> /build/b0/home/<username>
+$ cd /build/b0/home/<username>
+$ cp ~/.{cshrc,cvsrc,login,mailrc,mg,nexrc,profile,tmux.conf} .
+$ echo 'export ENV=~/.kshrc' >> ./.profile
+$ echo "export PS1='b0:\w \$ '" >> ./.kshrc
+$ cd /build/b0
+# chroot -u <username> .
+$ tmux
+# pwd_mkdb /etc/master.passwd
+# ldocnfig /usr/local/lib
+# sysmerge
+```
+
 ## Introduction
 
 Modern web and server application deployments predominently use
@@ -306,6 +340,7 @@ For most commands, I set
 members to execute any command without password.
 
 ```
+$ /etc/doas.conf
 permit nopass :wheel
 ```
 
@@ -314,13 +349,14 @@ those four variables back to the default for `<username>`. Place the
 rule below the defautl rule above in `doas.conf`.
 
 ```
+$ /etc/doas.conf
 # Default rule from wheel group members.
 permit nopass :wheel
 
-# Permit without password and set variables when kevin runs chroot cmd.
-permit nopass setenv { LOGNAME=kevin HOME=/home/kevin USER=kevin \
-PATH=/home/kevin/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games \
-} kevin cmd chroot
+# Permit without password and set variables when <username> runs chroot cmd.
+permit nopass setenv { LOGNAME=<username> HOME=/home/<username> USER=<username> \
+PATH=/home/<username>/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games \
+} <username> cmd chroot
 ```
 
 ### Populate the device files in /dev
@@ -536,8 +572,14 @@ from the default Ctrl-B to ` (backtick).
 ## Change root into your new chroot environment
 
 ```
-# cd /build/b0
+$ cd /build/b0
 # chroot -u <username> .
+```
+
+To test the custom prompt, launch a tmux session.
+
+```
+$ tmux
 ```
 
 ## First time setup in the chroot
