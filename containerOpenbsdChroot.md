@@ -29,12 +29,15 @@ $ cp ~/.{cshrc,cvsrc,login,mailrc,mg,nexrc,profile,tmux.conf} .
 $ echo 'export ENV=~/.kshrc' >> ./.profile
 $ echo "export PS1='b0:\w \$ '" >> ./.kshrc
 $ cd /build/b0
-# chroot -u <username> .
-$ cd
-$ tmux
+# chroot .
 # pwd_mkdb /etc/master.passwd
 # ldocnfig /usr/local/lib
 # sysmerge
+# exit
+$ cd /build/b0
+# chroot -u <username> .
+$ cd
+$ tmux
 ```
 
 ## Introduction
@@ -614,6 +617,12 @@ Populate `/etc` with [sysmerge(8)](https://man.openbsd.org/sysmerge).
 
 ```
 # sysmerge
+```
+
+The setup is complete. Exit the root user out of the chroot.
+
+```
+# exit
 ```
 
 ## Change root into your new chroot environment
