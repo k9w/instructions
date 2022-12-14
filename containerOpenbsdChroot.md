@@ -6,15 +6,17 @@
 $ cat /etc/fstab
 245f04ba1667c1de.a / ffs rw,wxallowed,noatime 1 1
 # mkdir -p /build/b0
-# sysmerge -k
+# sysupgrade -k
 $ cd /home/_sysupgrade
-# for f in *.tgz; do tar -C /build/b0 -xzphf "$f"; done
-$ /etc/doas.conf
+# for f in *.tgz; do tar -C /build/b0 -xzphvf "$f"; done
+$ cat /etc/doas.conf
 # Default rule from wheel group members.
 permit nopass :wheel
 
-# Permit without password and set variables when <username> runs chroot cmd.
-permit nopass setenv { LOGNAME=<username> HOME=/home/<username> USER=<username> \
+# Permit without password and set variables when <username> runs chroot
+# command.
+permit nopass setenv { LOGNAME=<username> HOME=/home/<username> \
+USER=<username> \
 PATH=/home/<username>/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games \
 } <username> cmd chroot
 $ cd /build/b0/dev
@@ -28,6 +30,7 @@ $ echo 'export ENV=~/.kshrc' >> ./.profile
 $ echo "export PS1='b0:\w \$ '" >> ./.kshrc
 $ cd /build/b0
 # chroot -u <username> .
+$ cd
 $ tmux
 # pwd_mkdb /etc/master.passwd
 # ldocnfig /usr/local/lib
@@ -274,7 +277,7 @@ Or, if you're running current and are ready to upgrade to a new
 snapshot, save the downloaded sets with the -k flag to sysmerge.
 
 ```
-# sysmerge -k
+# sysupgrade -k
 ```
 
 Then after the reboot, you can use the sets saved to
@@ -316,7 +319,7 @@ running until it finds no more files in the current directory matching
 
 ```
 $ cd /home/_sysupgrade
-# for f in *.tgz; do tar -C /build/b0 -xzphf "$f"; done
+# for f in *.tgz; do tar -C /build/b0 -xzphvf "$f"; done
 ```
 
 If you prefer to untar one archive at a time, this is how it looks:
@@ -340,7 +343,7 @@ For most commands, I set
 members to execute any command without password.
 
 ```
-$ /etc/doas.conf
+$ cat /etc/doas.conf
 permit nopass :wheel
 ```
 
@@ -349,12 +352,14 @@ those four variables back to the default for `<username>`. Place the
 rule below the defautl rule above in `doas.conf`.
 
 ```
-$ /etc/doas.conf
+$ cat /etc/doas.conf
 # Default rule from wheel group members.
 permit nopass :wheel
 
-# Permit without password and set variables when <username> runs chroot cmd.
-permit nopass setenv { LOGNAME=<username> HOME=/home/<username> USER=<username> \
+# Permit without password and set variables when <username> runs chroot
+# command.
+permit nopass setenv { LOGNAME=<username> HOME=/home/<username> \
+USER=<username> \
 PATH=/home/<username>/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games \
 } <username> cmd chroot
 ```
@@ -569,20 +574,27 @@ b0:~/bin $
 I added my ~/.tmux.conf from the host, which sets the tmux prefix key
 from the default Ctrl-B to ` (backtick).
 
-## Change root into your new chroot environment
+## First time setup in the chroot
+
+If we enter the chroot as our regular user now, doas(1) will fail with
+the error:
+
+```
+doas: getpwuid_r failed: Bad file descriptor
+```
+
+`su` to root would fail with:
+
+```
+su: who are you?
+```
+
+So first, enter the chroot as the root user.
 
 ```
 $ cd /build/b0
-# chroot -u <username> .
+# chroot .
 ```
-
-To test the custom prompt, launch a tmux session.
-
-```
-$ tmux
-```
-
-## First time setup in the chroot
 
 Build the password database from `/etc/master.passwd` with
 [pwd_mkdb(8)](https://man.openbsd.org/pwd_mkdb).
@@ -603,6 +615,24 @@ Populate `/etc` with [sysmerge(8)](https://man.openbsd.org/sysmerge).
 ```
 # sysmerge
 ```
+
+## Change root into your new chroot environment
+
+Now we are ready to enter the chroot as the regular user.
+
+```
+$ cd /build/b0
+# chroot -u <username> .
+```
+
+To test the custom prompt, launch a tmux session. `cd` to your home
+folder in the chroot first.
+
+```
+$ cd
+$ tmux
+```
+
 
 ## Caveats
 
