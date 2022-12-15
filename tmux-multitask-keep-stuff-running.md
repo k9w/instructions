@@ -32,8 +32,6 @@ $ tmux
 You're in tmux when you see a green bar at the bottom of your terminal
 window.
 
-[![tmux.png](img/tmux.png)](img/tmux.png)
-
 The bottom green bar shows us this is tmux session zero \[0\] with one
 window (tab) open, 0:bash. The asterisk (\*) shows we are viewing that
 tab.
@@ -48,11 +46,11 @@ $ exit
 
 Multiple tmux windows work just like browsers tabs.
 
-[![tmux0.png](img/tmux0.png)](img/tmux0.png)
+[![tmux.png](img/tmux.png)](img/tmux.png)
 
 tmux can have multiple tabs too.
 
-[![tmux1.png](img/tmux1.png)](img/tmux1.png)
+[![tmux0.png](img/tmux0.png)](img/tmux0.png)
 
 Each tab is called a window. The terms are important if you read the
 tmux manpage, the authoritative source on how tmux works.
@@ -68,7 +66,7 @@ Create a new tmux window (tab).
 Ctrl-b c
 ```
 
-[![tmux2.png](img/tmux2.png)](img/tmux2.png)
+[![tmux1.png](img/tmux1.png)](img/tmux1.png)
 
 Notice on the bottom green bar there is a new tab: 1:bash. The star \*
 shows we are viewing the new tab.
@@ -87,7 +85,7 @@ as nano for this example.
 $ vi test
 ```
 
-[![tmux3.png](img/tmux3.png)](img/tmux3.png)
+[![tmux2.png](img/tmux2.png)](img/tmux2.png)
 
 Notice the tab title changed from `1:bash` to `1:vi`. To exit vi, type
 Esc :qa! That is: the Escape key, colon, q, a and ! (exclamation
@@ -108,7 +106,7 @@ $ sudo dnf update
 
 While running dnf update with sudo, the tab changes to 1:sudo.
 
-[![tmux4.png](img/tmux4.png)](img/tmux4.png)
+[![tmux3.png](img/tmux3.png)](img/tmux3.png)
 
 While that update is going, switch to the first tab with Ctrl-b n.
 
@@ -122,7 +120,7 @@ Read the manpage for the ls command, for example.
 $ man ls
 ```
 
-[![tmux5.png](img/tmux5.png)](img/tmux5.png)
+[![tmux4.png](img/tmux4.png)](img/tmux4.png)
 
 Now notice the first window (tab 0) has changed from 0:bash to 0:man,
 because we're using the 'man' program to read the manual for the 'ls'
@@ -136,7 +134,7 @@ You can often tell when a command completes in the other window
 without even switching to view it. For instance, once the 'dnf update'
 finishes in the second tab '1:sudo', it'll change back to '1:bash'.
 
-[![tmux6.png](img/tmux6.png)](img/tmux6.png)
+[![tmux5.png](img/tmux5.png)](img/tmux5.png)
 
 I don't know what that dash (-) means at the end of '1:bash-'. Check
 the tmux manpage for more info.
@@ -147,7 +145,7 @@ Keep the ls manpage open and switch back to the second tab.
 Ctrl-b n
 ```
 
-[![tmux7.png](img/tmux7.png)](img/tmux7.png)
+[![tmux6.png](img/tmux6.png)](img/tmux6.png)
 
 We switched back to the second tab, 1:bash, where we had run 'dnf
 update'. We see that command has now completed.
@@ -168,7 +166,7 @@ Detach your terminal (command prompt window) from this tmux session.
 Ctrl-b d
 ```
 
-[![tmux8.png](img/tmux8.png)](img/tmux8.png)
+[![tmux7.png](img/tmux7.png)](img/tmux7.png)
 
 Re-attach to the same session.
 
@@ -176,7 +174,7 @@ Re-attach to the same session.
 $ tmux a
 ```
 
-[![tmux9.png](img/tmux9.png)](img/tmux9.png)
+[![tmux8.png](img/tmux8.png)](img/tmux8.png)
 
 Detach again.
 
@@ -184,7 +182,7 @@ Detach again.
 Ctrl-b d
 ```
 
-[![tmux10.png](img/tmux10.png)](img/tmux10.png)
+[![tmux9.png](img/tmux9.png)](img/tmux9.png)
 
 Now open a second tmux session.
 
@@ -192,7 +190,7 @@ Now open a second tmux session.
 $ tmux
 ```
 
-[![tmux11.png](img/tmux11.png)](img/tmux11.png)
+[![tmux10.png](img/tmux10.png)](img/tmux10.png)
 
 In the very left of the bottom green bar, our first tmux session was
 titled \[0\]. This second tmux session is titled \[1\].
@@ -203,7 +201,7 @@ Detach from this second tmux session.
 Ctrl-b d
 ```
 
-[![tmux12.png](img/12tmux.png)](img/tmux12.png)
+[![tmux11.png](img/tmux11.png)](img/tmux11.png)
 
 If you try 'tmux a', it will attach to the most recently used session,
 1 in this case, not 0.
@@ -212,7 +210,7 @@ If you try 'tmux a', it will attach to the most recently used session,
 $ tmux a
 ```
 
-[![tmux13.png](img/tmux13.png)](img/tmux13.png)
+[![tmux12.png](img/tmux12.png)](img/tmux12.png)
 
 You can list your active sessions.
 
@@ -226,7 +224,7 @@ Or you can abbreviate that partially.
 $ tmux list-s
 ```
 
-[![tmux14.png](img/tmux14.png)](img/tmux14.png)
+[![tmux13.png](img/tmux13.png)](img/tmux13.png)
 
 It shows us two sessions, 0 and 1. We are attached to session 1.
 
@@ -255,7 +253,7 @@ because it's the only one open.
 $ tmux a
 ```
 
-[![tmux15.png](img/tmux15.png)](img/tmux15.png)
+[![tmux14.png](img/tmux14.png)](img/tmux14.png)
 
 It's right where we left it, at the end of the 'dnf update' command we
 ran earlier.
@@ -274,7 +272,7 @@ bottom panes with Ctrl-b " (double quote).
 Ctrl-b "
 ```
 
-[![tmux16.png](img/tmux16.png)](img/tmux16.png)
+[![tmux15.png](img/tmux15.png)](img/tmux15.png)
 
 You can toggle/switch the cursor between the panes with Ctrl-b o.
 
@@ -286,7 +284,7 @@ The screenshots don't show the cursor. But you get the point. Your
 cursor should now be in the top pane, where 'dnf update' finished. Hit
 Enter to make a new prompt line.
 
-[![tmux17.png](img/tmux17.png)](img/tmux17.png)
+[![tmux16.png](img/tmux16.png)](img/tmux16.png)
 
 Switch back to the bottom pane with 'Ctrl-b o'.
 
@@ -303,7 +301,7 @@ already viewing the ls manpage.
 Ctrl-b n
 ```
 
-[![tmux18.png](img/tmux18.png)](img/tmux18.png)
+[![tmux17.png](img/tmux17.png)](img/tmux17.png)
 
 The white status line at the bottom, above the green tmux bar, is part
 of the man program. Exit the manpage now with q to quit.
@@ -312,7 +310,7 @@ of the man program. Exit the manpage now with q to quit.
 q
 ```
 
-[![tmux19.png](img/tmux19.png)](img/tmux19.png)
+[![tmux18.png](img/tmux18.png)](img/tmux18.png)
 
 Switch from window 0 back to window 1.
 
@@ -320,7 +318,7 @@ Switch from window 0 back to window 1.
 Ctrl-b n
 ```
 
-[![tmux20.png](img/tmux20.png)](img/tmux20.png)
+[![tmux19.png](img/tmux19.png)](img/tmux19.png)
 
 With the cursor in the bottom pane (use 'Ctrl-b o' to switch to it if
 needed), open the pwd manpage.
@@ -329,7 +327,7 @@ needed), open the pwd manpage.
 $ man pwd
 ```
 
-[![tmux21.png](img/tmux21.png)](img/tmux21.png)
+[![tmux20.png](img/tmux20.png)](img/tmux20.png)
 
 Experienced terminal users often prefer their command prompt views to
 be as tall as possible, to show the most amount of lines and limit
@@ -348,7 +346,7 @@ key).
 Ctrl-b <space>
 ```
 
-[![tmux22.png](img/tmux22.png)](img/tmux22.png)
+[![tmux21.png](img/tmux21.png)](img/tmux21.png)
 
 Your cursor should still be in the pane showing the pwd manpage, which
 now on the right-hand side of window 1 in our example.
@@ -359,12 +357,12 @@ Scroll down the manpage one screenfull with the spacebar key.
 <space>
 ```
 
-[![tmux23.png](img/tmux23.png)](img/tmux23.png)
+[![tmux22.png](img/tmux22.png)](img/tmux22.png)
 
 This manpage is a bit hard to read with its lines wrapped (cut off)
 like that. Let's expand the command prompt window to be full screen.
 
-[![tmux24.png](img/tmux24.png)](img/tmux24.png)
+[![tmux23.png](img/tmux23.png)](img/tmux23.png)
 
 Now the spacing on the completed 'dnf update' command looks a bit off
 too, because we ran the command earlier with the command prompt window
@@ -379,7 +377,7 @@ long enough to fill this right-hand pane.
 $ man ls
 ```
 
-[![tmux25.png](img/tmux25.png)](img/tmux25.png)
+[![tmux24.png](img/tmux24.png)](img/tmux24.png)
 
 Switch over to the left-hand pane with Ctrl-b o.
 
@@ -401,7 +399,7 @@ including hidden files (-a), and in human readable file size numbers
 $ ls -alh
 ```
 
-[![tmux26.png](img/tmux26.png)](img/tmux26.png)
+[![tmux25.png](img/tmux25.png)](img/tmux25.png)
 
 Notice there is a file called .tmux.conf. We use that to customize
 tmux, such as changing the prefix key from the default Ctrl-b to
@@ -416,7 +414,7 @@ Following our example above, switch from window 1 to window 0.
 Ctrl-b n
 ```
 
-[![tmux27.png](img/tmux27.png)](img/tmux27.png)
+[![tmux26.png](img/tmux26.png)](img/tmux26.png)
 
 View the bash manpage.
 
@@ -424,7 +422,7 @@ View the bash manpage.
 $ man bash
 ```
 
-[![tmux28.png](img/tmux28.png)](img/tmux28.png)
+[![tmux27.png](img/tmux27.png)](img/tmux27.png)
 
 This is nice. But what if we wanted to look at three things at a time,
 side-by-side?
@@ -437,7 +435,7 @@ For simplicity, exit the manpage first with q to quit.
 q
 ```
 
-[![tmux29.png](img/tmux29.png)](img/mux29.png)
+[![tmux28.png](img/tmux28.png)](img/tmux28.png)
 
 (Ignore the rsync command for now. I was just checking if it was
 installed.)
@@ -449,7 +447,7 @@ side-by-side.
 Ctrl-b % Ctrl-b %
 ```
 
-[![tmux30.png](img/tmux30.png)](img/tmux30.png)
+[![tmux29.png](img/tmux29.png)](img/tmux29.png)
 
 Before we do any commands in the panes, let's make the panes equal
 size with Ctrl-b &lt;space&gt;.
@@ -458,11 +456,17 @@ size with Ctrl-b &lt;space&gt;.
 Ctrl-b <space>
 ```
 
-[![tmux31.png](img/tmux31.png)](img/tmux31.png)
+[![tmux30.png](img/tmux30.png)](img/tmux30.png)
 
 You can rotate among a set of built-in tmux pane arrangements by
 repeating Ctrl-b &lt;space&gt; (like Alt-Tabbing through open Windows
 in Windows 10).
+
+```
+Ctrl-b <space>
+```
+
+[![tmux31.png](img/tmux31.png)](img/tmux31.png)
 
 ```
 Ctrl-b <space>
@@ -482,19 +486,13 @@ Ctrl-b <space>
 
 [![tmux34.png](img/tmux34.png)](img/tmux34.png)
 
-```
-Ctrl-b <space>
-```
-
-[![tmux35.png](img/tmux35.png)](img/tmux35.png)
-
 The next Ctrl-b takes us back to the original 3 column pane layout.
 
 ```
 Ctrl-b <space>
 ```
 
-[![tmux36.png](img/tmux36.png)](img/tmux36.png)
+[![tmux35.png](img/tmux35.png)](img/tmux35.png)
 
 Finally, let's demonstrate them in use. Use Ctrl-b o to toggle between
 the panes as needed.
@@ -528,11 +526,11 @@ $ dnf info emacs-nox
 
 The resulting window should look like this.
 
-[![tmux37.png](img/tmux37.png)](img/tmux37.png)
+[![tmux36.png](img/tmux36.png)](img/tmux36.png)
 
 This arrangement can work well on vertical monitors too.
 
-[![tmux38.png](img/tmux38.png)](img/tmux38.png)
+[![tmux37.png](img/tmux37.png)](img/tmux37.png)
 
 When it's time to log off the Linux server, you can save your place in
 your work by detaching from the tmux session, then exiting the server
