@@ -4,11 +4,11 @@ tmux (Terminal Multiplexer) is a shell app that lets you have multiple
 command line windows and tabs open at a time. The two biggest reasons
 why you should use tmux:
 
-\- Save your place and come back to it next time
+- Save your place and come back to it next time
 
-\- Run multiple commands at the same time. For example, lookup a
-command's manpage in one pane (part of a window), and execute the
-command in the other.
+- Run multiple commands at the same time. For example, lookup a
+  command's manpage in one pane (part of a window), and execute the
+  command in the other.
 
 #### Basic usage
 
@@ -32,6 +32,8 @@ $ tmux
 You're in tmux when you see a green bar at the bottom of your terminal
 window.
 
+[![tmux.png](img/tmux.png)](img/tmux.png)
+
 The bottom green bar shows us this is tmux session zero \[0\] with one
 window (tab) open, 0:bash. The asterisk (\*) shows we are viewing that
 tab.
@@ -44,11 +46,7 @@ $ exit
 
 #### Multiple windows (like browser tabs)
 
-Multiple tmux windows work just like browsers tabs.
-
-[![tmux.png](img/tmux.png)](img/tmux.png)
-
-tmux can have multiple tabs too.
+Multiple tmux windows work just like browsers tabs. tmux can have multiple tabs too.
 
 [![tmux0.png](img/tmux0.png)](img/tmux0.png)
 
