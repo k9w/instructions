@@ -1,8 +1,8 @@
 # Tmux: multitask, keep stuff running
 
-tmux (Terminal Multiplexer) is a shell app that lets you have multiple
-command line windows and tabs open at a time. The two biggest reasons
-why you should use tmux:
+[tmux(1)](https://man.openbsd.org/tmux), or Terminal Multiplexer, is a
+shell app that lets you have multiple command line windows and tabs
+open at a time. tmux lets you:
 
 - Save your place and come back to it next time
 
@@ -51,7 +51,8 @@ Multiple tmux windows work just like browsers tabs. tmux can have multiple tabs 
 [![tmux0.png](img/tmux0.png)](img/tmux0.png)
 
 Each tab is called a window. The terms are important if you read the
-tmux manpage, the authoritative source on how tmux works.
+[tmux manpage](https://man.openbsd.org/tmux), the authoritative source
+on how tmux works.
 
 **All tmux commands begin with a prefix key: Control-b by default.**
 
@@ -75,9 +76,10 @@ bar. In the first screenshot above, only one tmux tab was open: 0:bash
 The name 'bash' in the tab will change if you run some types of
 commands.
 
-Edit a new file with vi(1). Or you can use nano(1). I chose vi this
-time because it doesn't have as much text at the bottom of the screen
-as nano for this example.
+Edit a new file with [vi(1)](https://man.openbsd.org/vi). Or you can
+use [nano](https://nano-editor.org). I chose vi this time because it
+doesn't have as much text at the bottom of the screen as nano for this
+example.
 
 ```
 $ vi test
@@ -86,7 +88,7 @@ $ vi test
 [![tmux2.png](img/tmux2.png)](img/tmux2.png)
 
 Notice the tab title changed from `1:bash` to `1:vi`. To exit vi, type
-Esc :qa! That is: the Escape key, colon, q, a and ! (exclamation
+`Esc :qa!` That is: the `Escape key`, `:` (colon), `q`, `a` and `!` (exclamation
 point, aka the bang character).
 
 ```
@@ -94,25 +96,34 @@ point, aka the bang character).
 ```
 
 If you had used nano, instead, the tab title would have changed to
-1:nano while nano was open.
+`1:nano` while nano was open.
 
-In this tab, run a 'dnf update' or 'apt update'.
+**Most of the commands point to [OpenBSD
+manpages](https://man.openbsd.org) because I like
+[OpenBSD](https://openbsd.org). I adapted this guide from the one I
+wrote at work, where I took screenshots in Windows 10 ssh'ed into an
+[Alma Linux](https://almalinux.org) virtual machine.**
+
+In this tab, update the system with
+[dnf(8)](https://man7.org/linux/man-pages/man8/dnf.8.html).
 
 ```
 $ sudo dnf update
 ```
 
-While running dnf update with sudo, the tab changes to 1:sudo.
+While running `dnf update` with [sudo](https://www.sudo.ws), the tab
+changes to `1:sudo`.
 
 [![tmux3.png](img/tmux3.png)](img/tmux3.png)
 
-While that update is going, switch to the first tab with Ctrl-b n.
+While that update is going, switch to the first tab with `Ctrl-b n`.
 
 ```
 Ctrl-b n
 ```
 
-Read the manpage for the ls command, for example.
+Read the manpage for the [ls(1)](https://openbsd.org/ls) command, for
+example.
 
 ```
 $ man ls
@@ -120,17 +131,17 @@ $ man ls
 
 [![tmux4.png](img/tmux4.png)](img/tmux4.png)
 
-Now notice the first window (tab 0) has changed from 0:bash to 0:man,
-because we're using the 'man' program to read the manual for the 'ls'
-command. Notice also the asterisk (\*) is on the 0 window because
-that's the one we're viewing.
+Now notice the first window (tab 0) has changed from `0:bash` to
+`0:man`, because we're using [man(1)](https://man.openbsd.org/man) to
+read the manual for the `ls` command. Notice also the asterisk (\*) is
+on the `0` window because that's the one we're viewing.
 
-You can close out of the ls manpage by typing q for quit. But don't do
-that yet.
+You can close out of the ls manpage by typing `q` for quit. But don't
+do that yet.
 
 You can often tell when a command completes in the other window
-without even switching to view it. For instance, once the 'dnf update'
-finishes in the second tab '1:sudo', it'll change back to '1:bash'.
+without even switching to view it. For instance, once the `dnf update`
+finishes in the second tab `1:sudo`, it'll change back to `1:bash`.
 
 [![tmux5.png](img/tmux5.png)](img/tmux5.png)
 
@@ -145,8 +156,8 @@ Ctrl-b n
 
 [![tmux6.png](img/tmux6.png)](img/tmux6.png)
 
-We switched back to the second tab, 1:bash, where we had run 'dnf
-update'. We see that command has now completed.
+We switched back to the second tab, `1:bash`, where we had run `dnf
+update`. We see that command has now completed.
 
 Leave this tmux session the way it is for the next exercise.
 
@@ -156,7 +167,8 @@ Sessions in tmux are like whole web browser windows. Each can have its
 own set of tabs.
 
 For terminology in the tmux manpage: A web browser window is like a
-tmux session. A browser tab is like a tmux window.
+tmux session. A browser tab is like a tmux window. A tmux window can
+be split into multiple window panes.
 
 Detach your terminal (command prompt window) from this tmux session.
 
