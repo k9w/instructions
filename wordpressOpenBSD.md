@@ -1,4 +1,268 @@
-08-24-2022
+# Install and Configure Wordpress on OpenBSD
+
+This guide shows you how to install and configure Wordpress on
+OpenBSD.
+
+## Setup the Webserver
+
+## Setup the Database
+
+```
+# pkg_add mariadb_server
+# rcctl enable mysqld
+# rcctl start mysqld
+# rcctl check mysqld
+# mysql_install_db
+# mysql_secure_installation
+# vi /etc/my/cnf
+```
+
+```
+[client-server]
+socket=/var/run/sock/mysql.sock
+port=3306
+```
+
+```
+# mysql -u root -p
+```
+
+Enter the root password you set earlier.
+
+Create a new sample database.
+
+```
+MariaDB [(none)]> CREATE DATABASE sampledb;
+```
+
+Create a new standard user with a strong password.
+
+```
+MariaDB [(none)]> CREATE USER 'user2'@'localhost' IDENTIFIED BY 'STRONG-PASSWORD';
+```
+
+Grant the user full permissions to the sample database.
+
+```
+MariaDB [(none)]> use sampledb; 
+MariaDB [sampledb]> GRANT ALL PRIVILEGES ON sampledb.* TO
+'user2'@'localhost';
+```
+
+Reload the privileges.
+
+```
+MariaDB [sampledb]> FLUSH PRIVILEGES;
+```
+
+Exit the console.
+
+```
+MariaDB [sampledb]> EXIT 
+```
+
+Log in to the MySQL console again, this time as a standard user.
+
+```
+# mysql -u user2 -p
+
+Check the current databases accessible by the user.
+
+MariaDB [(none)]> show databases;
+
+
+
++--------------------+
+
+| Database           |
+
++--------------------+
+
+| information_schema |
+
+| sampledb           |
+
++--------------------+
+
+2 rows in set (0.002 sec)
+
+Exit the console.
+
+MariaDB [(none)]> EXIT
+```
+
+## Setup PHP to talk with Webserver and Database
+
+```
+# pkg_add php-mysqli php-pdo_mysql
+# vi /var/www/htdocs/test.php
+```
+
+```
+<?php
+  $servername = "127.0.0.1";
+  $username = "username";
+  $password = "password";
+  // Create connection to MariaDB
+  $connection = new mysqli($servername, $username ,$password);
+  // Test connection to MariaDB
+  if ($connection->connect_error) {
+    die("Database Connection Failed: " . $connection->connect_error);
+  }
+  echo "Database connected successfully. Congratulations!";
+?>
+```
+
+Visit that page in your browser.
+
+## Install Wordpress
+
+```
+# pkg_add php php-gd php-intl php-xmlrpc php-curl php-zip php-mysqli php-pdo_mysql pecl74-mcrypt pecl74-imagick
+```
+
+Enable installed modules.
+
+```
+# cp /etc/php-7.4.sample/* /etc/php-7.4/
+```
+
+Enable and Start PHP-FPM.
+
+```
+# rcctl enable php74_fpm
+# rcctl start php74_fpm
+```
+
+```
+# vi /etc/httpd.conf
+```
+
+```
+ext_ip="*" #Enter Your Vultr IP Address here
+
+server "default" {
+        listen on $ext_ip port 80
+        root "/htdocs/"
+directory index "index.php"
+
+ location "*.php*" {
+            fastcgi socket "/run/php-fpm.sock"
+    }
+
+location "/posts/*" {
+            fastcgi {
+                    param SCRIPT_FILENAME \
+                            "/htdocs/index.php"
+                     socket "/run/php-fpm.sock"
+            }
+    }
+
+    location "/page/*" {
+            fastcgi {
+                    param SCRIPT_FILENAME \
+                            "/htdocs/index.php"
+                    socket "/run/php-fpm.sock"
+            }
+    }
+
+   location "/feed/*" {
+            fastcgi {
+                    param SCRIPT_FILENAME \
+                            "/htdocs/index.php"
+                    socket "/run/php-fpm.sock"
+            }
+    }
+
+    location "/comments/feed/*" {
+            fastcgi {
+                    param SCRIPT_FILENAME \
+                            "htdocs/index.php"
+                    socket "/run/php-fpm.sock"
+            }
+    }
+
+     location "/wp-json/*" {
+            fastcgi {
+                    param SCRIPT_FILENAME \
+                            "htdocs/index.php"
+                    socket "/run/php-fpm.sock"
+            }
+    }
+}
+
+types {
+        text/css css ;
+        text/html htm html ;
+        text/txt txt ;
+        image/gif gif ;
+        image/jpeg jpg jpeg ;
+        image/png png ;
+        application/javascript js ;
+        application/xml xml ;
+
+}
+ server "www.example.net" {
+        listen on $ext_ip port 80
+    }
+```
+
+```
+# mkdir /var/www/etc
+# cp /etc/resolv.conf /var/www/etc/.
+# cp /etc/hosts /var/www/etc/.
+```
+
+```
+# mysql
+```
+
+```
+MariaDB [(none)]> CREATE DATABASE wpdb;
+MariaDB [(none)]> CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'strongpassword';
+MariaDB [(none)]> use wpdb; 
+MariaDB [wpdb]> GRANT ALL PRIVILEGES ON wpdb.* TO 'wpuser'@'localhost';
+MariaDB [wpdb]> FLUSH PRIVILEGES;
+```
+
+```
+$ cd ~/Downloads
+$ ftp -o https://wordpress.org/latest.tar.gz
+$ tar -xzvf latest.tar.gz
+# mv wordpress/* /var/www/htdocs
+# chown -R www:www /var/www/htdocs
+```
+
+Run web installer.
+
+```
+https://your-domain
+```
+
+Click Let's Go to get started with your WordPress configuration.
+
+Enter the Database name created earlier, a Username and associated
+Password. Then, under Database Host replace localhost with 127.0.0.1
+or localhost:/var/run/mysql/mysql.sock.
+
+[paste my own screenshot]
+
+Next, a wp-config.php file will be automatically created. Click Run the Installation to enter your first website title and administrator account details to set up WordPress.
+
+Now, login to your WordPress dashboard, install themes, plugins and
+create users necessary to develop your websites on the platform.
+
+[paste my own screensho]
+
+o limit potential attacks on your WordPress server, you can install security plugins such as Wordfence or Sucuri to limit password guesses and access to the wp-login page.
+
+Also, delete the WordPress installation script to limit any duplicate installations.
+
+```
+# rm /var/www/htdocs/wp-admin/install.php
+```
+
+## See also
 
 First install and configure MariaDB.
 <https://www.vultr.com/docs/how-to-install-mariadb-on-openbsd-7>
