@@ -15,10 +15,51 @@ Handbook](https://make.wordpress.org/hosting/handbook).
 
 ### PHP and Extensions to PHP
 
+OpenBSD offers multiple versions of PHP.
+
+```
+$ pkg_info -I php | cut -d" " -f1
+```
+
+On 7.2-release:
+```
+php-7.4.32p0
+php-7.4.33
+php-8.0.24p0
+php-8.0.25
+php-8.0.26
+php-8.1.11p0
+php-8.1.12
+php-8.1.13
+```
+
+On 7.2-current (Dec 13 2022 snapshot):
+```
+php-7.4.33
+php-8.0.26
+php-8.1.13
+php-8.2.0p0
+```
+
+If you find any PHP extensionsrecommended by Wordpress, are not tied to
+the latest PHP version in -current, they likely won't be updated until
+shortly before the next OpenBSD release.
+
+Examples.
+
+In this case, you'll have best support for Wordpress features by using
+the latest version of PHP offered for the most recent OpenBSD release.
+
+So in our case of 7.2-release, let's go with PHP 8.1.
+
+```
+# pkg_add php ....
+```
+
 ### Non-PHP Dependencies
 
 ```
-# pkg_add maradb-server 
+# pkg_add mariadb-server 
 ```
 
 ## Setup the Database
