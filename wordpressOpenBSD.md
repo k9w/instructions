@@ -5,6 +5,22 @@ OpenBSD.
 
 ## Setup the Webserver
 
+## Install Dependencies
+
+[Wordpress.org](https://wordpress.org) lists their required,
+recommended, and optional dependencies in the [Server Environment](
+https://make.wordpress.org/hosting/handbook/server-environment)
+section of their [Hosting
+Handbook](https://make.wordpress.org/hosting/handbook).
+
+### PHP and Extensions to PHP
+
+### Non-PHP Dependencies
+
+```
+# pkg_add maradb-server 
+```
+
 ## Setup the Database
 
 ```
@@ -69,25 +85,14 @@ Log in to the MySQL console again, this time as a standard user.
 Check the current databases accessible by the user.
 
 MariaDB [(none)]> show databases;
-
-
-
 +--------------------+
-
 | Database           |
-
 +--------------------+
-
 | information_schema |
-
 | sampledb           |
-
 +--------------------+
-
 2 rows in set (0.002 sec)
-
 Exit the console.
-
 MariaDB [(none)]> EXIT
 ```
 
@@ -263,6 +268,8 @@ Also, delete the WordPress installation script to limit any duplicate installati
 ```
 
 ## See also
+
+<https://wordpress.org/support/article/creating-database-for-wordpress/#using-the-mysql-client>
 
 First install and configure MariaDB.
 <https://www.vultr.com/docs/how-to-install-mariadb-on-openbsd-7>
