@@ -3,7 +3,6 @@
 This guide shows you how to install and configure Wordpress on
 OpenBSD.
 
-## Setup the Webserver
 
 ## Install Dependencies
 
@@ -13,7 +12,7 @@ https://make.wordpress.org/hosting/handbook/server-environment)
 section of their [Hosting
 Handbook](https://make.wordpress.org/hosting/handbook).
 
-### PHP and Extensions to PHP
+### PHP Version
 
 OpenBSD offers multiple versions of PHP.
 
@@ -56,11 +55,17 @@ So in our case of 7.2-release, let's go with PHP 8.1.
 # pkg_add php ....
 ```
 
+### Extensions to PHP
+
+
+
 ### Non-PHP Dependencies
 
 ```
 # pkg_add mariadb-server 
 ```
+
+## Setup the Webserver
 
 ## Setup the Database
 
