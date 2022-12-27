@@ -57,6 +57,10 @@ So in our case of 7.2-release, let's go with PHP 8.1.
 
 ### Extensions to PHP
 
+From <https://www.openbsdhandbook.com/howto/wordpress>:
+- php-cgi
+- fcgi
+
 #### Required
 
 - php-mysqli or php-pdo_mysql
