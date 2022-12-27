@@ -59,9 +59,7 @@ So in our case of 7.2-release, let's go with PHP 8.1.
 
 #### Required
 
-php-mysqli
-or 
-php-pdo_mysql
+- php-mysqli or php-pdo_mysql
 
 According to
 [W3Schools](https://www.w3schools.com/php/php_mysql_connect.asp),
@@ -70,52 +68,49 @@ databases too.
 
 #### Strongly Recommended
 
-curl or php-curl ?
-libxml or php-xmlrpc ?
-libexif (php-mbstring not found in openbsd packages) ? 
-fileinfo (no openbsd package) ? 
-imagick or php-imagick
-mbstring (no openbsd package) ?
-openssl 3.0 for php 8.1 (will it work with libressl?) ?
-pcre or pcre2 ?
-php-zip
-
+- curl or php-curl ?
+- libxml or php-xmlrpc ?
+- libexif (php-mbstring not found in openbsd packages) ? 
+- fileinfo (no openbsd package) ? 
+- imagick or php-imagick
+- mbstring (no openbsd package) ?
+- openssl 3.0 for php 8.1 (will it work with libressl?) ?
+- pcre or pcre2 ?
+- php-zip
 
 #### Recommended
 
-memcached or libmemcached
-opache (requires libcurl)
-redis (if using Redis)
+- memcached or libmemcached
+- opache (requires libcurl)
+- redis (if using Redis)
 
 #### Optional
 
-bc - arbitrary precision math
-php-filter
-image, libgd, php-gd (if imagick is not installed)
-iconv
-intl
-simplexml
-sodium
-xmlreader
-zlib
+- bc - arbitrary precision math
+- php-filter
+- image, libgd, php-gd (if imagick is not installed)
+- iconv
+- intl
+- simplexml
+- sodium
+- xmlreader
+- zlib
 
 #### For file changes, plugin updates, etc.
 
-php-ssh2
-php-ftp
-php-sockets
+- php-ssh2
+- php-ftp
+- php-sockets
 
 #### System Packages
 
-ImageMagick
-Ghost Script
+- ImageMagick
+- Ghost Script
 
 
 ### Non-PHP Dependencies
 
-```
-mariadb-server 
-```
+- mariadb-server 
 
 See the webserver setup section below for which webserver package to
 install.
