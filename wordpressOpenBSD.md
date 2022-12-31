@@ -63,7 +63,8 @@ From <https://www.openbsdhandbook.com/howto/wordpress>:
 
 #### Required
 
-- php-mysqli or php-pdo_mysql
+- [php-mysqli](https://openports.pl/path/lang/php/8.1,-mysqli) or
+  [php-pdo_mysql](https://openports.pl/path/lang/php/8.1,-pdo_mysql)
 
 According to
 [W3Schools](https://www.w3schools.com/php/php_mysql_connect.asp),
@@ -72,8 +73,10 @@ databases too.
 
 #### Strongly Recommended
 
-- curl or php-curl ?
-- libxml or php-xmlrpc ?
+- [curl](https://openports.pl/path/net/curl) or
+  [php-curl](https://openports.pl/path/lang/php/8.1,-curl) ?
+- [libxml](https://openports.pl/path/textproc/libxml) or
+  [php-xmlrpc](https://openbsd.app/?search=php-xmlrpc&current=on) ?
 - libexif (php-mbstring not found in openbsd packages) ? 
 - fileinfo (no openbsd package) ? 
 - imagick or php-imagick
