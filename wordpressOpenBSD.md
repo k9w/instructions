@@ -63,8 +63,19 @@ From <https://www.openbsdhandbook.com/howto/wordpress>:
 
 #### Required
 
-- [php-mysqli](https://openports.pl/path/lang/php/8.1,-mysqli) or
-  [php-pdo_mysql](https://openports.pl/path/lang/php/8.1,-pdo_mysql)
+WordPress needs one of these two PHP extensions in order to
+communicate with its database.
+
+- [php-mysqli](https://www.php.net/manual/en/book.mysqli.php) Is an
+  extension to PHP allowing access to MySQL, MariaDB, or any database
+  compatible with MySQL. The OpenBSD package is also called
+  [php-mysqli](https://openports.pl/path/lang/php/8.1,-mysqli).
+
+- [php-pdo_mysql](https://www.php.net/manual/en/ref.pdo-mysql.php) is
+  a PDO driver giving PHP access to many databases, including
+  MySQL-compatible ones such as MariaDB. The OpenBSD package is also
+  called
+  [php-pdo_mysql](https://openports.pl/path/lang/php/8.1,-pdo_mysql).
 
 According to
 [W3Schools](https://www.w3schools.com/php/php_mysql_connect.asp),
@@ -73,16 +84,41 @@ databases too.
 
 #### Strongly Recommended
 
-- [curl](https://openports.pl/path/net/curl) or
-  [php-curl](https://openports.pl/path/lang/php/8.1,-curl) ?
-- [libxml](https://openports.pl/path/textproc/libxml) or
-  [php-xmlrpc](https://openbsd.app/?search=php-xmlrpc&current=on) ?
-- libexif (php-mbstring not found in openbsd packages) ? 
-- fileinfo (no openbsd package) ? 
-- imagick or php-imagick
-- mbstring (no openbsd package) ?
+- [curl](https://curl.se) is used to download or upload data over http
+  or https. OpenBSD package:
+  [curl](https://openports.pl/path/net/curl).
+
+- [php-curl](https://www.php.net/manual/en/book.curl.php) OpenBSD
+  package: [php-curl](https://openports.pl/path/lang/php/8.1,-curl) ?
+  (it is unclear which one they want)
+  
+- [libxml2](https://gitlab.gnome.org/GNOME/libxml2) is a library for
+  reading XML documents. OpenBSD pakcage:
+  [libxml](https://openports.pl/path/textproc/libxml)
+
+- [php-xmlrpc](https://openbsd.app/?search=php-xmlrpc&current=on) ?
+  (it is unclear which one they want)
+
+- [libexif](https://libexif.github.io) is a library for reading
+  metadata from EXIF image files from digital cameras. OpenBSD
+  package: [libexif](https://openports.pl/path/graphics/libexif)
+
+- [php-mbstring](https://www.php.net/manual/en/book.mbstring.php) is a
+  library to deal with multibyte encodings. not found in openbsd packages
+
+- [php-fileinfo](https://www.php.net/manual/en/intro.fileinfo.php) is
+  a library in the same vein as [fileinfo}(https://fileinfo.com) to
+  identify the type of a file. (no openbsd package)
+
+- [php-imagick](https://www.php.net/manual/en/book.imagick.php) is a
+  native PHP extension to create or modify images using the
+  ImageMagick API. OpenBSD package:
+  [pecl81-imagick](https://openports.pl/path/graphics/pecl-imagick,php81)
+
 - openssl 3.0 for php 8.1 (will it work with libressl?) ?
+
 - pcre or pcre2 ?
+
 - php-zip
 
 #### Recommended
