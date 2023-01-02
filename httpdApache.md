@@ -367,9 +367,27 @@ Headers and modules are installed to:
 - `/var/www/icons`
 
 
-Reference:
-<https://httpd.apache.org/docs/2.4/mod/quickreference.html>
-<https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html>
-<https://community.letsencrypt.org/t/recommended-apache-config/58294/2>
-<https://doc.owncloud.com/server/next/admin_manual/installation/letsencrypt/apache.html#lets-encrypt-acme-challenge>
+## Troubleshooting
+
+If you get this error:
+
+```
+$ httpd2 -t
+AH00526: Syntax error on line 154 of /etc/apache2/extra/httpd-ssl.conf:
+SSLCertificateKeyFile: file '/etc/ssl/private/example.com.key' does not exist or is empty
+```
+
+It is likely because Apache's www user does not have read, write, or
+execute permission to `/etc/ssl/private/example.com.key`.
+
+
+To fix it....
+
+
+## See also
+
+- <https://httpd.apache.org/docs/2.4/mod/quickreference.html>
+- <https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html>
+- <https://community.letsencrypt.org/t/recommended-apache-config/58294/2>
+- <https://doc.owncloud.com/server/next/admin_manual/installation/letsencrypt/apache.html#lets-encrypt-acme-challenge>
 
