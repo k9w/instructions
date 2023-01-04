@@ -53,3 +53,5 @@ Double-check `/etc/acme-client.conf`.
 
 If that doesn't fix it....
 
+It resolved itself a day later when I checked from a different browser
+and different computer.
