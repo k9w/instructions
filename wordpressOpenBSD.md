@@ -115,9 +115,16 @@ databases too.
   ImageMagick API. OpenBSD package:
   [pecl81-imagick](https://openports.pl/path/graphics/pecl-imagick,php81)
 
-- openssl 3.0 for php 8.1 (will it work with libressl?) ?
+- [openssl](https://www.openssl.org) 3.0 for php 8.1 (will it work
+  with OpenBSD's [libressl](https://www.libressl.org)) ?
 
-- pcre or pcre2 ?
+- [pcre](https://www.php.net/manual/en/book.pcre.php) Regular
+  expressions modeled after Perl 5. OpenBSD package:
+  [pcre](https://openports.pl/path/devel/pcre)
+
+- [pcre2](https://github.com/PCRE2Project/pcre2) Regular expressions
+  in C modeled after Perl 5. OpenBSD package:
+  [pcre2](https://openports.pl/path/devel/pcre2) ?
 
 - php-zip
 

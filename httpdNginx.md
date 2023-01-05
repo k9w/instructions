@@ -233,12 +233,12 @@ $ diff nginx.conf.orig nginx.conf
 
 ## See also
 
-<https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
-<https://stackoverflow.com/questions/69318127/nginx-2-different-domains-on-one-server>
-<https://nginx.org/en/docs/http/request_processing.html>
-<https://www.openbsdhandbook.com/services/webserver/nginx>
-<https://nginx.org/en/docs>
-<https://nginx.org/en/docs/beginners_guide.html>
-<https://nginx.org/en/docs/http/server_names.html>
-<https://www.hostiserver.com/community/articles/how-to-redirect-301-in-apache-and-ngninx>
+- <https://dataswamp.org/~solene/2019-07-04-nginx-acme.html>
+- <https://stackoverflow.com/questions/69318127/nginx-2-different-domains-on-one-server>
+- <https://nginx.org/en/docs/http/request_processing.html>
+- <https://www.openbsdhandbook.com/services/webserver/nginx>
+- <https://nginx.org/en/docs>
+- <https://nginx.org/en/docs/beginners_guide.html>
+- <https://nginx.org/en/docs/http/server_names.html>
+- <https://www.hostiserver.com/community/articles/how-to-redirect-301-in-apache-and-ngninx>
 
