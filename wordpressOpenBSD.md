@@ -126,35 +126,57 @@ databases too.
   in C modeled after Perl 5. OpenBSD package:
   [pcre2](https://openports.pl/path/devel/pcre2) ?
 
-- php-zip
+- [php-zip](https://www.php.net/manual/en/book.zip.php) Transparently
+  read or write zip archives and the files inside them. OpenBSD
+  package: [php-zip](https://openports.pl/path/lang/php/8.1,-zip)
 
 #### Recommended
 
-- memcached or libmemcached
+- [Memcached](https://memcached.org) Caching to speed up
+  database-driven applications. PHP package:
+  [php-memcached](https://www.php.net/manual/en/book.memcached.php)
+  OpenBSD package:
+  [memcached](https://openports.pl/path/misc/memcached),
+  [pecl81-memcached](https://openports.pl/path/www/pecl-memcached,php81)
+
+- libmemcached
+
 - opache (requires libcurl)
+
 - redis (if using Redis)
 
 #### Optional
 
 - bc - arbitrary precision math
+
 - php-filter
+
 - image, libgd, php-gd (if imagick is not installed)
+
 - iconv
+
 - intl
+
 - simplexml
+
 - sodium
+
 - xmlreader
+
 - zlib
 
 #### For file changes, plugin updates, etc.
 
 - php-ssh2
+
 - php-ftp
+
 - php-sockets
 
 #### System Packages
 
 - ImageMagick
+
 - Ghost Script
 
 
