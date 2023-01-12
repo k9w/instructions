@@ -139,7 +139,9 @@ databases too.
   [memcached](https://openports.pl/path/misc/memcached),
   [pecl81-memcached](https://openports.pl/path/www/pecl-memcached,php81)
 
-- libmemcached
+- [libmemcached](https://libmemcached.org) C and C++ API library for
+  Memcached. OpenBSD package:
+  [libmemcached](https://openports.pl/path/devel/libmemcached)
 
 - opache (requires libcurl)
 
