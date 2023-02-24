@@ -75,3 +75,26 @@ cp pledge.gpu pledge.gpu.bak
 For each file, remove all lines and replace with 'disable' on its own
 line. Commenting out the other lines wont' work.
 
+For firefox crashing during jitsi calls, Andrew Fresh said to check that
+my account is in the staff login class.
+
+Check with:
+
+```
+# vipw
+```
+
+He also has his own launcher for firefox to set ulimits higher.
+
+
+```
+$ cat /home/afresh1/bin/firefox
+#!/bin/sh
+
+ulimit -n $(ulimit -Hn)
+ulimit -d $(ulimit -Hd)
+exec $_firefox "$@"
+```
+
+<https://github.com/michaeldexter/occambsd>
+
