@@ -35,7 +35,7 @@ not sub-commands:
 - [rcsdiff(1)](https://man.openbsd.org/rcsdiff) - Compare multiple
   revisions of the tracked file.
 
-- [rcsmerge(1)](https://man.openbsd.org/rcsdiff) - Merge changes
+- [rcsmerge(1)](https://man.openbsd.org/rcsmerge) - Merge changes
   between revisions.
 
 - [rcsclean(1)](https://man.openbsd.org/rcsclean) - Clean up working
@@ -359,6 +359,165 @@ It looks normal.
 Let's now revisit the repo file itself and see how it changed with the
 second commit.
 
+```
+head	1.2;
+access;
+symbols;
+locks
+	kevin:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2023.07.03.20.39.17;	author kevin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2023.07.03.15.20.50;	author kevin;	state Exp;
+branches;
+next	;
+
+
+desc
+@First commit.
+@
+
+
+1.2
+log
+@Fix typos.
+@
+text
+@# Aallow wheel members to doas without password and keep their
+# environment variables.
+
+permit nopass :wheel
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+#allow wheel members to doas without password and keep their
+# environment variables
+d5 1
+@
+```
+
+Head is at commit 1.2 instead of the initial 1.1.
+
+Our user, kevin, now has a lock on commit 1.2, because we used the
+```-l``` flag to ```ci``` to keep the working copy in the directory
+and locked (available to kevin) for editing.
+
+Next we see the metadata for the two commit records, sorted newest to
+oldest.
+
+- Commit 1.2: ```2023 July 3rd at 20:39```.
+
+- Commit 1.1: ```2023 July 3rd at 15:20```.
+
+No branches exist for either commit.
+
+One thing we might have noticed from the first look at the repo file
+above was the ```desc``` or description of the file is ```First
+commit.```
+
+We should have specified the description as some thing such as:
+```
+System configuration file for the doas security utility.
+```
+
+And last we see the two commits themselves.
+
+The latest commit, 1.2, shows the commit log message ```Fix typos.```
+as well as thfull text of the file's current contents as well as
+
+The previous commit, 1.1, shows a log message of ```Initial
+revision``` (likely an RCS default), and only the lines that differ
+from the commit directly after it.
+
+
+RCS does not keep revision history of its own repo file, obviously,
+because that's where it records the changes to the file it
+tracks. But we can get a diff of how the repo file changed from the
+first to the second commit by saving the repo file's initial contents from
+the first commit earlier in this guide, paste it into a new file with
+extension ```.orig``` and use the ```-u``` flag to
+[diff(1)](https://man.openbsd.org/diff) to produce a unified diff.
+
+```
+--- doas.conf,v.orig	Mon Jul  3 21:57:16 2023
++++ doas.conf,v	Mon Jul  3 20:39:17 2023
+@@ -1,14 +1,20 @@
+-head    1.1;
++head	1.2;
+ access;
+ symbols;
+-locks; strict;
+-comment @# @;
++locks
++	kevin:1.2; strict;
++comment	@# @;
+ 
+ 
++1.2
++date	2023.07.03.20.39.17;	author kevin;	state Exp;
++branches;
++next	1.1;
++
+ 1.1
+-date    2023.07.03.15.20.50;    author kevin;   state Exp;
++date	2023.07.03.15.20.50;	author kevin;	state Exp;
+ branches;
+-next    ;
++next	;
+ 
+ 
+ desc
+@@ -16,14 +22,27 @@
+ @
+ 
+ 
+-1.1
++1.2
+ log
+-@Initial revision
++@Fix typos.
+ @
+ text
+-@#allow wheel members to doas without password and keep their
+-# environment variables
++@# Aallow wheel members to doas without password and keep their
++# environment variables.
+ 
+ permit nopass :wheel
++
+ @
+ 
++
++1.1
++log
++@Initial revision
++@
++text
++@d1 2
++a2 2
++#allow wheel members to doas without password and keep their
++# environment variables
++d5 1
++@
+```
+
+
+Next we will see how to update the description and the initial
+commit's log message.
 
 
 
