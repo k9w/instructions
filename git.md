@@ -230,17 +230,14 @@ $ git checkout -- test-file
 ```
 
 
-
-
-<p>
 # Cloning
 
 On the server where we made 'dotfiles.git' earlier, we could clone it
 into my home folder on the same server.
 
 ```
-9$ cd ~
-9$ git clone git-repos/dotfiles.git .
+$ cd ~
+$ git clone git-repos/dotfiles.git .
 ```
 
 Notice the inclusion of the dot (.) at the end of the command
@@ -387,8 +384,6 @@ flap.md  r.md
 
 
 
-
-<br>
 # Remotes
 
 
@@ -474,6 +469,19 @@ name on your Github profile.
 
 <https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository>
 <https://github.com/new>
+
+
+Then set the url with [git-remote(1)](https://git-scm.com/docs/git-remote).
+
+```
+$ git remote set-url --add --push origin git://original/repo.git
+$ git remote set-url --add --push origin git://another/repo.git
+```
+
+```
+$ git remote set-url --add --push github https://github.com/k9w/instructions.git
+```
+
 
 And push to the server.
 
