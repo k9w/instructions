@@ -159,10 +159,12 @@ file.
 
 ### The RCS repo file
 
-Before we continue, let's look at the repo file in detail.
+In the next section, we will look at how to recover the original
+file. But before we continue, let's look at the repo file in detail.
 
 ```
-$ cat doas.conf,v                                                                                                                                                                            
+$ cat doas.conf,v
+
 head    1.1;
 access;
 symbols;
@@ -202,7 +204,7 @@ second commit is 1.2, third is 1.3, etc.
 We've only made one commit thus far. The rest of the repo file shows
 us:
 
-- The date and author of the commit.
+- The date and author of the commit. 2023, July 3rd, at 15:20.
 
 - We have no branches yet.
 
@@ -234,7 +236,7 @@ $ ls -al doas.conf*
 -r--r--r--  1 kevin  wheel  299 Jul  3 15:20 doas.conf,v
 ```
 
-There are two problems with this:
+There are two problems here:
 
 - ```doas.conf``` is now read-only, compared to the ```-rw-r--r--```
   permissions we had before we checked it into RCS.
@@ -243,8 +245,124 @@ There are two problems with this:
   editor at ```14:18```. Why does it now say last modified at
   ```15:44```?
 
+Here's what happened:
+
+- The file is read-only because RCS only lets a file be edited when
+  it's ```locked``` to one person to edit it at a time. File locking
+  is intended to disuade multiple people from editing the file at the
+  same time, or the same person from editing the file in multiple
+  terminals/editors. The intention is to minimize multiple sets of
+  changes that could conflict with one another. When a file is
+  ```unlocked```, anyone may lock it for exclusive editing
+  permission. By default, ```ci``` checks in the file and clears any
+  existing lock, and stores the file unlocked in the repository.
+
+- By default, ```co``` checks out the working copy of the file by
+  creating it new, which gives it a last-modified time of when you
+  checked it out (15:44), not earlier when you saved it
+  (14:18). Additionally, the time we checked in the file to RCS with
+  ```ci``` was ```15:20```. Because ```ci``` deletes the working copy
+  by default, we cannot use RCS to retrieve the file with it's
+  original last-modified time of 14:18. What we can do is restore it
+  with the timestamp it was checked in at 15:20.
+
+Here's what to do:
+
+We could manually set the new working copy of the file from read-only
+to writable with [chmod(1)](https://man.openbsd.org/chmod). But it's
+better to use RCS's own commands and flags to fix this.
+
+We will see later that it's better to not check in the file the
+default way we did above, which locks the file and removes the working
+copy.
+
+However since we did check it in the default way, we can make it
+editable by us and restore its last-checked-in time as the
+last-modified time.
+
+The [co(1) manpage](https://man.openbsd.org/co) describes an option to
+fix each of the above issues:
+
+	-l
+		Retrieve the latest commit and lock it for editing.
+
+	-M
+		Set the modification date of the checked-out file to the time
+		of the last commit.
+
+RCS does not support multiple command flags behind one dash
+```-lM```. They must be separated out as ```-l -M```. The sequence
+does not matter in this case.
+
+```
+$ co -l -M doas.conf
+doas.conf,v  -->  doas.conf
+revision 1.1 (locked)
+done
+```
+
+Let's take a look at what we checked-out.
+
+```
+$ ls -al doas.conf*
+-rw-r--r--  1 kevin  kevin  107 Jul  3 15:20 doas.conf
+-r--r--r--  1 kevin  wheel  310 Jul  3 20:10 doas.conf,v
+```
+
+doas.conf still shows the same content. But it now shows the
+last-checked-in time of 15:20 rather than 15:44, which was when we
+first checked it out.
+
+### A better way
+
+To avoid all that check-out cleanup, let's check in each new commit we
+want to make by leaving the file locked for editing and intact as a
+working copy outside its repo file using the following flag to
+```ci```.
+
+	-l
+		Commit the current working copy and preserve it in its
+		directory with unmodified edit permissions.
+
+Here's how that works:
+
+ - (Optionally) edit the file and make some changes. Here is how the
+   file looks now. (The blank newline at the end is intentional.)
+
+```
+$ cat doas.conf
+# Aallow wheel members to doas without password and keep their
+# environment variables.
+
+permit nopass :wheel
+
+```
+
+ - Now check-in or commit the new version with the -l flag.
+
+```
+$ ci -l doas.conf
+doas.conf,v  <--  doas.conf
+new revision: 1.2; previous revision: 1.1
+enter log message, terminated with a single '.' or end of file:
+>> Fix typos.
+>> .
+revision 1.2 (locked)
+done
+a$ ls -al doas.conf*                                                                                                                                                                          
+-rw-r--r--  1 kevin  kevin  111 Jul  3 20:39 doas.conf
+-r--r--r--  1 kevin  wheel  522 Jul  3 20:39 doas.conf,v
+```
+
+It looks normal.
+
+Let's now revisit the repo file itself and see how it changed with the
+second commit.
 
 
+
+
+[continue editing here]
 
 
 
