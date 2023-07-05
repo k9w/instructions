@@ -410,7 +410,8 @@ d5 1
 @
 ```
 
-Head is at commit 1.2 instead of the initial 1.1.
+Head is at commit 1.2 instead of the initial 1.1. That means the
+latest version is 1.2.
 
 Our user, kevin, now has a lock on commit 1.2, because we used the
 ```-l``` flag to ```ci``` to keep the working copy in the directory
@@ -429,7 +430,8 @@ One thing we might have noticed from the first look at the repo file
 above was the ```desc``` or description of the file is ```First
 commit.```
 
-We should have specified the description as some thing such as:
+We should have specified the description as something such as:
+
 ```
 System configuration file for the doas security utility.
 ```
@@ -437,7 +439,7 @@ System configuration file for the doas security utility.
 And last we see the two commits themselves.
 
 The latest commit, 1.2, shows the commit log message ```Fix typos.```
-as well as thfull text of the file's current contents as well as
+as well as the full text of the file's current contents.
 
 The previous commit, 1.1, shows a log message of ```Initial
 revision``` (likely an RCS default), and only the lines that differ
@@ -445,14 +447,16 @@ from the commit directly after it.
 
 
 RCS does not keep revision history of its own repo file, obviously,
-because that's where it records the changes to the file it
-tracks. But we can get a diff of how the repo file changed from the
-first to the second commit by saving the repo file's initial contents from
-the first commit earlier in this guide, paste it into a new file with
-extension ```.orig``` and use the ```-u``` flag to
-[diff(1)](https://man.openbsd.org/diff) to produce a unified diff.
+because that's where it records the changes to the file it tracks. But
+we can get a diff of how the repo file changed from the first to the
+second commit by saving the repo file's initial contents from the
+first commit earlier in this guide, paste it into a new file with
+extension ```.orig``` and use
+[diff(1)](https://man.openbsd.org/diff)'s ```-u``` flag to produce a
+unified diff.
 
 ```
+$ diff -u doas.conf,v.orig doas.conf,v
 --- doas.conf,v.orig	Mon Jul  3 21:57:16 2023
 +++ doas.conf,v	Mon Jul  3 20:39:17 2023
 @@ -1,14 +1,20 @@
