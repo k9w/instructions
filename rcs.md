@@ -7,7 +7,7 @@ files.
 It preceeded other VCS'es Git, Got, Subversion, and CVS.
 
 RCS repositories (repos) are centralized, not distributed. In fact RCS
-has no concept of committing or checking in changes over the networ.k.
+has no concept of committing or checking in changes over the network.
 
 Each RCS repository tracks just one file. The repository is named
 identical to the file it tracks, with a ```,v``` suffix, including
@@ -281,7 +281,7 @@ editable by us and restore its last-checked-in time as the
 last-modified time.
 
 The [co(1) manpage](https://man.openbsd.org/co) describes an option to
-fix each of the above issues:
+fix each of those issues:
 
 	-l
 		Retrieve the latest commit and lock it for editing.
@@ -349,7 +349,7 @@ enter log message, terminated with a single '.' or end of file:
 >> .
 revision 1.2 (locked)
 done
-a$ ls -al doas.conf*                                                                                                                                                                          
+a$ ls -al doas.conf*
 -rw-r--r--  1 kevin  kevin  111 Jul  3 20:39 doas.conf
 -r--r--r--  1 kevin  wheel  522 Jul  3 20:39 doas.conf,v
 ```
