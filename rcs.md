@@ -523,7 +523,13 @@ $ diff -u doas.conf,v.orig doas.conf,v
 Next we will see how to update the description and the initial
 commit's log message.
 
+[show first how to display repo description and revision message with
+rlog]
 
+
+```
+$ rcs -t"New description" -m1.1:"First commit"
+```
 
 [continue editing here]
 
