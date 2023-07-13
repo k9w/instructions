@@ -523,12 +523,67 @@ $ diff -u doas.conf,v.orig doas.conf,v
 Next we will see how to update the description and the initial
 commit's log message.
 
-[show first how to display repo description and revision message with
-rlog]
-
+Here is how it looks with the bad description, before the fix.
 
 ```
-$ rcs -t"New description" -m1.1:"First commit"
+$ rlog doas.conf
+
+RCS file: doas.conf,v
+Working file: doas.conf
+head: 1.2
+branch:
+locks: strict
+        kevin: 1.2
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;     selected revisions: 2
+description:
+First commit.
+----------------------------
+revision 1.2    locked by: kevin;
+date: 2023/07/03 20:39:17;  author: kevin;  state: Exp;  lines: +3 -2;
+Fix typos.
+----------------------------
+revision 1.1
+date: 2023/07/03 15:20:50;  author: kevin;  state: Exp;
+Initial revision
+=============================================================================
+```
+
+Here is the fix.
+
+```
+$ rcs -t-"System doas configuration file" -m1.1:"First commit" doas.conf
+RCS file: doas.conf,v
+done
+```
+And here is how it looks after the fix.
+
+```
+$ rlog doas.conf
+
+RCS file: doas.conf,v
+Working file: doas.conf
+head: 1.2
+branch:
+locks: strict
+        kevin: 1.2
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;     selected revisions: 2
+description:
+System doas configuration file
+----------------------------
+revision 1.2    locked by: kevin;
+date: 2023/07/03 20:39:17;  author: kevin;  state: Exp;  lines: +3 -2;
+Fix typos.
+----------------------------
+revision 1.1
+date: 2023/07/03 15:20:50;  author: kevin;  state: Exp;
+First commit
+=============================================================================
 ```
 
 [continue editing here]
