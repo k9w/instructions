@@ -25,6 +25,15 @@ anoncvs@anoncvsd.spacehopper.org:/cvs, you need to change the mirror
 name in ./CVS/Root and then specify it one time on the command line
 next time you do cvs update.
 
+If you just change it in ./CVS/Root and then run CVS update without
+specifying the new mirror once on the command line, you might get an
+error like this:
+
+```
+cvs update: move away usr.sbin/zic/zic.8; it is in the way
+C usr.sbin/zic/zic.8
+```
+
 Here is how to switch the mirror to spacehopper while tracking
 7.3-release.
 
@@ -34,6 +43,8 @@ $ cvs -d anoncvs@anoncvs.spacehopper.org:/cvs -q up -Pd -rOPENBSD_7_3
 
 
 ### reposync: Host your own repository mirror
+
+https://github.com/sthen/reposync
 
 ## Host Your Own Project with CVS
 
