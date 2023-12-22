@@ -1,6 +1,43 @@
-	$Id: cvs_notes,v 1.11 2019/09/28 23:03:14 kevin Exp $
+## Introduction
 
-originally started 08-29-19
+## Build OpenBSD Ports or Base
+
+This seciton contains additions and clarifications to OpenBSD's [own
+documentation](https://www.openbsd.org/anoncvs.html) on using CVS to
+track OpenBSD code.
+
+One detail not shared on that page is CVS is the only way to track
+releases. The [Git mirror](https://github.com/openbsd) only tracks
+-current. This is particularly important if you use -release and you
+want to install a port such as [Tarsnap](https://tarsnap.com). Its
+[OpenBSD port](https://openports.pl/path/sysutils/tarsnap)
+deliberately does not have a pre-compiled package available, because
+the Tarsnap author encourages users to verify the client source code,
+to not blindly trust a pre-compiled package from someone else, but to
+verify the code is safe for them, and then compile a package for
+themselves.
+
+### Switch from one upstream repository mirror to another
+
+If you initially did a full checkout using
+anoncvs@anoncvs1.usa.openbsd.org:/cvs and want to switch to
+anoncvs@anoncvsd.spacehopper.org:/cvs, you need to change the mirror
+name in ./CVS/Root and then specify it one time on the command line
+next time you do cvs update.
+
+Here is how to switch the mirror to spacehopper while tracking
+7.3-release.
+
+```
+$ cvs -d anoncvs@anoncvs.spacehopper.org:/cvs -q up -Pd -rOPENBSD_7_3
+```
+
+
+### reposync: Host your own repository mirror
+
+## Host Your Own Project with CVS
+
+(The rest of the content on this page is old and will likely be replaced.)
 
 cd ~/k9w
 cvs -d $PWD init
