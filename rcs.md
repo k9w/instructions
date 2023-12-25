@@ -39,20 +39,25 @@ not sub-commands:
   between revisions.
 
 - [rcsclean(1)](https://man.openbsd.org/rcsclean) - Clean up working
-  files. This means if you have a configuration file tracked by RCS
-  delete the working copy while it is checked into the RCS ,v
-  repository. This is usually not what you want these days if you
-  actively use the configuration file in production in the same folder
-  as its ,v repository.
+  files in the current working directory. This means if you have a
+  configuration file tracked by RCS, delete the working copy while it
+  is checked out of the RCS ,v repository, or delete it regardless of
+  it's checked-out state with the -v flag. This is usually not what
+  you want these days. Most of the time you actively use the
+  configuration file in production in the same folder as its ,v
+  repository.
 
 - [ident(1)](https://man.openbsd.org/ident) - Identify the keyword
   string in RCS-tracked files.
 
 RCS supports two general workflows:
 
-- Lock the file for editing.
+- Check in and unlock the file to the ,v repo file and do not maintain
+  a working copy outside the repository, except when it is actively
+  locked for editing, and checked out for active editing.
 
-- Just check in changes and don't worry about locking.
+- Just check in changes to the repository and keep the working copy
+  available outside the repo and locked for editing.
 
 RCS command flags and manpages use the term ```revision``` to refer to
 a specific version of the tracked file. Later VCS'es call it a
@@ -64,9 +69,10 @@ a specific version of the tracked file. Later VCS'es call it a
 For our example, let's write a configuration file for
 [doas(1)](https://man.openbsd.org/doas), a [2-clause
 BSD-licensed](https://opensource.org/license/bsd-2-clause) tool to run
-commands as another user, usually privileged commands a root. Doas
-incorporates much less code than [sudo](https://www.sudo.ws) which is
-also [permissively-licensed](https://www.sudo.ws/about/license).
+commands as another user, usually privileged commands to be run as
+root. Doas incorporates much less code than
+[sudo](https://www.sudo.ws) which is also
+[permissively-licensed](https://www.sudo.ws/about/license).
 
 The file you want to track with RCS is called the working copy:
 
