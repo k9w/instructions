@@ -40,9 +40,9 @@ php-8.1.13
 php-8.2.0p0
 ```
 
-If you find any PHP extensionsrecommended by Wordpress, are not tied to
-the latest PHP version in -current, they likely won't be updated until
-shortly before the next OpenBSD release.
+If you find any PHP extensions recommended by Wordpress are not tied
+to the latest PHP version in -current, they likely won't be updated
+until shortly before the next OpenBSD release.
 
 Examples.
 
@@ -107,7 +107,7 @@ databases too.
   library to deal with multibyte encodings. not found in openbsd packages
 
 - [php-fileinfo](https://www.php.net/manual/en/intro.fileinfo.php) is
-  a library in the same vein as [fileinfo}(https://fileinfo.com) to
+  a library in the same vein as [fileinfo](https://fileinfo.com) to
   identify the type of a file. (no openbsd package)
 
 - [php-imagick](https://www.php.net/manual/en/book.imagick.php) is a
@@ -427,9 +427,11 @@ Next, a wp-config.php file will be automatically created. Click Run the Installa
 Now, login to your WordPress dashboard, install themes, plugins and
 create users necessary to develop your websites on the platform.
 
-[paste my own screensho]
+[paste my own screenshot]
 
-o limit potential attacks on your WordPress server, you can install security plugins such as Wordfence or Sucuri to limit password guesses and access to the wp-login page.
+To limit potential attacks on your WordPress server, you can install
+security plugins such as Wordfence or Sucuri to limit password guesses
+and access to the wp-login page.
 
 Also, delete the WordPress installation script to limit any duplicate installations.
 
