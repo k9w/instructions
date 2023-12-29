@@ -20,36 +20,35 @@ OpenBSD offers multiple versions of PHP.
 $ pkg_info -I php | cut -d" " -f1
 ```
 
-On 7.2-release:
+On 7.4-release:
 ```
-php-7.4.32p0
-php-7.4.33
-php-8.0.24p0
-php-8.0.25
-php-8.0.26
-php-8.1.11p0
-php-8.1.12
-php-8.1.13
+php-7.4.33p1
+php-8.0.30
+php-8.1.25
+php-8.1.26
+php-8.1.27
+php-8.2.12
+php-8.2.13
+php-8.2.14
 ```
 
-On 7.2-current (Dec 13 2022 snapshot):
+On 7.4-current (Dec 28 2023 snapshot):
 ```
-php-7.4.33
-php-8.0.26
-php-8.1.13
-php-8.2.0p0
+php-7.4.33p1
+php-8.0.30
+php-8.1.27
+php-8.2.14
+php-8.3.1
 ```
 
 If you find any PHP extensions recommended by Wordpress are not tied
 to the latest PHP version in -current, they likely won't be updated
 until shortly before the next OpenBSD release.
 
-Examples.
-
 In this case, you'll have best support for Wordpress features by using
 the latest version of PHP offered for the most recent OpenBSD release.
 
-So in our case of 7.2-release, let's go with PHP 8.1.
+So in our case of 7.4-release, let's go with PHP 8.2.
 
 ```
 # pkg_add php ....
