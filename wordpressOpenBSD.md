@@ -442,11 +442,9 @@ Also, delete the WordPress installation script to limit any duplicate installati
 
 <https://wordpress.org/support/article/creating-database-for-wordpress/#using-the-mysql-client>
 
-[First install and configure MariaDB.]
-(https://www.vultr.com/docs/how-to-install-mariadb-on-openbsd-7)
+[First install and configure MariaDB.](https://www.vultr.com/docs/how-to-install-mariadb-on-openbsd-7)
 
-[Then install and configure PHP and Wordpress.]
-(https://www.vultr.com/docs/how-to-run-wordpress-on-openbsd-7-0-with-apache-httpd-d)
+[Then install and configure PHP and Wordpress.](https://www.vultr.com/docs/how-to-run-wordpress-on-openbsd-7-0-with-apache-httpd-d)
 
 [Wordpress on OpenBSD 6.7 (released May 19, 2020) Guide updated May
 2023](https://docs.ircnow.org/openbsd/wordpress)
