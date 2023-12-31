@@ -56,10 +56,6 @@ So in our case of 7.4-release, let's go with PHP 8.2.
 
 ### Extensions to PHP
 
-From <https://www.openbsdhandbook.com/howto/wordpress>:
-- php-cgi
-- fcgi
-
 #### Required
 
 WordPress needs one of these two PHP extensions in order to
