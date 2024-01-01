@@ -3,6 +3,73 @@
 This guide shows you how to install and configure Wordpress on
 OpenBSD.
 
+### Why use Wordpress?
+
+Wordpress is one of many dynamic website platforms that uses a
+database to generate the webpage sent to the site visitor's web
+browser each time the visitor requests a page.
+
+The database itself, the database application, Wordpress itself (the
+PHP files), the PHP language engine, any PHP extensions, any Wordpress
+pluglins - they all constitute a whole bunch of additional code and
+content on the server compared to running a static website with
+potentially the exact same text, pictures and other media, themes and
+formatting.
+
+A static website usually requires directly editing and publishing
+HTML, CSS, JavaScript, or a frontend framework for those tools. Even
+using a static site generator such as Hugo, MkDocs, or mkws.sh (which
+requires none of their own code on the webserver) still requires
+defining templates and writing Markdown or a similar configuration
+language with a text editor and then uploading the files.
+
+Wordpress and other dynamic website platforms such as Drupal and
+Joomla give a point-and-click way to generate and manage every piece
+of website content. The only typing the user needs to do for the most
+part is just the sentences and other text they want to appear on the
+website. Themes and collors, image and media placement, and website
+layout, responsiveness and experience, even uploading files and
+publishging changes - all of them are available by point-and-click.
+
+Many less-technical users don't want to type their content in
+Markdown, type any code or text to choose where on their site to place
+a picture, or to choose how the site looks, or to generate the site
+with 'hugo build' or upload the rendered site changes with a separate
+graphical FTP client such as FileZilla.
+
+Wordpress offers users that choice to point-and-click to accomplish
+all those things.
+
+### Why self-host Wordpress? Why not use Wix or GoDaddy?
+
+Self-hosting is running the website on a server you control, even if
+you don't own the server hardware used for it.
+
+A practical reason to self-host is to save money. All-inclusive
+services such as Wix and GoDaddy charge $10/mo or more (often with the
+domain name example.com included in the monthly price).
+
+You can get a website domain name for $15/yr in most cases at
+registrars such as Namecheap, and Porkbun.
+
+You can get server hosting at providers such as Vultr for $6/mo.
+
+An idealistic reason to self-host is to own your data and retain more
+control of it. Services such as Wix, GoDaddy, and even Wordpress.com
+could have a technical problem or change their pricing or terms of
+service. Your website could become unavailable for any number of
+reasons.
+
+If you have better control over your data and self-host it, you can
+pickup and move to a different provider more easily if you needed to.
+
+### Why run it on OpenBSD?
+
+For all the advantages that Linux and FreeBSD offer, OpenBSD uses much
+less code in the base system to host a website, even a dynamic website
+with Wordpress. It is less code for the developers to keep secure from
+exploits. In some cases, it may even be lighter on server hosting
+resources.
 
 ## Install Dependencies
 
@@ -435,6 +502,38 @@ Also, delete the WordPress installation script to limit any duplicate installati
 ```
 
 ## See also
+
+<https://developer.wordpress.org/advanced-administration>
+
+<https://developer.wordpress.org/advanced-administration/before-install>
+
+<https://developer.wordpress.org/advanced-administration/before-install/creating-database/#using-the-mysql-client>
+
+<https://developer.wordpress.org/advanced-administration/before-install/howto-install>
+
+<https://developer.wordpress.org/advanced-administration/wordpress/wp-config>
+
+<https://make.wordpress.org/hosting/handbook/server-environment>
+
+<https://openports.pl/path/www/apache-httpd>
+
+<https://openports.pl/path/www/nginx>
+
+<https://openports.pl/path/lang/php/8.2>
+
+<https://openports.pl/path/databases/mariadb,-server>
+
+<https://gohugo.io>
+
+<https://www.mkdocs.org>
+
+<https://mkws.sh>
+
+<https://www.godaddy.com/websites/website-builder/plans-and-pricing>
+
+<https://www.wix.com/premium-purchase-plan/dynamo>
+
+<https://jamstack.org/generators>
 
 <https://wordpress.org/support/article/creating-database-for-wordpress/#using-the-mysql-client>
 
