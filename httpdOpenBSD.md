@@ -1,26 +1,161 @@
-# 04-13-2021
+# Introduction
 
-Host a website on OpenBSD's httpd webserver and configure a TLS
-certificate for https on it with acme-client, both in the base system.
+[OpenBSD](https://openbsd.org)'s
+[httpd](https://man.openbsd.org/httpd) is a lightweight alternative to
+[Apache](httpdApache.md), [Nginx](httpdNginx.md),
+[Caddy](httpdCaddy.md), [Lighttpd](httpdLighttpd.md) and other
+webserver applications.
+
+## Starting and Stopping
+
+Enable and start httpd.
+
+```
+# rcctl enable httpd
+# rcctl start httpd
+httpd(ok)
+```
+
+Reload httpd to apply new configuration from httpd.conf.
+
+```
+# rcctl reload httpd
+httpd(ok)
+```
+
+Check if httpd is running correctly.
+
+```
+# rcctl check httpd
+httpd(ok)
+```
+
+Restart httpd entirely.
+
+```
+$ doas rcctl restart httpd
+httpd(ok)
+httpd(ok)
+```
+
+Stop and disable httpd.
+
+```
+# rcctl stop httpd
+httpd(ok)
+# rcctl disable httpd
+#
+```
+
+## Configuration
+
+OpenBSD httpd requires
+[/etc/httpd.conf](https://man.openbsd.org/httpd.conf) to exist and
+contain at least one server \{\} block. You can copy the example file
+from /etc/examples/httpd.conf.
+
+```
+# cp /etc/examples/httpd.conf /etc
+```
 
 
-First site is static files with OpenBSD httpd, acme-client, and
-ideally a wildcard certificate.
+### Local offline development
 
-Some notes found at:
-https://blog.lambda.cx/posts/letsencrypt-on-openbsd
+```
+server "127.0.0.1" {
+        listen on * port 80
+        root "/"
+}
+```
 
-Currently, acme-client does not support wildcard certificates.
-https://serverfault.com/questions/1040803/acquiring-a-wildcard-certificate-from-lets-encrypt-via-acme-client1
-https://www.reddit.com/r/openbsd/comments/l2ovm5/wildcard_lets_encrypt_certificates
+### Production setup
 
-I intend to use k9w.org with a wildcard certificate for use across
-several servers. I will save *.k9w.org for my second website and use
-certbot to get and manage the Lets Encrypt wildcard certificate.
+This example has three websites:
+- subdomain.example.com
+- example.com
+- otherwebsite.com
 
-But for this first website using OpenBSD httpd and acme-client, I will
-use capernaumtech.com and no subdomains, unless the non-wildcard cert
-works with subdomains anyway.
+The port 80 server block for each site redirects to a port 443 block
+right below it.
+
+
+```
+server "subdomain.example.com" {
+	listen on "subdomain.example.com" port 80
+	root "/subdomain.example.com"
+	location "/.well-known/acme-challenge/*" {
+		root "/acme"
+		request strip 2
+	}
+	location * {
+		block return 302 "https://$HTTP_HOST$REQUEST_URI"
+	}
+}
+
+server "subdomain.example.com" {
+	listen on "subdomain.example.com" tls port 443
+	root "/subdomain.example.com"
+	tls {
+		certificate "/etc/ssl/subdomain.example.com.crt"
+		key "/etc/ssl/private/subdomain.example.com.key"
+	}
+}
+
+server "example.com" {
+	listen on "example.com" port 80
+	root "/example.com"
+	location "/.well-known/acme-challenge/*" {
+		root "/acme"
+		request strip 2
+	}
+	location * {
+		block return 302 "https://$HTTP_HOST$REQUEST_URI"
+	}
+}
+
+server "example.com" {
+	listen on "example.com" tls port 443
+	root "/example.com"
+	tls {
+		certificate "/etc/ssl/example.com.crt"
+		key "/etc/ssl/private/example.com.key"
+	}
+}
+
+server "otherwebsite.com" {
+	listen on "otherwebsite.com" port 80
+	root "/otherwebsite.com"
+	location "/.well-known/acme-challenge/*" {
+		root "/acme"
+		request strip 2
+	}
+	location * {
+		block return 302 "https://$HTTP_HOST$REQUEST_URI"
+	}
+}
+
+server "otherwebsite.com" {
+	listen on "otherwebsite.com" tls port 443
+	root "/otherwebsite.com"
+	tls {
+		certificate "/etc/ssl/otherwebsite.com.crt"
+		key "/etc/ssl/private/otherwebsite.com.key"
+	}
+}
+```
+
+## acme-client to fetch TLS certificates for https
+
+OpenBSD uses [acme-client](https://man.openbsd.org/acme-client) to
+fetch TLS certificates for secure https. It is configured with
+[acme-client.conf](https://man.openbsd.org/acme-client.conf).
+
+acme-client and https are generally not required for local web
+development on your own machine or internal network. This guide for
+acme-client only addresses typical setup for an internet-facing
+webserver.
+
+### Configuration
 
 Copy example conf files for acme-client and httpd.
 
@@ -29,90 +164,52 @@ Copy example conf files for acme-client and httpd.
 # cp /etc/example/httpd.conf /etc
 ```
 
---------
-
-
-Here is what I changed from the acme-client.conf example:
-
-```
-$ diff -u ./examples/acme-client.conf acme-client.conf  
---- ./examples/acme-client.conf Sat Mar 20 06:20:35 2021
-+++ acme-client.conf    Tue Apr 13 05:07:22 2021
-@@ -14,18 +14,18 @@
- authority buypass {
-        api url "https://api.buypass.com/acme/directory"
-        account key "/etc/acme/buypass-privkey.pem"
--       contact "mailto:me@example.com"
-+       contact "mailto:kevin@k9w.org"
- }
- 
- authority buypass-test {
-        api url "https://api.test4.buypass.no/acme/directory"
-        account key "/etc/acme/buypass-test-privkey.pem"
--       contact "mailto:me@example.com"
-+       contact "mailto:kevin@k9w.org"
- }
- 
--domain example.com {
--       alternative names { secure.example.com }
--       domain key "/etc/ssl/private/example.com.key"
--       domain full chain certificate "/etc/ssl/example.com.fullchain.pem"
--       sign with letsencrypt
-+domain capernaumtech.com {
-+       alternative names { www.capernaumtech.com
-test.capernaumtech.com }
-+       domain key "/etc/ssl/private/capernaumtech.com.key"
-+       domain full chain certificate "/etc/ssl/capernaumtech.com.fullchain.pem"
-+       sign with letsencrypt-staging
- }
-```
-
-
-Here is what I changed from the httpd.conf example:
+This is a production example corresponding to the httpd.conf earlier
+in this guide. acme-client only supports the http-01 challenge, not
+the dns-01 challenge for a wildcard certificate. So a unique cert is
+needed for each domain and each subdomain.
 
 ```
-$ diff -u ./examples/httpd.conf httpd.conf              
---- ./examples/httpd.conf       Sat Mar 20 06:20:35 2021
-+++ httpd.conf  Tue Apr 13 05:36:56 2021
-@@ -1,6 +1,6 @@
- # $OpenBSD: httpd.conf,v 1.22 2020/11/04 10:34:18 denis Exp $
- 
--server "example.com" {
-+server "capernaumtech.com" {
-	listen on * port 80
-	location "/.well-known/acme-challenge/*" {
-		root "/acme"
-@@ -11,11 +11,11 @@
-	}
- }
- 
--server "example.com" {
-+server "capernaumtech.com" {
-	listen on * tls port 443
-	tls {
--		certificate "/etc/ssl/example.com.fullchain.pem"
--		key "/etc/ssl/private/example.com.key"
-+		certificate "/etc/ssl/capernaumtech.com.fullchain.pem"
-+		key "/etc/ssl/private/capernaumtech.com.key"
-	}
-	location "/pub/*" {
-		directory auto index
+authority letsencrypt {
+	api url "https://acme-v02.api.letsencrypt.org/directory"
+	account key "/etc/acme/letsencrypt-privkey.pem" ecdsa
+}
+
+domain subdomain.example.com {
+	domain key "/etc/ssl/private/subdomain.example.com.key" ecdsa
+	domain certificate "/etc/ssl/subdomain.example.com.crt"
+	sign with letsencrypt
+}
+
+domain example.com {
+	domain key "/etc/ssl/private/example.com.key" ecdsa
+	domain certificate "/etc/ssl/example.com.crt"
+	sign with letsencrypt
+}
+
+domain otherwebsite.com {
+	alternative names { www.otherwebsite.com }
+	domain key "/etc/ssl/private/otherwebsite.com.key" ecdsa
+	domain certificate "/etc/ssl/otherwebsite.com.crt"
+	sign with letsencrypt
+}
 ```
 
---------
+### Getting the cert for the first time
 
 
-I made a simple index.html file and put it into /var/www/capernaumtech.com
+The acme protocol used by Let's Encrypt and other providers requires
+the website to be reachable with standard http as part of validating
+the domain belongs to you to issue a TLS certificate to you.
 
-Then, to test out regular http, I skiped acme-client and enabled httpd.
+Make a simple index.html file and put it into /var/www and the folder
+for each website, such as /var/www/example.com.
 
-```
-# rcctl enable httpd
-# rcctl start httpd
-```
+Standard http won't work as is because our port 80 server block in
+httpd.conf redirects to https, which won't work yet before we get the
+cert.
 
-It did not work because httpd.conf had the 302 redirect to https. I
-commented out the redirect block in httpd.conf:
+Comment it out of each port 80 server block in httpd.conf.
 
 ```
 #	location * {
@@ -120,181 +217,82 @@ commented out the redirect block in httpd.conf:
 #	}
 ```
 
-Restarted httpd:
+Reload httpd for it to re-read its config.
 
 ```
-# rcctl restart httpd
+# rcctl reload httpd
 ```
 
-And http://capernaumtech.com loaded successfully.
+Test each website with standard https.
 
+http://example.com
 
-Then, with sign with letsencrypt-staging, I ran the acme client to
-generate the cert:
-
-```
-# acme-client capernaumtech.com
-```
-
-In Firefox, that successfully redirected capernaumtech.com to
-https://capernaumtech.com.
-
-But Firefox threw error code: SEC_ERROR_UNKNOWN_ISSUER
-
-I examined the certificate in the browser and found it complained
-because it was issued by letsencrypt-staging, not letsencrypt.
-
-This means I am next ready to generate the cert in production.
-
-----
-
-In /etc/acme-client.conf, I changed this:
-
--	sign with letsencrypt-staging
-+	sign with letsencrypt
-
-Re-ran acme-client:
+If each site loads successfully, you're ready to try fetching the TLS
+certificate from the iussuer.
 
 ```
-# acme-client capernaumtech.com
+# acme-client -v example.com
 ```
 
-And re-loaded httpd:
+-v is optional and gives greater detail like below, which shows a
+successfull first-time registration.
 
 ```
-# rcctl restart httpd
+acme-client: https://acme-v02.api.letsencrypt.org/directory: directories
+acme-client: acme-v02.api.letsencrypt.org: DNS: 172.65.32.248
+acme-client: dochngreq: https://acme-v02.api.letsencrypt.org/acme/authz-v3/160169565936
+acme-client: challenge, token: HbDBXzzBCHABm0E4r34nkOddY-Z25OM1elibl_9f4Dc, uri: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565936/1vDAqg, status: 0
+acme-client: /var/www/acme/HbDBXzzBCHABm0E4r34nkOddY-Z25OM1elibl_9f4Dc: created
+acme-client: dochngreq: https://acme-v02.api.letsencrypt.org/acme/authz-v3/160169565946
+acme-client: challenge, token: nGVVQrZo37-w9yqlNRw5YbuI6DZNQV_jKCmSu8A1Xn0, uri: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565946/o4rZDQ, status: 0
+acme-client: /var/www/acme/nGVVQrZo37-w9yqlNRw5YbuI6DZNQV_jKCmSu8A1Xn0: created
+acme-client: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565936/1vDAqg: challenge
+acme-client: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565946/o4rZDQ: challenge
+acme-client: order.status 1
+acme-client: https://acme-v02.api.letsencrypt.org/acme/finalize/119176435/130997223986: certificate
+acme-client: order.status 3
+acme-client: https://acme-v02.api.letsencrypt.org/acme/cert/042629603e4e38b7833d1ec06b9f96f422f5: certificate
+acme-client: /etc/ssl/example.com.crt: created
 ```
 
-But I still got the same error in Firefox and Chromium.
+If you have problems, see the Troubleshooting section below.
 
-Next thing to check are the .pem files in /etc/ssl and its private directory.
-
-The timestamp on capernaumtech.com.fullchain.pem is from 45 minutes
-ago when I generated the staging cert.
-
-Perhaps it will be sufficient to remove the .pem files and rerun
-acme-client. Or I might need to revoke the staging cert.
-
-For now, I disabled and stopped httpd until I come back to it.
-
-
-<p>
-# 04-14
-
-Next step it to replace the staging cert with a production cert.
-
-Renamed the TLS cert file in /etc/ssl and restarted httpd.
-
-```
-# mv capernaumtech.com.fullchain.pem capernaumtech.com.fullchain.pem-staging 
-# rcctl restart httpd
-```
-
-Reloaded the page in the browser. The error changed from invalid cert
-to site cannot be reached. This is good because it means httpd cannot
-find the cert, which means we can then make the new cert in its place.
-
-Regenerated the cert, for production this time, and restarted httpd.
-
-```
-# acme-client capernaumtech.com
-# rcctl restart httpd
-```
-
-And now the page loads properly with TLS.
-
-----
-
-Then, automate the renewal of the cert weekly in cron.
+### Automate the cert renewal with cron
 
 Root's crontab runs /etc/weekly at 03:30 UTC every Saturday.
-/etc/weekly runs /etc/weekly.local which is where we add the following lines.
+/etc/weekly runs /etc/weekly.local which is where we add the following
+lines for each website.
 
 ```
-# Renew the TLS cert for capernaumtech.com and restart httpd.
-acme-client capernaumtech.com && rcctl restart httpd
+# Renew the TLS cert for example.com and restart httpd.
+acme-client example.com && rcctl restart httpd
 ```
 
-----
-
-Then, change the website root from /var/www/htdocs to
-/var/www/capernaumtech.com.
-
-```
-# cd /var/www
-# mkdir capernaumtech.com
-# mv htdocs/index.html capernaumtech.com/
-# rcctl restart httpd
-```
-
-----
+### Optionally allow write to web folder by non-root user
 
 Next, set owner:group, default set-user-id and set-group-id, and set
 file and directory permissions and umask.
-https://serverfault.com/questions/6895/whats-the-best-way-of-handling-permissions-for-apache-2s-user-www-data-in-var
+
 
 Here is the default in /var/www:
-drwxr-xr-x   2 root  daemon  512 Apr 14 03:42 capernaumtech.com
+drwxr-xr-x   2 root  daemon  512 Apr 14 03:42 example.com
 
 Add group write permission g+w to the existing permissions.
 
 ```
 $ pwd
 /var/www
-# chmod -R g+w ./capernaumtech.com
+# chmod -R g+w ./example.com
 ```
 
 Add your user to the daemon group.
 
 ```
-# usermod -G daemon kevin
+# usermod -G daemon <user>
 ```
 
 
-<p>
-# 04-16-2021
-
-Crista suggested the site name metabytes.com, which is taken. But
-metabytesblog.com was free. So I registered it and copyed my setup for
-capernaumtech.com to it and will later generate the TLS cert.
-
-```
-$ cd /var/www
-# cp -R capernaumtech.com metabytesblog.com
-```
-
-capernaumtech.com/index.html had group write. But
-metabytesblog.com/index.html did not have group write.
-
-So I changed the default permissions:
-
-```
-# chmod 2775 /var/www/metabytesblog.com
-```
-
-But the permissions are not working.
-
-/etc/acme-client
-
-----
-
-Then, import the site and conf files into git.
-
-Then setup replication with rsync, which is not a backup since it only
-keeps the current copy. 
-
-Then you can start in on learning HTML, CSS, and adding content to the site.
-
-For now, just sync down to your laptop and then up to Github or other
-location. Later, create an SSH key for automation and lock it down to a
-specific git command or other method in MWL's SSH Mastery book.
-
-
-<p>
-# 03-17-2022
-
-OpenBSD's acme-client only supports the http-01 challenge, not the
-dns-01 challenge for a wildcard certificate.
+## Backup and restore site content, config, and cert
 
 Here is how to move the site, cert, and private key, from one server
 to another, with $siteName equaling your domain, such as k9w.org
@@ -307,7 +305,7 @@ Here is the list of folders to backup.
 /etc/monthly.local
 /etc/ssl/$siteName.fullchain.pem
 /etc/ssl/private/$siteName.key
-/var/www/capernaumtech.com/*
+/var/www/example.com/*
 
 First, use doas or root to copy all the files and folders above to a
 backup folder in your home directory.
@@ -331,8 +329,6 @@ Use doas or root to copy all the files. Replace $siteName below with your domain
 # cp -r /etc/ssl/{$siteName.fullchain.pem,private} etc/ssl
 # cp -r /var/www/$siteName var/www
 ```
-
-(continue the re-work from here)
 
 Change the owner of the .pem private key files in etc/acme from root
 to your username. Otherwise, they will not be copied in the following
@@ -455,9 +451,9 @@ $ cat /etc/acme-clent.conf
 ```
 
 ```
-server "metabytesblog.com" {
-	listen on "metabytesblog.com" port 80
-	root "/metabytesblog.com"
+server "example.com" {
+	listen on "example.com" port 80
+	root "/example.com"
 	location "/.well-known/acme-challenge/*" {
 		root "/acme"
 		request strip 2
@@ -467,12 +463,12 @@ server "metabytesblog.com" {
 	}
 }
 
-server "metabytesblog.com" {
-	listen on "metabytesblog.com" tls port 443
-	root "/metabytesblog.com"
+server "example.com" {
+	listen on "example.com" tls port 443
+	root "/example.com"
 	tls {
-		certificate "/etc/ssl/metabytesblog.com.crt"
-		key "/etc/ssl/private/metabytesblog.com.key"
+		certificate "/etc/ssl/example.com.crt"
+		key "/etc/ssl/private/example.com.key"
 	}
 }
 ```
@@ -488,10 +484,10 @@ authority letsencrypt {
 	account key "/etc/acme/letsencrypt-privkey.pem"
 }
 
-domain metabytesblog.com {
-	alternative names { www.metabytesblog.com }
-	domain key "/etc/ssl/private/metabytesblog.com.key" ecdsa
-	domain certificate "/etc/ssl/metabytesblog.com.crt"
+domain example.com {
+	alternative names { www.example.com }
+	domain key "/etc/ssl/private/example.com.key" ecdsa
+	domain certificate "/etc/ssl/example.com.crt"
 	sign with letsencrypt
 }
 ```
@@ -509,23 +505,87 @@ Manually run httpd with debugging to see why it won't start.
 # httpd -d
 ```
 
+## Troubleshooting
 
+### After successful staging, fetching the real cert fails
+
+In Firefox, that successfully redirected example.com to
+https://example.com.
+
+But Firefox threw error code: SEC_ERROR_UNKNOWN_ISSUER
+
+I examined the certificate in the browser and found it complained
+because it was issued by letsencrypt-staging, not letsencrypt.
+
+This means I am next ready to generate the cert in production.
+
+----
+
+In /etc/acme-client.conf, I changed this:
+
+-	sign with letsencrypt-staging
++	sign with letsencrypt
+
+Re-ran acme-client:
 
 ```
-a$ doas acme-client -v metabytesblog.com
-acme-client: https://acme-v02.api.letsencrypt.org/directory: directories
-acme-client: acme-v02.api.letsencrypt.org: DNS: 172.65.32.248
-acme-client: dochngreq: https://acme-v02.api.letsencrypt.org/acme/authz-v3/160169565936
-acme-client: challenge, token: HbDBXzzBCHABm0E4r34nkOddY-Z25OM1elibl_9f4Dc, uri: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565936/1vDAqg, status: 0
-acme-client: /var/www/acme/HbDBXzzBCHABm0E4r34nkOddY-Z25OM1elibl_9f4Dc: created
-acme-client: dochngreq: https://acme-v02.api.letsencrypt.org/acme/authz-v3/160169565946
-acme-client: challenge, token: nGVVQrZo37-w9yqlNRw5YbuI6DZNQV_jKCmSu8A1Xn0, uri: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565946/o4rZDQ, status: 0
-acme-client: /var/www/acme/nGVVQrZo37-w9yqlNRw5YbuI6DZNQV_jKCmSu8A1Xn0: created
-acme-client: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565936/1vDAqg: challenge
-acme-client: https://acme-v02.api.letsencrypt.org/acme/chall-v3/160169565946/o4rZDQ: challenge
-acme-client: order.status 1
-acme-client: https://acme-v02.api.letsencrypt.org/acme/finalize/119176435/130997223986: certificate
-acme-client: order.status 3
-acme-client: https://acme-v02.api.letsencrypt.org/acme/cert/042629603e4e38b7833d1ec06b9f96f422f5: certificate
-acme-client: /etc/ssl/metabytesblog.com.crt: created
+# acme-client example.com
 ```
+
+And re-loaded httpd:
+
+```
+# rcctl restart httpd
+```
+
+But I still got the same error in Firefox and Chromium.
+
+Next thing to check are the .pem files in /etc/ssl and its private directory.
+
+The timestamp on example.com.fullchain.pem is from 45 minutes
+ago when I generated the staging cert.
+
+Perhaps it will be sufficient to remove the .pem files and rerun
+acme-client. Or I might need to revoke the staging cert.
+
+For now, I disabled and stopped httpd until I come back to it.
+
+
+<p>
+# 04-14
+
+Next step it to replace the staging cert with a production cert.
+
+Renamed the TLS cert file in /etc/ssl and restarted httpd.
+
+```
+# mv example.com.fullchain.pem example.com.fullchain.pem-staging 
+# rcctl restart httpd
+```
+
+Reloaded the page in the browser. The error changed from invalid cert
+to site cannot be reached. This is good because it means httpd cannot
+find the cert, which means we can then make the new cert in its place.
+
+Regenerated the cert, for production this time, and restarted httpd.
+
+```
+# acme-client example.com
+# rcctl restart httpd
+```
+
+And now the page loads properly with TLS.
+
+
+## See Also
+
+Some notes found at:
+https://blog.lambda.cx/posts/letsencrypt-on-openbsd
+
+Currently, acme-client does not support wildcard certificates.
+https://serverfault.com/questions/1040803/acquiring-a-wildcard-certificate-from-lets-encrypt-via-acme-client1
+https://www.reddit.com/r/openbsd/comments/l2ovm5/wildcard_lets_encrypt_certificates
+
+Content folder permissions:
+https://serverfault.com/questions/6895/whats-the-best-way-of-handling-permissions-for-apache-2s-user-www-data-in-var
+
