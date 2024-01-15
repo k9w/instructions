@@ -65,6 +65,8 @@ It does not successfully have permissions to access
 at /var/www/log, even after I set the ownership to match the lighttpd
 groupd.
 
+Maybe add _lighttpd user to daemon group and enable g+w on /var/www?
+
 I need to ask for assistance on this. But for now, I'll move on to
 Caddy.
 
