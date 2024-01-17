@@ -62,9 +62,9 @@ Or you can use the sample below for offline development on your local
 computer.
 
 ```
-server "127.0.0.1" {
+server 127.0.0.1 {
         listen on * port 80
-        root "/"
+        root '/'
 }
 ```
 
