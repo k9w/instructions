@@ -1,10 +1,10 @@
 # Introduction
 
 [OpenBSD](https://openbsd.org)'s
-[httpd](https://man.openbsd.org/httpd) is a lightweight alternative to
-[Apache](httpdApache.md), [Nginx](httpdNginx.md),
-[Caddy](httpdCaddy.md), [Lighttpd](httpdLighttpd.md) and other
-webserver applications.
+[httpd](https://man.openbsd.org/httpd) is a lightweight webserver
+application similar to [Apache](httpdApache.md),
+[Nginx](httpdNginx.md), [Caddy](httpdCaddy.md),
+[Lighttpd](httpdLighttpd.md) and others.
 
 ## Starting and Stopping
 
@@ -44,22 +44,22 @@ Stop and disable httpd.
 # rcctl stop httpd
 httpd(ok)
 # rcctl disable httpd
-#
 ```
 
 ## Configuration
 
 OpenBSD httpd requires
 [/etc/httpd.conf](https://man.openbsd.org/httpd.conf) to exist and
-contain at least one server \{\} block. You can copy the example file
-from /etc/examples/httpd.conf.
+contain at least one server \{\} block, listen address, and root
+folder defined. You can copy the example file from
+/etc/examples/httpd.conf.
 
 ```
 # cp /etc/examples/httpd.conf /etc
 ```
 
-
-### Local offline development
+Or you can use the sample below for offline development on your local
+computer.
 
 ```
 server "127.0.0.1" {
@@ -68,7 +68,7 @@ server "127.0.0.1" {
 }
 ```
 
-### Production setup
+### Production setup for httpd.conf
 
 This example has three websites:
 - subdomain.example.com
@@ -157,17 +157,18 @@ webserver.
 
 ### Configuration
 
-Copy example conf files for acme-client and httpd.
+You can copy and adapt the example config file for acme-client to your
+needs..
 
 ```
 # cp /etc/example/acme-client.conf /etc
-# cp /etc/example/httpd.conf /etc
 ```
 
-This is a production example corresponding to the httpd.conf earlier
-in this guide. acme-client only supports the http-01 challenge, not
-the dns-01 challenge for a wildcard certificate. So a unique cert is
-needed for each domain and each subdomain.
+The production example below fetches TLS certificates for the domains
+listed in httpd.conf earlier in this guide. acme-client only supports
+the http-01 challenge, not the dns-01 challenge for a wildcard
+certificate. So a unique cert is needed for each domain and each
+subdomain.
 
 ```
 authority letsencrypt {
@@ -209,7 +210,8 @@ Standard http won't work as is because our port 80 server block in
 httpd.conf redirects to https, which won't work yet before we get the
 cert.
 
-Comment it out of each port 80 server block in httpd.conf.
+For each port 80 server block in httpd.conf, comment out the location
+block redirecting to https 443.
 
 ```
 #	location * {
@@ -223,7 +225,7 @@ Reload httpd for it to re-read its config.
 # rcctl reload httpd
 ```
 
-Test each website with standard https.
+Test each website with standard http.
 
 http://example.com
 
@@ -234,7 +236,7 @@ certificate from the iussuer.
 # acme-client -v example.com
 ```
 
--v is optional and gives greater detail like below, which shows a
+-v is optional and gives verbose detail like below, which shows a
 successfull first-time registration.
 
 ```
@@ -268,14 +270,28 @@ lines for each website.
 acme-client example.com && rcctl restart httpd
 ```
 
+## Web content folder
+
+OpenBSD, other BSDs, and Linux generally put web content in
+/var/www. Put each website into its own subfolder, even if you host
+only one site, and title the folder after the website domain name.
+
 ### Optionally allow write to web folder by non-root user
 
-Next, set owner:group, default set-user-id and set-group-id, and set
-file and directory permissions and umask.
+Web content for example.com would be at /var/www/example.com.
 
+If you want to write files to /var/www as a regular user without root
+or doas, change the permissions for each website subfolder to allow
+it.
 
-Here is the default in /var/www:
-drwxr-xr-x   2 root  daemon  512 Apr 14 03:42 example.com
+Check the default owner, group and their permissions for /var/www.
+
+```
+$ ls -al /var
+drwxr-xr-x  10 root  daemon     512 Oct 10 07:41 www
+```
+
+The group and others cannot write to /var/www, only root.
 
 Add group write permission g+w to the existing permissions.
 
@@ -290,6 +306,8 @@ Add your user to the daemon group.
 ```
 # usermod -G daemon <user>
 ```
+
+Next, set default set-user-id and set-group-id, and umask.
 
 
 ## Backup and restore site content, config, and cert
@@ -447,7 +465,7 @@ https in the browser.
 
 
 ```
-$ cat /etc/acme-clent.conf
+$ cat /etc/httpd.conf
 ```
 
 ```
@@ -549,10 +567,6 @@ Perhaps it will be sufficient to remove the .pem files and rerun
 acme-client. Or I might need to revoke the staging cert.
 
 For now, I disabled and stopped httpd until I come back to it.
-
-
-<p>
-# 04-14
 
 Next step it to replace the staging cert with a production cert.
 
