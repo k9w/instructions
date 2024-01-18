@@ -1,4 +1,6 @@
-# _Instructions for my future self, and maybe for you too_
+# Home
+
+_Instructions for my future self, and maybe for you too_
 
 ## Backstory
 

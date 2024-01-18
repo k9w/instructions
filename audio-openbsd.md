@@ -1,4 +1,4 @@
-# 03-15-2022
+# USB and audio jack headsets with OpenBSD
 
 https://www.openbsd.org/faq/faq13.html
 

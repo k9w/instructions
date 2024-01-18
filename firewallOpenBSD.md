@@ -1,4 +1,4 @@
-# 08-15-2022
+# OpenBSD PF Firewall
 
 This is the PF ruleset I have setup on my home OpenBSD router since
 2019.

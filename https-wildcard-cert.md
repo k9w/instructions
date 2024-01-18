@@ -1,8 +1,8 @@
-# 03-17-22
+# Wildcard certificates for https
 
-I have example.com and several subdomains registered with DNSimple. I want
-a wildcard TLS certificate to use with all of the subdomains. I use
-each subdomain on a different VPS server and eventually on Linux
+I have example.com and several subdomains registered with DNSimple. I
+want a wildcard TLS certificate to use with all of the subdomains. I
+use each subdomain on a different VPS server and eventually on Linux
 containers and FreeBSD jails too.
 
 To initially get and then periodically renew the wildcard cert, I use:
@@ -14,9 +14,8 @@ https://github.com/go-acme/lego
 
 Challenge type: dns-01
 
-I already have a non-wildcard cert for example1.com with the
-http-01 challenge. Since it's not wildcard, I can only use it on one
-server.
+I already have a non-wildcard cert for example1.com with the http-01
+challenge. Since it's not wildcard, I can only use it on one server.
 
 https://api.dnsimple.com/v2
 
@@ -36,7 +35,7 @@ $ curl -H 'Authorization: Bearer OAUTH-TOKEN' https://api.dnsimple.com/v2/whoami
 ```
 
 That is a GET request. With my OAuth token in place in the command
-above, the API answers the GET request as follows. 
+above, the API answers the GET request as follows.
 
 ```
 {
@@ -57,10 +56,8 @@ This pattern should be all I need for Letsencrypt, unless a POST
 request is required and used.
 
 
-<p>
-# 03-27
-
-I got an API token and tried it with lego for all subdomains of example.com.
+I got an API token and tried it with lego for all subdomains of
+example.com.
 
 ```
 $ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hidden --dns dnsimple --domains *.example.com run
@@ -94,7 +91,8 @@ backups of this folder is ideal.
 $ 
 ```
 
-It did not work. So I tried it again as just example.com, not *.example.com, and it worked.
+It did not work. So I tried it again as just example.com, not
+*.example.com, and it worked.
 
 ```
 $ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hidden --dns dnsimple --domains example.com run   
@@ -114,27 +112,30 @@ $ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hid
 $ 
 ```
 
-This generated files in ~/.lego/certificates
+This generated files in ~/.lego/certificates.
 
+```
 example.com.crt        example.com.issuer.crt example.com.json      example.com.key
+```
 
-Copy example.com.crt to /etc/ssl. Copy example.com.key to /etc/ssl/private
+Copy example.com.crt to /etc/ssl. Copy example.com.key to
+/etc/ssl/private.
 
 Once I find out how to use the certificate on multiple servers, I need
 to add that same command to /etc/monthly.local with 'renew' instead of
 'run'.
 
-http://c.example.com worked as before. https://c.example.com failed to load
-the page because the cert was for example1.com. I commented out
-the code blocks for example1.com in /etc/httpd.conf and then
-Firefox recognized the example.com cert. It said it was not valid for
-c.example.com, only for example.com. I added an A record for example.com and
-confirmed that worked.
+http://c.example.com worked as before. https://c.example.com failed to
+load the page because the cert was for example1.com. I commented out
+the code blocks for example1.com in /etc/httpd.conf and then Firefox
+recognized the example.com cert. It said it was not valid for
+c.example.com, only for example.com. I added an A record for
+example.com and confirmed that worked.
 
-So I listed the example.com certificate, revoked, it, and ran lego this
-time for *.example.com. Strangely, *.example.com was the first method I tried
-last week, and it failed. But today, it worked; likely because I had
-already made the cert for just example.com.
+So I listed the example.com certificate, revoked, it, and ran lego
+this time for *.example.com. Strangely, *.example.com was the first
+method I tried last week, and it failed. But today, it worked; likely
+because I had already made the cert for just example.com.
 
 ```
 $ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hidden --dns dnsimple --domains example.com list
@@ -163,9 +164,12 @@ c$ DNSIMPLE_OAUTH_TOKEN=QQNeuBtXBEna518dIZ61vOMLuqAEhvGf lego --email address@hi
 $
 ```
 
-The prior files in ~/.lego/certificates were replaced with the following:
+The prior files in ~/.lego/certificates were replaced with the
+following.
 
+```
 _.example.com.crt        _.example.com.issuer.crt _.example.com.json       _.example.com.key
+```
 
 Next step is to deploy .crt and .key to /etc/ssl as before, update
 httpd.conf to refer to the new cert and key names, and retest.
@@ -189,7 +193,7 @@ c$ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hi
 c$ DNSIMPLE_OAUTH_TOKEN=******************************** lego --email address@hidden --dns dnsimple --domains *.example.com renew
 ```
 
-Your /etc/httpd.conf should look like this:
+Your /etc/httpd.conf should look like this.
 
 ```
 server "c.example.com" {
@@ -250,7 +254,8 @@ server "example1.com" {
 ```
 
 
-The next step is to try this on another server with a second subdomain of example.com and with another standalone domain name, example2.com.
+The next step is to try this on another server with a second subdomain
+of example.com and with another standalone domain name, example2.com.
 
 This second server will use the apache web server rather than
 OpenBSD's httpd web server.

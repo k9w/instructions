@@ -1,4 +1,4 @@
-# 09-10-21
+# tmux copy mode
 
 In ~/.tmux.conf, I have my prefix key remapped from C-b to `
 (backtick).

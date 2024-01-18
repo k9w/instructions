@@ -1,4 +1,4 @@
-# Introduction
+# OpenBSD's httpd webserver
 
 [OpenBSD](https://openbsd.org)'s
 [httpd](https://man.openbsd.org/httpd) is a lightweight webserver
