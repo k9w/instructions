@@ -110,3 +110,21 @@ Another one, which has the awk shebang line, is:
 /usr/src/sys/dev/sdmmc/devlist2h.awk
 
 Here is some new text.
+BEGIN { FS=","
+	print "Produce to pick up from the store:" }
+
+# For lines with a third field equaling an integer greater than 1,
+# print the second word.
+$3>1 { print $2 }
+
+# For lines containing 'dairy', print the second field.
+/dairy/ { print $2 }
+
+END { print "--------" }
+dairy,milk, 1
+produce,bananas, 5
+dairy,cheese, 1
+produce,spinach, 1
+produce,apples, 6
+meat,salmon, 1
+grocery,coffee, 1
