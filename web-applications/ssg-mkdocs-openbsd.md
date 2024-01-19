@@ -85,3 +85,12 @@ $ ln -s ~/src/instructions ~/src/mkdocs-project/docs
 ```
 
 
+Once you've built your site, upload it to your server's
+/var/www/example.com folder as the daemon user using openrsync. The
+daemon user defaults to nologin rather than a shell. It will also need
+an ssh key.
+
+Is an ssh key still needed if the server has full rsync installed and an
+rsync daemon running?
+
+
