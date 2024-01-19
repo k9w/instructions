@@ -1,4 +1,4 @@
-# OpenBSD's Rsync Clone: Openrsync
+# Openrsync
 
 [openrsync(1)](https://man.openbsd.org/openrsync) is an
 [ISC-licensed](https://en.wikipedia.org/wiki/ISC_license)
