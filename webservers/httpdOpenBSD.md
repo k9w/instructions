@@ -593,13 +593,10 @@ And now the page loads properly with TLS.
 
 ## See Also
 
-Some notes found at:
-https://blog.lambda.cx/posts/letsencrypt-on-openbsd
+[Let's Encrypt on OpenBSD](https://blog.lambda.cx/posts/letsencrypt-on-openbsd)
 
-Currently, acme-client does not support wildcard certificates.
-https://serverfault.com/questions/1040803/acquiring-a-wildcard-certificate-from-lets-encrypt-via-acme-client1
-https://www.reddit.com/r/openbsd/comments/l2ovm5/wildcard_lets_encrypt_certificates
+[acme-client does not support wildcard certificates.](https://serverfault.com/questions/1040803/acquiring-a-wildcard-certificate-from-lets-encrypt-via-acme-client1)
+* <https://www.reddit.com/r/openbsd/comments/l2ovm5/wildcard_lets_encrypt_certificates>
 
-Content folder permissions:
-https://serverfault.com/questions/6895/whats-the-best-way-of-handling-permissions-for-apache-2s-user-www-data-in-var
+[Web content folder permissions](https://serverfault.com/questions/6895/whats-the-best-way-of-handling-permissions-for-apache-2s-user-www-data-in-var)
 
