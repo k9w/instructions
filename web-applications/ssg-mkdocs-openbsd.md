@@ -76,3 +76,12 @@ If you're just trying out mkdocs and want to use the content with
 another static site generator such as [hugo](https://gohugo.io), put
 the markdown and other content in its own folder and symlink that
 folder to <mkdocs-project-folder/docs. 
+
+In this example make a symlink in the 'mkdocs-project' folder to the
+'instructions' folder that holds the markdown content.
+
+```
+$ ln -s ~/src/instructions ~/src/mkdocs-project/docs
+```
+
+
