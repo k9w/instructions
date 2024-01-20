@@ -31,7 +31,7 @@ Reference section below for RCS's root commands.)
 $ ci -l doas.conf
 ```
 
-RCS creates the repo file 'doas.conf,v'.
+RCS creates the repository file 'doas.conf,v'.
 
 ```
 doas.conf,v  <--  doas.conf
@@ -62,7 +62,7 @@ initial revision: 1.1
 done
 ```
 
-You now have the ,v repository file tracking doas.conf.
+You now have the repository file `doas.conf,v` tracking doas.conf.
 
 ```
 $ ls doas.conf*

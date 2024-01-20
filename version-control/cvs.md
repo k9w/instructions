@@ -1,4 +1,7 @@
-## Introduction
+## Concurrent Versions System (CVS)
+
+(Use the OpenBSD website as an example repository to checkout, compare
+different commits in history and to mirror the full repository.)
 
 ## Build OpenBSD Ports or Base
 
