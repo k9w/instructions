@@ -1,4 +1,4 @@
-08-20-21
+# Wifi on OpenBSD
 
 Connect to a wireless SSID with password, independent from any 'join'
 entries in /etc/hostname.iwm0.

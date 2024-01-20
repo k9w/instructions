@@ -1,63 +1,120 @@
-## Introduction
+## Revision Control System (RCS)
 
-Revision Control System (RCS) is a Version Control System (VCS) that
-allows users to create, maintain, compare and roll back changes to
-files.
+Revision Control System (RCS) is a Version Control System (VCS) like
+Git. RCS tracks, rolls back, compares, and branches changes to just
+one file per repository for one user at a time. It is not suitable to
+track many files at once for multiple users.
 
-It preceeded other VCS'es Git, Got, Subversion, and CVS.
 
-RCS repositories (repos) are centralized, not distributed. In fact RCS
-has no concept of committing or checking in changes over the network.
+## Start tracking a file
 
-Each RCS repository tracks just one file. The repository is named
-identical to the file it tracks, with a ```,v``` suffix, including
-after any other suffixes the file might have.
+Go to the folder containing a file you want to track.
+
+```
+$ pwd
+/home/<username>/src/rcs-tracked-files
+```
+
+Let's write [doas.conf](https://man.openbsd.org/doas.conf) from its
+example file. Use root to copy it to a folder to edit as regular
+user. Change its owner to your user and keep its group as `wheel`.
+
+```
+# cp /etc/examples/doas.conf .
+# chown <username>:wheel doas.conf
+```
+
+Start tracking the file with RCS's `ci` command. (See the Command
+Reference section below for RCS's root commands.)
+
+```
+$ ci -l doas.conf
+```
+
+RCS creates the repo file 'doas.conf,v'.
+
+```
+doas.conf,v  <--  doas.conf
+```
+
+It asks for a repo description. No log message will be collected for
+the first commit.
+
+```
+enter description, terminated with single '.' or end of file:
+NOTE: This is NOT the log message!
+>> 
+```
+
+Give a description of what the file is for.
+
+```
+>> Root access file for other users.
+>> 
+```
+
+To end the description, type a period (.) on its own line and hit
+enter.
+
+```
+>> .
+initial revision: 1.1
+done
+```
+
+You now have the ,v repository file tracking doas.conf.
+
+```
+$ ls doas.conf*
+doas.conf   doas.conf,v
+```
+
+## Commit sequential revisions
+
+
+
+## View and search the log history
+
+
+
+## Compare the file content between different versions
+
+
+
+## Revert to a previous version
+
+
+
+## Create a new branch
+
+
+
+## View the differences between branches
+
+
+## Switch your working copy to a different branch
+
+
+## Merge two branches together
+
 
 
 ## Overview
 
-Unique from the other VCS'es above, RCS uses multiple root commands,
-not sub-commands:
-
-- [ci(1)](https://man.openbsd.org/ci) - Check-in a file to RCS for
-  tracking. Commit a new revision to an already-tracked file.
-
-- [co(1)](https://man.openbsd.org/co) - Check-out a file from RCS for
-  editing. Not needed if you previously checked in the file unlocked
-  with ```ci -l [file]```.
-
-- [rlog(1)](https://man.openbsd.org/rlog) - View the log of changes
-  and commit messages.
-
-- [rcs(1)](https://man.openbsd.org/rcs) - Manage an RCS repository's
-  locking, revisions, log messages, branches, etc.
-
-- [rcsdiff(1)](https://man.openbsd.org/rcsdiff) - Compare multiple
-  revisions of the tracked file.
-
-- [rcsmerge(1)](https://man.openbsd.org/rcsmerge) - Merge changes
-  between revisions.
-
-- [rcsclean(1)](https://man.openbsd.org/rcsclean) - Clean up working
-  files in the current working directory. This means if you have a
-  configuration file tracked by RCS, delete the working copy while it
-  is checked out of the RCS ,v repository, or delete it regardless of
-  it's checked-out state with the -v flag. This is usually not what
-  you want these days. Most of the time you actively use the
-  configuration file in production in the same folder as its ,v
-  repository.
-
-- [ident(1)](https://man.openbsd.org/ident) - Identify the keyword
-  string in RCS-tracked files.
-
 RCS supports two general workflows:
 
-- Check in and unlock the file to the ,v repo file and do not maintain
-  a working copy outside the repository, except when it is actively
-  locked for editing, and checked out for active editing.
+- Default behavior: Check in and unlock the file to the ,v repo file
+  (explained later in this guide) and do not maintain a working copy
+  outside the repository, except when it is actively locked and
+  checked out for active editing.
 
-- Just check in changes to the repository and keep the working copy
-  available outside the repo and locked for editing.
+- My preferred method: Just check in changes to the repository and
+  keep the working copy available outside the repo and locked for
+  editing.
+
+It makes more sense to always have the working copy of the file
+available, and writable. Therefore we will start by covering the
+non-locking workflow.
 
 RCS command flags and manpages use the term ```revision``` to refer to
 a specific version of the tracked file. Later VCS'es call it a
@@ -66,15 +123,10 @@ a specific version of the tracked file. Later VCS'es call it a
 
 ## Basic Usage 
 
-For our example, let's write a configuration file for
-[doas(1)](https://man.openbsd.org/doas), a [2-clause
-BSD-licensed](https://opensource.org/license/bsd-2-clause) tool to run
-commands as another user, usually privileged commands to be run as
-root. Doas incorporates much less code than
-[sudo](https://www.sudo.ws) which is also
-[permissively-licensed](https://www.sudo.ws/about/license).
+Write a configuration file (
+[doas(1)](https://man.openbsd.org/doas) for example).
 
-The file you want to track with RCS is called the working copy:
+
 
 ```
 doas.conf
@@ -162,6 +214,42 @@ The original file ```doas.conf``` is gone. RCS created the new repo
 file ```doas.conf,v``` and deleted the original working copy of the
 file.
 
+
+## Command Reference
+
+Unlike later version control systems, RCS uses multiple root commands,
+not sub-commands:
+
+- [ci(1)](https://man.openbsd.org/ci) - Check-in a file to RCS for
+  tracking. Commit a new revision to an already-tracked file.
+
+- [co(1)](https://man.openbsd.org/co) - Check-out a file from RCS for
+  editing. Not needed if you previously checked in the file unlocked
+  with ```ci -l [file]```.
+
+- [rlog(1)](https://man.openbsd.org/rlog) - View the log of changes
+  and commit messages.
+
+- [rcs(1)](https://man.openbsd.org/rcs) - Manage an RCS repository's
+  locking, revisions, log messages, branches, etc.
+
+- [rcsdiff(1)](https://man.openbsd.org/rcsdiff) - Compare multiple
+  revisions of the tracked file.
+
+- [rcsmerge(1)](https://man.openbsd.org/rcsmerge) - Merge changes
+  between revisions.
+
+- [rcsclean(1)](https://man.openbsd.org/rcsclean) - Clean up working
+  files in the current working directory. This means if you have a
+  configuration file tracked by RCS, delete the working copy while it
+  is checked out of the RCS ,v repository, or delete it regardless of
+  it's checked-out state with the -v flag. This is usually not what
+  you want these days. Most of the time you actively use the
+  configuration file in production in the same folder as its ,v
+  repository.
+
+- [ident(1)](https://man.openbsd.org/ident) - Identify the keyword
+  string in RCS-tracked files.
 
 ### The RCS repo file
 
