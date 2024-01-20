@@ -71,32 +71,69 @@ doas.conf   doas.conf,v
 
 ## Commit sequential revisions
 
+```
+$
+```
 
+## Keyword substitution
+
+
+```
+$
+```
 
 ## View and search the log history
 
 
 
+```
+$
+```
+
 ## Compare the file content between different versions
 
 
+
+```
+$
+```
 
 ## Revert to a previous version
 
 
 
+```
+$
+```
+
 ## Create a new branch
 
+
+```
+$
+```
 
 
 ## View the differences between branches
 
 
-## Switch your working copy to a different branch
+```
+$
+```
 
+## Switch the working copy to a different branch
+
+
+```
+$
+```
 
 ## Merge two branches together
 
+
+```
+$
+```
 
 
 ## Overview
