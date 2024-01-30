@@ -8,6 +8,7 @@ implementation of the [rsync](https://rsync.samba.org) protocol for
 
 ## Usage examples
 
+
 Copy a generated static website from the build directory to the
 webserver directory on the same local machine to preview without help
 of a live server by the site generator.
@@ -37,13 +38,18 @@ manually.
 $ openrsync -av --rsync-path=/usr/bin/openrsync /var/www/example.com/ webserver.com:/var/www/example.com
 ```
 
-Backup files from a remote client (with rsync installed) to the local
-backup server. This is run as root so that the backed up files can be
-set to the same owner as the person who owned them.
+Download from a remote source to a local destination, the current
+working directory.
 
 ```
-# openrsync -av hostname:/home/<username>/ /backups/<username>
+$ openrsync -av --rsync-path=/usr/bin/openrsync hostname:~/src/rcs-tracked-files/ .
 ```
+
+Openrsync is suitable for replicating or synchronizing files. But it
+alone is not suitable for backups, because it does not keep versions
+or immutability. Proper backup and restore tools would be Tarsnap,
+Borg, Rclone, Restic, and others.
+
 
 ## Daemon to speedup file comparisons
 
@@ -75,3 +81,5 @@ ssh'ed into the remote machine.
 <https://github.com/kristapsdz/openrsync>
 
 <https://github.com/openbsd/src/tree/master/usr.bin/rsync>
+
+
