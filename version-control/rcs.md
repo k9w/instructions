@@ -188,11 +188,23 @@ line adding `nopass`.
 
 ## Revert to a previous version
 
-
+Let's checkout or revert doas.conf back to the original version 1.1.
 
 ```
-$
+$ co -l1.1 doas.conf
+doas.conf,v  -->  doas.conf
+revision 1.1 (locked)
+writable doas.conf exists; remove it? [ny](n): y
+co: doas.conf,v: warning: You now have 2 locks.
+done
 ```
+
+The file now shows exactly how we copied it from /etc/examples, except
+for the keyword substitution on the line with "$OpenBSD".
+
+In my testing, this deleted revision 1.2. Need to investigate if
+that's connected with the 2 locks.
+
 
 ## Create a new branch
 
@@ -227,6 +239,35 @@ $
 
 ## Keyword substitution
 
+You might have noticed one of the first lines in the original file
+/etc/examples/doas.conf.
+
+```
+# $OpenBSD: doas.conf,v 1.1 2016/09/03 11:58:32 pirofti Exp $
+```
+
+As part of the very first check-in to RCS, it changed to:
+
+```
+# $OpenBSD: doas.conf,v 1.1 2024/01/30 20:35:58 kevin Exp kevin $
+```
+
+RCS doesn't have any history of the first version above because
+Keyword Substitution modified `$OpenBSD <any-text> $` and inserted the
+second version above. That was then recorded as the first commit in
+the RCS file.
+
+It tells us the version, date, and author as of when it was checked
+into RCS. On the next commit by the same author, the version number
+and date would change to the date and time it's checked into RCS.
+
+RCS and later version control systems can display the date and author
+info for each version in the log history. RCS, CVS and SVN support
+Keyword Substitution as a more convenient way to see this info
+directly inside the working copy of the file.
+
+Keyword Substitution is optional and not required for the rest of the
+benefits of RCS and other version control systems.
 
 ```
 $
@@ -248,7 +289,8 @@ not sub-commands:
   and commit messages.
 
 - [rcs(1)](https://man.openbsd.org/rcs) - Manage an RCS repository's
-  locking, revisions, log messages, branches, etc.
+  locking, revisions, log messages, branches, etc. Explains Keyword
+  Substitution. 
 
 - [rcsdiff(1)](https://man.openbsd.org/rcsdiff) - Compare multiple
   revisions of the tracked file.
