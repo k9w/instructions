@@ -205,6 +205,14 @@ for the keyword substitution on the line with "$OpenBSD".
 In my testing, this deleted revision 1.2. Need to investigate if
 that's connected with the 2 locks.
 
+Looks like RCS can roll back to a previous version. But once it does,
+it cannot keep any revisions newer than that.
+
+`rcs -b1.1 doas.conf` didn't create a new branch.
+
+I will document RCS further in this guide after I have a better
+understanding of CVS and SVN.
+
 
 ## Create a new branch
 
