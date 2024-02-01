@@ -55,6 +55,27 @@ $ cd /usr/src
 $ cvs -d /cvs -q up -Pd -rOPENBSD_7_3
 ```
 
+If you want the full repo on multiple machines and to not redundantly
+download the full copy from the third party mirror multiple times,
+create a compressed tar archive of /cvs in /var/db/reposync.
+
+```
+$ doas -u cvs tar czf /var/db/reposync/cvs-repo.tgz /cvs
+```
+
+Several files in the archive will excede the maximum file path length
+for the default ustar and give the following error.
+
+```
+tar: File name too long for ustar
+cvs/ports/x11/qt6/qtwebengine/patches/patch-src_3rdparty_chromium_ui_views_widget_desktop_aura_desktop_window_tree_host_platform_impl_interactive_uitest_cc,v
+```
+
+To prevent that, investigate other command options for tar, use a
+different tool than tar, or count on re-syncing those files from
+upstream once the archive is extracted on the destination machine.
+
+
 ## Build OpenBSD Ports or Base
 
 This seciton contains additions and clarifications to OpenBSD's [own
