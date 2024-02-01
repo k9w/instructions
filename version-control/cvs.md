@@ -1,17 +1,59 @@
 ## Concurrent Versions System (CVS)
 
-CVS is a centralized version control system [used by the OpenBSD
+[cvs(1)](https://man.openbsd.org/cvs) is a centralized version control
+system [used by the OpenBSD
 project](https://cvs.afresh1.com/~andrew/o/why-cvs.html). It lacks
-default tooling to push and pull changed between repositories, though
-add-on tools such as cvsync and [reposync](https://github.com/sthen/reposync) can accomplish that. Checked
-out copies of a CVS tree are in a separate folder from the repository,
-if not on a separate machine altogether. Synchronizing the local
-working checkout of a large CVS tree with its repository can be slow
-over the internet. This can be mitigated by using a local repository
-mirrored from upstream.
+default tooling to push and pull changes between repositories, though
+add-on tools such as [reposync](https://github.com/sthen/reposync) can
+accomplish that. Checked out copies of a CVS tree are in a separate
+folder from the repository, if not on a separate machine
+altogether. Synchronizing the local working checkout of a large CVS
+tree with its repository can be slow over the internet. This can be
+mitigated by using a local repository mirrored from upstream.
 
 (Use the OpenBSD website as an example repository to checkout, compare
 different commits in history and to mirror the full repository.)
+
+## Clone the Repository
+
+Becausing updating a cvs checkout working directory can be very slow
+when its repository is remote across the internet, let's do the CVS
+equivalent of a 'git clone' and fetch a copy of the full repository
+using rsync and a wrapper script called reposync.
+
+Setup.
+
+```
+# pkg_add reposync
+# useradd cvs
+# install -d -o cvs /cvs /var/db/reposync
+```
+
+The one command below both fetches an initial mirror of the repository
+and can be used again to update it.
+
+```
+# doas -u cvs reposync rsync://anoncvs.spacehopper.org/cvs
+```
+
+This takes about 90 minutes on initial sync and uses about 10GB as of 2024.
+
+```
+$ du -hcs /cvs/*
+224M    CVSROOT
+1.8G    ports
+4.2G    src
+956M    www
+2.4G    xenocara
+9.5G    total
+```
+
+Then update your local checked out working copy from local /cvs.
+
+```
+$ cd /usr/src
+$ cvs -d /cvs -q up -Pd -rOPENBSD_7_3
+```
 
 ## Build OpenBSD Ports or Base
 
