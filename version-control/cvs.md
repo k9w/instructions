@@ -23,6 +23,13 @@ using rsync and a wrapper script called reposync.
 
 Setup.
 
+Set $CVSROOT to `/cvs` in ~/.profile.
+
+```
+CVSROOT=/cvs
+export CVSROOT
+```
+
 ```
 # pkg_add reposync
 # useradd cvs
@@ -48,12 +55,64 @@ $ du -hcs /cvs/*
 9.5G    total
 ```
 
-Then update your local checked out working copy from local /cvs.
+## Update the local Repository
+
+A subsequent reposync the next day took about 5 minutes to update the
+local repository from upstream.
+
+
+## Checkout a working copy from the local Repository
+
+If this is your first time checking out the CVS repos, create the
+folders in /usr.
+
+`/usr/src` might already exist and be in that group by default.
+
+```
+$ cd /usr
+# mkdir {src,ports,xenocara,www}
+```
+
+Change the group membership of the folders to wsrc.
+
+```
+# chgrp wsrc {src,ports,xenocara,www}
+```
+
+Add group write permission to the folders.
+
+```
+# chmod g+w {src,ports,xenocara,www}
+```
+
+Next do an initial checkout from the local repo to these folders.
+
+```
+$ cd /usr
+$ cvs -qd /cvs co -P src
+```
+
+Checking out all four sets of the repository concurrently (each in its
+own tmux window) on my Thinkpad X220 took:
+
+```
+ports: 52 minutes
+src: 44 minutes
+xenocara: 28 minutes
+www: 9 minutes
+```
+
+## Update the working copy from the local Repository
+
+Later, use the update or up subcommand to cvs to update the new workin
+copy.
 
 ```
 $ cd /usr/src
-$ cvs -d /cvs -q up -Pd -rOPENBSD_7_3
+$ cvs -d /cvs -q up -Pd
 ```
+
+## Copy the local Repository to another machine
 
 If you want the full repo on multiple machines and to not redundantly
 download the full copy from the third party mirror multiple times,
@@ -75,6 +134,32 @@ To prevent that, investigate other command options for tar, use a
 different tool than tar, or count on re-syncing those files from
 upstream once the archive is extracted on the destination machine.
 
+To replicate to a server as is, create the user and folder on the
+server and upload the tar archive from local to remote with openrsync.
+
+At work on symmetrical Gigabit fiber, this took about 30 minutes to
+upload 2.1GB.
+
+```
+$ openrsync -av --rsync-path=/usr/bin/openrsync /var/db/reposync/cvs-repo.tgz hostname:/var/db/reposync
+Transfer starting: 1 files
+cvs-repo.tgz
+Transfer complete: 36 B sent, 2.073 GB read, 2.073 GB file size
+```
+
+On the server, change the tar archive owner to cvs if not already.
+
+```
+$ cd /var/db/reposync
+# chown cvs cvs-repo.tgz
+```
+
+Ensure /cvs exists with proper permissions for the cvs user. Then
+untar the archive into it.
+
+```
+$ doas -u cvs tar xzf /var/db/reposync/cvs-repo.tgz /cvs
+```
 
 ## Build OpenBSD Ports or Base
 
