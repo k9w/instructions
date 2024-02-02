@@ -158,8 +158,14 @@ Ensure /cvs exists with proper permissions for the cvs user. Then
 untar the archive into it.
 
 ```
-$ doas -u cvs tar xzf /var/db/reposync/cvs-repo.tgz /cvs
+$ cd /cvs
+$ doas -u cvs tar xzf /var/db/reposync/cvs-repo.tgz
 ```
+Extraction takes about 15 minutes.
+
+Then run reposync to pull in the filepaths too long for tar to fit
+into the tar archive, as well as any updates since the initial sync.
+
 
 ## Build OpenBSD Ports or Base
 
