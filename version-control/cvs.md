@@ -2,14 +2,22 @@
 
 [cvs(1)](https://man.openbsd.org/cvs) is a centralized version control
 system [used by the OpenBSD
-project](https://cvs.afresh1.com/~andrew/o/why-cvs.html). It lacks
-default tooling to push and pull changes between repositories, though
-add-on tools such as [reposync](https://github.com/sthen/reposync) can
-accomplish that. Checked out copies of a CVS tree are in a separate
-folder from the repository, if not on a separate machine
-altogether. Synchronizing the local working checkout of a large CVS
-tree with its repository can be slow over the internet. This can be
-mitigated by using a local repository mirrored from upstream.
+project](https://cvs.afresh1.com/~andrew/o/why-cvs.html). This guide
+shows how to:
+
+* Obtain the source code and update it from upstream.
+* Switch your working copy to a tag or branch.
+* Compare code and content among different commits and with custom
+changes, see the history of who changed what and when, etc.
+
+It lacks default tooling to
+push and pull changes between repositories, though add-on tools such
+as [reposync](https://github.com/sthen/reposync) can accomplish
+that. Checked out copies of a CVS tree are in a separate folder from
+the repository, if not on a separate machine altogether. Synchronizing
+the local working checkout of a large CVS tree with its repository can
+be slow over the internet. This can be mitigated by using a local
+repository mirrored from upstream.
 
 (Use the OpenBSD website as an example repository to checkout, compare
 different commits in history and to mirror the full repository.)
