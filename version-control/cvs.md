@@ -29,14 +29,6 @@ when its repository is remote across the internet, let's do the CVS
 equivalent of a 'git clone' and fetch a copy of the full repository
 using rsync and a wrapper script called reposync.
 
-Setup.
-
-Set $CVSROOT to `/cvs` in ~/.profile.
-
-```
-CVSROOT=/cvs
-export CVSROOT
-```
 
 ```
 # pkg_add reposync
@@ -48,7 +40,7 @@ The one command below both fetches an initial mirror of the repository
 and can be used again to update it.
 
 ```
-# doas -u cvs reposync rsync://anoncvs.spacehopper.org/cvs
+$ doas -u cvs reposync rsync://anoncvs.spacehopper.org/cvs
 ```
 
 This takes about 90 minutes on initial sync and uses about 10GB as of 2024.
@@ -70,6 +62,13 @@ local repository from upstream.
 
 
 ## Checkout a working copy from the local Repository
+
+Set $CVSROOT to `/cvs` in ~/.profile.
+
+```
+CVSROOT=/cvs
+export CVSROOT
+```
 
 If this is your first time checking out the CVS repos, create the
 folders in /usr.
@@ -128,6 +127,7 @@ create a compressed tar archive of /cvs in /var/db/reposync.
 
 ```
 $ doas -u cvs tar czf /var/db/reposync/cvs-repo.tgz /cvs
+$ doas -u cvs tar czvf /var/db/reposync/src-repo.tgz /cvs/src/*
 ```
 
 Several files in the archive will excede the maximum file path length
