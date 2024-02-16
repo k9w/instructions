@@ -106,11 +106,18 @@ CVSROOT=/cvs
 
 ## Checkout each repository with CVS
 
-Checkout from the local repo to these folders.
+Checkout -current from the local repo to these folders.
 
 ```
 $ cd /usr
 $ cvs -qd /cvs co -P {src,ports,xenocara,www}
+```
+
+Or checkout a release instead (except www, which doesn't have tagged releases).
+
+```
+$ cd /usr
+$ cvs -qd /cvs co -P {src,ports,xenocara} -rOPENBSD_7_5
 ```
 
 Checking out all four sets of the repository concurrently (each in its
@@ -123,14 +130,29 @@ xenocara: 28 minutes
 www: 9 minutes
 ```
 
+To switch from -current to a release, cd into each folder (except www)
+and specify the revision tag `-r tag` like the checkout above.
+
+```
+$ cd /src
+$ cvs -q up -Pd -rOPENBSD_7_5
+```
+
 ## Update the working copy from the local Repository
 
-Later, use the update or up subcommand to cvs to update the new workin
-copy.
+Use the same cvs update commands from above to update the checked out
+CVS copy after you've updated the central repo with reposync.
 
 ```
 $ cd /usr/src
 $ cvs -d /cvs -q up -Pd
+```
+
+Or:
+
+```
+$ cd /usr/src
+$ cvs -d /cvs -q up -Pd -rOPNEBSD_7_5
 ```
 
 ## Copy the local Repository to another machine
