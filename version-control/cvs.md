@@ -22,7 +22,7 @@ repository mirrored from upstream.
 (Use the OpenBSD website as an example repository to checkout, compare
 different commits in history and to mirror the full repository.)
 
-## Clone the Repository
+## Fetch the Repository
 
 Becausing updating a cvs checkout working directory can be very slow
 when its repository is remote across the internet, let's do the CVS
@@ -34,6 +34,7 @@ using rsync and a wrapper script called reposync.
 # pkg_add reposync
 # useradd cvs
 # install -d -o cvs /cvs /var/db/reposync
+# chmod -R g+w /cvs /var/db/reposync
 ```
 
 The one command below both fetches an initial mirror of the repository
@@ -57,11 +58,35 @@ $ du -hcs /cvs/*
 
 ## Update the local Repository
 
-A subsequent reposync the next day took about 5 minutes to update the
-local repository from upstream.
+Use the same reposync command above to update the repo.
+
+```
+$ doas -u cvs reposync rsync://anoncvs.spacehopper.org/cvs
+```
+
+A daily update takes about 5 minutes.
 
 
-## Checkout a working copy from the local Repository
+## Setup folders for CVS
+
+`/usr/src` should already exist with these settings.
+
+```
+$ ls -l /usr | grep src
+drwxrwxr-x   2 root   wsrc    512 Jan 17 23:23 src
+```
+
+If not, add it to the list of folders below.
+
+In /usr, create folders for ports, xenocara, and www with the same
+settings.
+
+```
+$ cd /usr
+# mkdir {ports,xenocara,www}
+# chgrp wsrc {ports,xenocara,www}
+# chmod g+w {ports,xenocara,www}
+```
 
 Set $CVSROOT to `/cvs` in ~/.profile.
 
@@ -70,33 +95,22 @@ CVSROOT=/cvs
 export CVSROOT
 ```
 
-If this is your first time checking out the CVS repos, create the
-folders in /usr.
+Log out and back in, or source .profile to apply the change. Check it
+with `env`.
 
-`/usr/src` might already exist and be in that group by default.
+```
+$ . ~/.profile
+$ env | grep -i cvs
+CVSROOT=/cvs
+```
+
+## Checkout each repository with CVS
+
+Checkout from the local repo to these folders.
 
 ```
 $ cd /usr
-# mkdir {src,ports,xenocara,www}
-```
-
-Change the group membership of the folders to wsrc.
-
-```
-# chgrp wsrc {src,ports,xenocara,www}
-```
-
-Add group write permission to the folders.
-
-```
-# chmod g+w {src,ports,xenocara,www}
-```
-
-Next do an initial checkout from the local repo to these folders.
-
-```
-$ cd /usr
-$ cvs -qd /cvs co -P src
+$ cvs -qd /cvs co -P {src,ports,xenocara,www}
 ```
 
 Checking out all four sets of the repository concurrently (each in its
@@ -128,6 +142,20 @@ create a compressed tar archive of /cvs in /var/db/reposync.
 ```
 $ doas -u cvs tar czf /var/db/reposync/cvs-repo.tgz /cvs
 $ doas -u cvs tar czvf /var/db/reposync/src-repo.tgz /cvs/src/*
+```
+
+```
+$ openrsync -av --rsync-path=/usr/bin/openrsync \
+hostname:/var/db/reposync/repo-archive /var/db/reposync
+```
+
+```
+$ openrsync -av --rsync-path=/usr/bin/openrsync \
+a.k9w.org:/var/db/reposync/checkout-archive /var/db/reposync
+```
+
+```
+$ doas -u cvs tar xzf /var/db/reposync/repo-archive/www-repo.tgz -C /
 ```
 
 Several files in the archive will excede the maximum file path length
