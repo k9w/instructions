@@ -37,6 +37,15 @@ using rsync and a wrapper script called reposync.
 # chmod -R g+w /cvs /var/db/reposync
 ```
 
+Optionally set `cvs` user shell to nologin.
+
+```
+# usermod -s /sbin/nologin
+```
+
+But you'll need to ensure it can execute `rsync` and anything else
+needed by reposync.
+
 The one command below both fetches an initial mirror of the repository
 and can be used again to update it.
 
@@ -198,10 +207,31 @@ You can now `cvs checkout` on the destination.
 
 This seciton is work-in-progress.
 
-You will need `/etc/rsyncd.conf` to allow `/cvs` and to start `rsync --daemon`.
+On the server, create user `anoncvs`.
 
-If you require ssh keys on your server, you will need a key pair for
-the cvs user.
+```
+# useradd -s /sbin/nologin anoncvs
+```
+
+```
+anoncvs:*:32767:32767::/nonexistent:/sbin/nologin
+```
+
+Set its shell to nologin or whatever commands are needed for reposync.
+
+
+In `sshd_config` allow anoncvs to login without authentication.
+
+```
+Match User anoncvs
+PermitEmptyPasswords yes
+		AllowTcpForwarding no
+		AllowAgentForwarding no
+		X11Forwarding no
+		PermitTTY no
+```
+
+You will need `/etc/rsyncd.conf` to allow `/cvs` and to start `rsync --daemon`.
 
 
 ## Build OpenBSD Ports or Base
