@@ -120,16 +120,6 @@ $ cd /usr
 $ cvs -qd /cvs co -P {src,ports,xenocara} -rOPENBSD_7_5
 ```
 
-Checking out all four sets of the repository concurrently (each in its
-own tmux window) on my Thinkpad X220 took:
-
-```
-ports: 52 minutes
-src: 44 minutes
-xenocara: 28 minutes
-www: 9 minutes
-```
-
 To switch from -current to a release, cd into each folder (except www)
 and specify the revision tag `-r tag` like the checkout above.
 
@@ -155,31 +145,20 @@ $ cd /usr/src
 $ cvs -d /cvs -q up -Pd -rOPNEBSD_7_5
 ```
 
-## Copy the local Repository to another machine
+## Use on multiple machines
 
 If you want the full repo on multiple machines and to not redundantly
-download the full copy from the third party mirror multiple times,
-create a compressed tar archive of /cvs in /var/db/reposync.
+download the full copy from the third party mirror multiple times, you
+can pre-load the repo with a tar archive, and optionally setup an
+rsync daemon for your own reposync server.
+
+### Pre-load the repo with a tar archive
+
+Create a compressed tar archive of /cvs in /var/db/reposync.
 
 ```
-$ doas -u cvs tar czf /var/db/reposync/cvs-repo.tgz /cvs
-$ doas -u cvs tar czvf /var/db/reposync/src-repo.tgz /cvs/src/*
+$ doas -u cvs tar czvf /var/db/reposync/cvs-repo.tgz /cvs
 ```
-
-```
-$ openrsync -av --rsync-path=/usr/bin/openrsync \
-hostname:/var/db/reposync/repo-archive /var/db/reposync
-```
-
-```
-$ openrsync -av --rsync-path=/usr/bin/openrsync \
-a.k9w.org:/var/db/reposync/checkout-archive /var/db/reposync
-```
-
-```
-$ doas -u cvs tar xzf /var/db/reposync/repo-archive/www-repo.tgz -C /
-```
-
 Several files in the archive will excede the maximum file path length
 for the default ustar and give the following error.
 
@@ -188,41 +167,41 @@ tar: File name too long for ustar
 cvs/ports/x11/qt6/qtwebengine/patches/patch-src_3rdparty_chromium_ui_views_widget_desktop_aura_desktop_window_tree_host_platform_impl_interactive_uitest_cc,v
 ```
 
-To prevent that, investigate other command options for tar, use a
-different tool than tar, or count on re-syncing those files from
-upstream once the archive is extracted on the destination machine.
+That's okay. `reposync` can fetch those.
 
-To replicate to a server as is, create the user and folder on the
-server and upload the tar archive from local to remote with openrsync.
-
-At work on symmetrical Gigabit fiber, this took about 30 minutes to
-upload 2.1GB.
+At the destination, setup the cvs user and repo folders.
 
 ```
-$ openrsync -av --rsync-path=/usr/bin/openrsync /var/db/reposync/cvs-repo.tgz hostname:/var/db/reposync
-Transfer starting: 1 files
-cvs-repo.tgz
-Transfer complete: 36 B sent, 2.073 GB read, 2.073 GB file size
+# pkg_add reposync
+# useradd cvs
+# install -d -o cvs /cvs /var/db/reposync
+# chmod -R g+w /cvs /var/db/reposync
 ```
 
-On the server, change the tar archive owner to cvs if not already.
+At the destination, copy the archive from the source.
 
 ```
-$ cd /var/db/reposync
-# chown cvs cvs-repo.tgz
+$ openrsync -av --rsync-path=/usr/bin/openrsync \
+<hostname>:/var/db/reposync/cvs-repo.tgz /var/db/reposync
 ```
 
-Ensure /cvs exists with proper permissions for the cvs user. Then
-untar the archive into it.
+Extract the archive into the root folder. tar will use the `cvs`
+folder we made earlier.
 
 ```
-$ cd /cvs
-$ doas -u cvs tar xzf /var/db/reposync/cvs-repo.tgz
+$ doas -u cvs tar xzvf /var/db/reposync/cvs-repo.tgz -C /
 ```
-Extraction takes about 15 minutes.
 
-Then run reposync to pull in the filepaths too long for tar to fit
-into the tar archive, as well as any updates since the initial sync.
+You can now `cvs checkout` on the destination.
+
+### Host a reposync server
+
+This seciton is work-in-progress.
+
+You will need `/etc/rsyncd.conf` to allow `/cvs` and to start `rsync --daemon`.
+
+If you require ssh keys on your server, you will need a key pair for
+the cvs user.
 
 
 ## Build OpenBSD Ports or Base
@@ -266,15 +245,11 @@ Here is how to switch the mirror to spacehopper while tracking
 $ cvs -d anoncvs@anoncvs.spacehopper.org:/cvs -q up -Pd -rOPENBSD_7_3
 ```
 
-
-### reposync: Host your own repository mirror
-
-https://github.com/sthen/reposync
-
 ## Host Your Own Project with CVS
 
 (The rest of the content on this page is old and will likely be replaced.)
 
+```
 cd ~/k9w
 cvs -d $PWD init
 
@@ -292,7 +267,6 @@ N learn/www.shellscript.sh/test.sh
 
 No conflicts created by this import
 
-             
 cd ..
 mv learn learn.orig
 cvs -qd ~/k9w checkout -P learn
@@ -304,19 +278,19 @@ U learn/www.shellscript.sh/test.sh
 U learn/www.shellscript.sh/test.sh,v
 U learn/www.shellscript.sh/var.sh,v
 U learn/www.shellscript.sh/while.sh,v
+```
 
+Diff changes on cvs_notes
 
-# diff changes on cvs_notes
+Incorporate RCS history into CVS where I used RCS
 
-# incorporate RCS history into CVS where I used RCS
-
-# diff changes on shellscript.sh examples that I tracked with RCS,
+Diff changes on shellscript.sh examples that I tracked with RCS,
 with revisions done after the import into CVS, and with the current
 version in the source repository and working directory.
 
-# continue working the tutorial at Functions
+Continue working the tutorial at Functions
 
-# try out and learn the rest of the CVS commands and document them here
+Try out and learn the rest of the CVS commands and document them here.
 
 
 --------
@@ -331,25 +305,33 @@ by CVS, and which will be managed by SVN.
 First I committed any changes left in my currently checked out copy of
 ~/k9w/learn. Then I renamed the repo 'k9w' and module 'learn'.
 
-cd ~
-mv k9w k9w-cvs
-cd k9w-cvs
-mv learn learn-cvs
+```
+$ cd ~
+$ mv k9w k9w-cvs
+$ cd k9w-cvs
+$ mv learn learn-cvs
+```
 
 Then I checked out a fresh copy of learn-cvs from ~/k9w-cvs
 
-cd ~/bin
-cvs -d ~/k9w-cvs checkout learn-cvs
+```
+$ cd ~/bin
+$ cvs -d ~/k9w-cvs checkout learn-cvs
+```
 
 Then I told cvs I was abandoning my checkout of 'learn'.
 
-cd ~/bin/learn
-cvs -d ~/k9w-cvs release
+```
+$ cd ~/bin/learn
+$ cvs -d ~/k9w-cvs release
+```
 
 Then I deleted 'learn', now that it had been replaced by learn-cvs.
 
-cd ~/bin
-rm -r learn
+```
+$ cd ~/bin
+$ rm -r learn
+```
 
 That is how to rename a repo and module in CVS.
 
@@ -358,10 +340,16 @@ in that project.
 
 To revert my current checkout from Sep 28 2019 to the state it was in
 on Sep 15:
-cvs -d ~/k9w-cvs checkout -D "9/15/19" learn-cvs
+
+```
+$ cvs -d ~/k9w-cvs checkout -D "9/15/19" learn-cvs
+```
 
 To revert it to a month ago:
-cvs -d ~/k9w-cvs checkout -D "1 month ago" learn-cvs
+
+```
+$ cvs -d ~/k9w-cvs checkout -D "1 month ago" learn-cvs
+```
 
 I tested this with a checkout of learn-cvs to ~/src instead of my main
 woring copy in ~/bin. No cvs release was necessary. Checking out an
@@ -382,16 +370,28 @@ my latest checkout or update to this working copy, then here is how to
 resolve the conflicting changes.
 
 From error:
+```
 C conflicts occured
+```
 
 do
-cvs update -j1.5 -j1.3 foo.c
+
+```
+$ cvs update -j1.5 -j1.3 foo.c
+```
 
 or
-cvs update -jTAG:DATE
+
+```
+$ cvs update -jTAG:DATE
+```
 
 or do
-cvs update -C
+
+```
+$ cvs update -C
+```
+
 this will overwrite the local copy with clean version from the repo
 and save my local copy in '.#file.revision' Then merge or edit the
 files by hand and then do 'cvs commit'
@@ -400,7 +400,8 @@ Need to test these todo commands.
 	$Id: cvs_setup,v 1.2 2021/02/05 06:36:35 kevin Exp $
 
 Migrate this server config files from RCS to CVS.
- 
+
+```
 # apt install cvs
 # exit
 $ pwd
@@ -409,9 +410,11 @@ $ cvs -d ~/dotfiles init
 $ mkdir test
 $ cd test
 $ cvs -d ~/dotfiles import -m "" kevin dotfiles start
+```
 
 No conflicts created by this import
 
+```
 $ pwd
 /home/kevin/test
 $ cd
@@ -422,17 +425,21 @@ Password:
 # exit
 $ cd /home
 $ cvs -d /home/dotfiles checkout kevin
+```
 
 Since I had already started an RCS file for configuration, I imported
 that into CVS by hand.
 
+```
 $ pwd
 /home
 $ mv kevin/configuration,v dotfiles/kevin
+```
 
 I ensured the Id keyword had been added to each file I want to track
 and then added them to CVS.
 
+```
 $ cd
 $ pwd
 /home/kevin
@@ -444,13 +451,14 @@ Directory /home/dotfiles/kevin/.ssh put under version control
 cvs add: scheduling file `.ssh/authorized_keys' for addition
 cvs add: use `cvs commit' to add these files permanently
 $ cvs commit -m "added files, including importing the RCS file for configuration"
+```
 
 Adding the file called configuation using its rcs file did not work
 correctly at first. CVS said it is in the way. So I renamed my working
 copy, did cvs update to pull in the repo version, renamed the latest
 one back, and committed again. And it worked.
 
-
+```
 cvs commit: Examining .
 cvs commit: Examining .ssh
 /home/dotfiles/kevin/.mg,v  <--  .mg
@@ -496,12 +504,14 @@ cvs commit: Examining .
 cvs commit: Examining .ssh
 /home/dotfiles/kevin/configuration,v  <--  configuration
 new revision: 1.4; previous revision: 1.3
+```
 
 Then I deleted configuration.2.
 
 Next, create the conf repo for the rest of the system, outside of
 users in /home.
 
+```
 $ su
 Password:
 # pwd
@@ -510,21 +520,29 @@ Password:
 # mkdir test
 # cd test
 # cvs -d /home/conf import -m "" root conf start
+```
 
 No conflicts created by this import
 
+```
 # cvs -d /home/conf import -m "" etc conf start
+```
 
 No conflicts created by this import
 
+```
 # cvs -d /home/conf import -m "" usr conf start
+```
 
 No conflicts created by this import
 
+```
 # cvs -d /home/conf import -m "" var conf start
+```
 
 No conflicts created by this import
 
+```
 # pwd
 /home/test
 # cd ..
@@ -574,9 +592,11 @@ cvs checkout: Updating var
 ? var/opt
 ? var/spool
 ? var/tmp
+```
 
 Add Id keyword to files to add in /root.
 
+```
 # cd /root
 # nvi .mg                                 
 # nvi .nexrc                 
@@ -679,17 +699,21 @@ crontabs
 # cd crontabs/
 # ls
 root  root,v
+```
 
 Here I chose to delete the RCS file since the history is not
 significant. Better to start over and add the current crontab to CVS.
 
+```
 # rm root,v
 # cvs add root
 cvs add: No CVSROOT specified!  Please use the `-d' option
 cvs [add aborted]: or set the CVSROOT environment variable.
+```
 
 Here, I had forgitten to add the directories spool and cron to CVS.
 
+```
 # cd /var
 # cvs add spool spool/cron spool/cron/crontabs spool/cron/crontabs/root
 Directory /home/conf/var/spool put under version control
@@ -709,10 +733,12 @@ initial revision: 1.1
 # exit
 $ cd
 $ mkdir instructions
+```
 
 I separated setup for cvs and tarsnap from configuration into separate
 instruction files.
 
+```
 $ cvs add instructions/
 Directory /home/dotfiles/kevin/instructions put under version control
 $ cd instructions/
@@ -733,3 +759,5 @@ initial revision: 1.1
 /home/dotfiles/kevin/instructions/tarsnap_debian,v  <--  instructions/tarsnap_debian
 initial revision: 1.1
 $
+```
+
