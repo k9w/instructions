@@ -211,11 +211,18 @@ On the server, create user `anoncvs`.
 # useradd -s /sbin/nologin anoncvs
 ```
 
+Note that nologin does not exist in /etc/shells.
+
 ```
 anoncvs:*:32767:32767::/nonexistent:/sbin/nologin
 ```
 
 Set its shell to nologin or whatever commands are needed for reposync.
+
+<https://www.cyberciti.biz/tips/howto-linux-shell-restricting-access.html>
+
+
+<https://www.baeldung.com/linux/create-non-login-user>
 
 
 In `sshd_config` allow anoncvs to login without authentication.
