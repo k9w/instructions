@@ -633,10 +633,10 @@ Add Id keyword to files to add in /root.
 
 ```
 # cd /root
-# nvi .mg                                 
-# nvi .nexrc                 
-# nvi .profile    
-# cvs add .mg .nexrc .profile                             
+# nvi .mg
+# nvi .nexrc
+# nvi .profile
+# cvs add .mg .nexrc .profile
 cvs add: scheduling file `.mg' for addition
 cvs add: scheduling file `.nexrc' for addition
 cvs add: scheduling file `.profile' for addition
@@ -800,4 +800,6 @@ $
 ## See Also
 
 <https://daulton.ca/2018/10/openbsd-create-private-mirror>
+
+<https://linuxconfig.org/how-to-setup-the-rsync-daemon-on-linux>
 
