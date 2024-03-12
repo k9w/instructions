@@ -205,7 +205,7 @@ You can now `cvs checkout` on the destination.
 
 This seciton is work-in-progress.
 
-On the server, create user `anoncvs`.
+On the server, create user `anoncvs`, which is used by reposync.
 
 ```
 # useradd -s /sbin/nologin anoncvs
@@ -802,4 +802,6 @@ $
 <https://daulton.ca/2018/10/openbsd-create-private-mirror>
 
 <https://linuxconfig.org/how-to-setup-the-rsync-daemon-on-linux>
+
+<https://www.upguard.com/blog/secure-rsync>
 
