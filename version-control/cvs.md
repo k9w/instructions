@@ -208,49 +208,6 @@ $ doas -u cvs tar xzvf /var/db/reposync/cvs-repo.tgz -C /
 
 You can now `cvs checkout` on the destination.
 
-### Host a reposync server
-
-This seciton is work-in-progress.
-
-On the server, create user `anoncvs`, which is used by reposync to
-connect from the client to the server.
-
-```
-# useradd -s /sbin/nologin anoncvs
-```
-
-Note that nologin does not exist in /etc/shells.
-
-```
-anoncvs:*:32767:32767::/nonexistent:/sbin/nologin
-```
-
-Set its shell to nologin or whatever commands are needed for reposync.
-
-<https://www.cyberciti.biz/tips/howto-linux-shell-restricting-access.html>
-
-
-<https://www.baeldung.com/linux/create-non-login-user>
-
-Is the rsync daemon on the server run by a `rsyncd` user? What about
-running as root to bind to the default priviledged port 873?
-
-
-
-In `sshd_config` allow anoncvs to login without authentication.
-
-```
-Match User anoncvs
-PermitEmptyPasswords yes
-		AllowTcpForwarding no
-		AllowAgentForwarding no
-		X11Forwarding no
-		PermitTTY no
-```
-
-You will need `/etc/rsyncd.conf` to allow `/cvs` and to start `rsync --daemon`.
-
-
 ## Build OpenBSD Ports or Base
 
 This seciton contains additions and clarifications to OpenBSD's [own
