@@ -44,6 +44,13 @@ Optionally set `cvs` user shell to nologin.
 But you'll need to ensure it can execute `rsync` and anything else
 needed by reposync.
 
+Ideally, restrict the cvs account to not have shell access, but to run
+just the following commands.
+- reposync
+- tar.
+
+Note we did not give it a home directory above.
+
 The one command below both fetches an initial mirror of the repository
 and can be used again to update it.
 
@@ -205,7 +212,8 @@ You can now `cvs checkout` on the destination.
 
 This seciton is work-in-progress.
 
-On the server, create user `anoncvs`, which is used by reposync.
+On the server, create user `anoncvs`, which is used by reposync to
+connect from the client to the server.
 
 ```
 # useradd -s /sbin/nologin anoncvs
@@ -223,6 +231,10 @@ Set its shell to nologin or whatever commands are needed for reposync.
 
 
 <https://www.baeldung.com/linux/create-non-login-user>
+
+Is the rsync daemon on the server run by a `rsyncd` user? What about
+running as root to bind to the default priviledged port 873?
+
 
 
 In `sshd_config` allow anoncvs to login without authentication.
