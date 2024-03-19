@@ -411,6 +411,26 @@ to serve the repo).
 Login to the server, create a git-repos folder in your home directory
 and cd to it.
 
+On server:
+
+```
+mkdir my_project.git
+cd my_project.git
+git --bare init
+```
+
+On client:
+
+```
+mkdir my_project && cd my_project
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin youruser@yourserver.com:/path/to/my_project.git
+git push origin main
+```
+
+
 ```
 $ cd
 $ mkdir git-repos
@@ -848,3 +868,8 @@ $ git add .
 $ git commit
 $ git push
 ```
+
+## See Also
+
+<https://stackoverflow.com/questions/2337281/how-do-i-do-an-initial-push-to-a-remote-repository-with-git>
+
