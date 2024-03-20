@@ -1,9 +1,78 @@
+# Git
+
+[Git}(https://git-scm.com) is a [distributed version control
+system](https://en.wikipedia.org/wiki/Distributed_version_control)
+used to manage source code, coniguration files, documentation, etc.
+
+Because Git is widely documented elsewhere, this guide shows my
+understanding and common usage of the system, including on
+[OpenBSD](https://openbsd.org).
+
+## Global user settings
+
+My `git config` setup is tracked in:
+
+```
+~/.gitconfig
+~/.gitignore
+~/.priv/gitconfig
+```
+
+### .gitconfig
+
+```
+[include]
+	path = ~/.priv/gitconfig
+
+[core]
+	excludesfile = /home/kevin/.gitignore
+#	pager = less
+#	editor = emacsclient -a mg
+
+# Normalize line endings across Windows, Linux, etc.
+#	autocrlf = input
+
+[init]
+	defaultBranch = main
+
+# Inserted automatically by 'gh auth login'.
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/local/bin/gh auth git-credential
+```
+
+
+### .gitignore
+
+```
+# Ignore all files and directories recursively.
+
+# Whitelist new files:
+# 'git add -f <filenames>'
+
+# Stage any changed files:
+# 'git add .'
+
+*
+```
+
+### .priv/gitconfig
+
+```
+# private info Git configuration file
+
+[user]
+	name = Firstname Lastname
+	email = name@example.com
+```
+
+
 First tell Git about yourself and set some options.
 
 
 ```
-$ git config --global user.name "Kevin Williams"
-$ git config --global user.email kevin@k9w.org
+$ git config --global user.name "Firstname Lastname"
+$ git config --global user.email name@example.com
 ```
 
 Tell Git to name the first branch 'main' when initializing a new repo
@@ -33,6 +102,7 @@ Keep in mind if the output is long enough for commands such as 'git
 log' that you choose to pipe it into less, you'll lose the color
 highlighting Git provides.
 
+## Start a new repository
 
 To make a Git repo of your dotfiles, start in your home directory:
 
