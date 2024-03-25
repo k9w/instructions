@@ -1,6 +1,6 @@
 # Git
 
-[Git}(https://git-scm.com) is a [distributed version control
+[Git](https://git-scm.com) is a [distributed version control
 system](https://en.wikipedia.org/wiki/Distributed_version_control)
 used to manage source code, coniguration files, documentation, etc.
 

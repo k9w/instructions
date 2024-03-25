@@ -77,3 +77,6 @@ rsync daemon mode
 
 <https://www.baeldung.com/linux/create-non-login-user>
 
+Andrew said to start with how to host an rsync server.
+
+
