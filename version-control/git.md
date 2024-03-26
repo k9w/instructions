@@ -67,155 +67,43 @@ My `git config` setup is tracked in:
 ```
 
 
-First tell Git about yourself and set some options.
-
-
-```
-$ git config --global user.name "Firstname Lastname"
-$ git config --global user.email name@example.com
-```
-
-Tell Git to name the first branch 'main' when initializing a new repo
-instead of the default branch name 'master'.
-
-```
-$ git config --global init.defaultBranch main
-```
-
-On Linux and FreeBSD, 'git diff' passes certain flags to less and
-displays correctly. But on OpenBSD, if the contents fit on one
-screenfull, less fills the rest of the screen with blanks and exits.
-
-To fix it on OpenBSD, one option is to set core.pager to pass the
-correct flags to less(1).
-
-To find the correct flags to pass to less on OpenBSD, compare its
-manpage with less on FreeBSD.
-
-Or set core.pager to cat(1) instead of less(1):
-
-```
-$ git config --global core.pager cat
-```
-
-Keep in mind if the output is long enough for commands such as 'git
-log' that you choose to pipe it into less, you'll lose the color
-highlighting Git provides.
-
 ## Start a new repository
 
-To make a Git repo of your dotfiles, start in your home directory:
+This example uses a static website with one file already.
 
 ```
-$ cd
+$ cd ~/src/example.com
 ```
 
-Initialize the git repository for dotfiles. Don't worry about how to
-set its name to 'dotfiles' yet.
+Create the git repository in this folder.
 
 ```
 $ git init
 ```
 
-Rename the default branch from 'master' to 'main' if you haven't
-already set init.defaultBranch to it in ~/.gitconfig.
+Next add the initial list of files to be tracked.
 
 ```
-$ git branch -m main
+$ git add -f index.html
 ```
 
-Often times, your Git repo is in a directory containing only the files
-in the project you want to track. In many cases, building or running
-the project makes logs, binaries and other files you don't want to
-track or don't need to clutter up other people's or other machines'
-folders where your repo may now or later be cloned to.
-
-Because your 'dotfiles' repo is in your home directory, Git will see
-other files and folders there which you likely don't need or want to
-track.
-
-To prevent those files from showing in a 'git status' or be added with
-'git add', make a ./.gitignore as follows.
-
-```
-# Ignore all files and directories recursively except what is added
-# manually by 'git add'. Requires 'git add -f' to add a file for the
-# first time to be committed and tracked.
-
-*
-
-```
-
-Next add the initial list of files to be tracked. Here's what I started
-with.
-
-```
-$ git add -f .Xresources .cwmrc .emacs.d/init.el .gitconfig .gitignore \
-.init.ee .kshrc .mg .nexrc
-```
-
-Check to see if you missed any files.
-
-```
-$ ls -a
-```
-
-Add the rest of the files you want. Remember you are not looking to
-necessarily track all dotfiles shipped with the OS.
-
-```
-$ git add -f .profile .tmux.conf .vimrc .xsession
-```
-
-Check the status, with 'git status'.
+Check what Git now tracks in this repo.
 
 ```
 $ git status
-$ git status | less
 ```
-Commit what you have thus far, and print the
-commands you just typed.
+Commit what you have thus far.
 
 ```
 $ git commit -m 'Initial commit.'
-$ git status
-$ history
 ```
 
-Going forward, whenever you modify an already tracked file and want to
-commit it to Git, you need to manually add it to the staging area, but
-without the -f flag since it's already tracked.
-
-```
-$ git add .tmux.conf
-```
-
-To show files currently tracked by git:
-
-```
-$ git ls-tree -r main
-```
-
-If you chose custom branch names, but not 'main', the above command
-won't work. List your branches, then pick a branch name and list the
-tracked files in that branch.
-
-```
-$ git branch
-* openbsd-laptop
-$ git ls-tree -r openbsd-laptop
-```
-
-To see what already-tracked files have been modified since they were
-last staged:
+See details of what already-tracked files have been modified since
+they were last staged:
 
 ```
 $ git diff
 ```
-
-Be sure 'git diff' is blank with no output before you commit, to
-ensure no changes are missed. Do so with 'git add' and the name of any
-modified files you want to commit.
 
 To show how currently staged files differ from the latest commit:
 
@@ -223,6 +111,17 @@ To show how currently staged files differ from the latest commit:
 $ git diff --staged
 ```
 
+To re-add already-tracked files to staging, omit the -f flag.
+
+```
+$ git add index.html
+```
+
+Show files currently tracked by git in the default main branch.
+
+```
+$ git ls-tree -r main
+```
 
 To rename an already-tracked file:
 
@@ -230,32 +129,14 @@ To rename an already-tracked file:
 $ git mv test-file test-file1
 ```
 
-This changes the file name in the working directory just like mv(1)
-and stages the new filename in the index, ready for the next commit.
-
-You could also rename the file regularly with just mv, 'git add -f'
-the new filename. 'git status' or 'git commit' would then auto-detect
-the file under the old name to be removed and see the file under the
-new name to be committed.
-
-Interestingly, if you had already modified the file before renaming
-it, but didn't stage it with 'git add', Git won't stage the changed
-file contents when it stages the file name change. In my test, I did
-that separately after committing the rename.
-
-You can remove a tracked file from the local directory and Git will
-notice it and remove it just like a renamed file above.
-
-To remove an already-tracked file from git and from the local
-directory in one command:
+Remove an already-tracked file from git and from the local
+directory in one command.
 
 ```
 $ git rm test-file1
 ```
 
-And then commit as normal.
-
-To remove an already-tracked file from Git but keep the local file:
+Remove an already-tracked file from Git but keep the local file:
 
 ```
 $ git rm --cached test-file2
@@ -922,6 +803,17 @@ $ git checkout -
 $ git switch -
 ```
 
+Delete local branch.
+
+```
+$ git branch -d <old-branch-name>
+```
+
+Delete remote branch.
+
+```
+$ git push -d origin <old-branch-name>
+```
 
 <p>
 # Stashing changes
