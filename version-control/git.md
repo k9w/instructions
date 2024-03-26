@@ -105,16 +105,16 @@ they were last staged:
 $ git diff
 ```
 
-To show how currently staged files differ from the latest commit:
+Show how currently-staged files differ from the latest commit.
 
 ```
 $ git diff --staged
 ```
 
-To re-add already-tracked files to staging, omit the -f flag.
+Re-add any modified files to staging.
 
 ```
-$ git add index.html
+$ git add .
 ```
 
 Show files currently tracked by git in the default main branch.
@@ -337,16 +337,16 @@ flap.md  r.md
 ## Remotes
 
 
-The distributed nature of Git allows one person to clone another's
-repository, or for one to upload their own repo to a server or another
-machine they can access. Git supports a number of workflows around
-this.
-
-First, list any existing remotes for the current repo.
+List any existing remotes for the current repo.
 
 ```
 $ git remote -v
 ```
+
+The distributed nature of Git allows one person to clone another's
+repository, or for one to upload their own repo to a server or another
+machine they can access. Git supports a number of workflows around
+this.
 
 The examples thus far in this guide assume you started the repo above
 on your own laptop. One common way to share a repo with others is to
@@ -364,20 +364,32 @@ and cd to it.
 On server:
 
 ```
-mkdir my_project.git
-cd my_project.git
-git --bare init
+$ mkdir my_project.git
+$ cd my_project.git
+$ git --bare init -b main
 ```
 
 On client:
 
+Start the local repository.
+
 ```
-mkdir my_project && cd my_project
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin youruser@yourserver.com:/path/to/my_project.git
-git push origin main
+$ mkdir my_project && cd my_project
+$ git init
+```
+
+Add files with contents. Then add to git and commit.
+
+```
+$ git add -f <first files>
+$ git commit -m "Initial commit"
+```
+
+Add the first remote and push to it.
+
+```
+$ git remote add origin youruser@yourserver.com:/path/to/my_project.git
+$ git push --set-upstream origin main
 ```
 
 
