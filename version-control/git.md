@@ -180,8 +180,8 @@ committed version if none is staged:
 $ git checkout -- test-file
 ```
 
-
-# Cloning
+<br>
+## Cloning
 
 On the server where we made 'dotfiles.git' earlier, we could clone it
 into my home folder on the same server.
@@ -333,9 +333,8 @@ $ ls
 flap.md  r.md
 ```
 
-
-
-# Remotes
+<br>
+## Remotes
 
 
 The distributed nature of Git allows one person to clone another's
@@ -491,7 +490,7 @@ $ git push github --all
 
 
 <br>
-# Branching
+## Branching
 
 
 One of Git's killer features is the ability to have branches, forked
@@ -815,8 +814,15 @@ Delete remote branch.
 $ git push -d origin <old-branch-name>
 ```
 
-<p>
-# Stashing changes
+Delete a remote branch that only exists in local repo cache.
+
+```
+$ git fetch origin --prune
+```
+
+
+<br>
+## Stashing changes
 
 If you changed files in a local repo without first running 'git pull',
 you can stash away those changes, do the git pull, then apply them
@@ -831,7 +837,13 @@ $ git commit
 $ git push
 ```
 
+<br>
 ## See Also
 
+
 <https://stackoverflow.com/questions/2337281/how-do-i-do-an-initial-push-to-a-remote-repository-with-git>
+
+<https://stackoverflow.com/questions/30590083/how-do-i-rename-both-a-git-local-and-remote-branch-name#30590238>
+
+<https://stackoverflow.com/questions/35941566/git-says-remote-ref-does-not-exist-when-i-delete-remote-branch>
 
