@@ -1,4 +1,4 @@
-	$Id: tarsnap_debian,v 1.1 2021/02/05 06:29:50 kevin Exp $
+# Tarsnap
 
 I had trouble running tarsnap on OpenBSD and FreeBSD with ACTS and
 cron. So I am trying it here on Debian.
@@ -8,38 +8,52 @@ nvi. It created roots crontab at:
 /var/spool/cron/crontabs/root
 
 Scheduled the following and it worked:
+
+```
 # touch /root/test
+```
 
 Next since Tarsnap and ACTS are not in the Debian repos, I will
 install tarsnap from its deb package, and acts from git.
 
 From https://tarsnap.com/pkg-deb.html:
-$ 
-wget https://pkg.tarsnap.com/tarsnap-deb-packaging-key.asc
+
+```
+$ wget https://pkg.tarsnap.com/tarsnap-deb-packaging-key.asc
 
 $ gpgv --keyring /usr/share/keyrings/debian-archive-keyring.gpg tarsnap-deb-packaging-key.asc
 gpgv: verify signatures failed: Unexpected error
+```
 
 I chose to skip the check and add the key.
 
+```
 # apt-key add tarsnap-deb-packaging-key.asc
 E: gnupg, gnupg2 and gnupg1 do not seem to be installed, but one of
 them is required for this operation
+```
 
 So I installed gpg
+
+```
 # apt install gpg
+```
 
 Then apt-key add worked. Next I added the tarsnap repo to sources-list.d.
 
+```
 # echo "deb http://pkg.tarsnap.com/deb/$(lsb_release -s -c) ./" | \
 tee -a /etc/apt/sources.list.d/tarsnap.list
 
 # apt update
+```
 
 Searching for tarsnap worked and also found tarsnap-archive-keyring. I
 chose to install both and git, so that I can get acts.
 
+```
 # apt install tarsnap-keyring tarsnap git
+```
 
 Next I initialized tarsnap for this system.
 
@@ -47,6 +61,7 @@ Next I initialized tarsnap for this system.
  - change default key to /root/de.k9w.org.tarsnapkey
  - uncomment humanize-numbers
 
+```
 # tarsnap-keygen --keyfile /root/de.k9w.org.tarsnapkey --user
 kevin@k9w.org --machine de.k9w.org
 Enter tarsnap account password: 
@@ -153,3 +168,4 @@ $
 .cache
 .config
 .mozilla
+```
