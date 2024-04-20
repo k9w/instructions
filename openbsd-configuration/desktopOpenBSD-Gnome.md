@@ -29,6 +29,16 @@ Enable services for Gnome, including it's login desktop manager gdm.
 # rcctl enable multicast messagebus avahi_daemon gdm
 ```
 
+Add user to _shutdown group to shutdown and reboot from the Gnome menu,
+and anywhere else in the system, without password.
+
+```
+# usermod -G _shutdown <username>
+```
+
+Adding to the group is not in the package readme, as it's not specific
+to Gnome.
+
 Reboot into the new setup.
 
 ```
