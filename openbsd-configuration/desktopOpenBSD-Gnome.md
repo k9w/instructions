@@ -26,11 +26,19 @@ Disable OpenBSD's default graphical login desktop manager xenodm.
 Enable services for Gnome, including it's login desktop manager gdm.
 
 ```
-# rcctl enable multicast messagebus avahi_daemon gdm
+# rcctl enable messagebus avahi_daemon gdm
 ```
 
+They must be enabled in that order, or avahi_daemon will fail and gdm
+won't work.
+
+The package readme also says to enable multicast. But that's just a
+varible, not an rc.d script.
+
 Add user to _shutdown group to shutdown and reboot from the Gnome menu,
-and anywhere else in the system, without password.
+and anywhere else in the system, without password. Only works with
+[shutdown(8)](https://man.openbsd.org/shutdown), not [halt or
+reboot](https://man.openbsd.org/reboot). 
 
 ```
 # usermod -G _shutdown <username>
@@ -42,111 +50,105 @@ to Gnome.
 Reboot into the new setup.
 
 ```
-# reboot
+$ Shutdown -R Now
 ```
 
-If you don't want to reboot, you can switch to a tty with Ctrl Alt F2
-and stop and start the daemons by hand easily. There's no rc.d script
-for multicast, which will error the rest of the services if you try to
-start it with them. Leave it off.
+## Switch Between Gnome and xenodm
+
+Switch back to xenodm on next boot.
 
 ```
-# rcctl stop xenodm
-# rcctl start messagebus avahi_daemon gdm
-```
-
-## Switch from Gnome to another DE
-
-To switch from Gnome to any other DE or WM which doesn't need GDM, 
-disable the GDM services, and enable xenodm.
-
-```
-# rcctl disable multicast messagebus avahi_daemon gdm
+# rcctl disable messagebus avahi_daeom gdm
 # rcctl enable xenodm
 ```
 
-And switch to a tty to stop and start them.
+Switch back to xenodm right away.
 
 ```
-# rcctl start xenodm
 # rcctl stop messagebus avahi_daemon gdm
+# rcctl start xenodm
 ```
 
-You can also switch from Gnome at the X terminal.
+## Caveats
+
+### Gnome Keyring and ssh-agent
+
+Gnome Keyring caches SSH keys and other credentials. Normally,
+Xenodm's confguration file `/etc/X11/xenodm/Xsession` calls ssh-agent
+and prompts for the private key passphrase on login. Gnome Keyring
+starts its own ssh-agent but doesn't prompt for the key passphrase
+until your first ssh attempt of the Gnome login session.
+
+You can also manually unlock the ssh key before being prompted.
 
 ```
-# rcctl stop messagebus avahi_daemon gdm && rcctl start xenodm
-```
-
-Gnome uses its Keyring to cache SSH keys and other credentials. I've
-chosen to not use it at this time until I can learn it
-better. Normally, Xenodm's confguration file /etc/X11/xenodm/Xsession
-calls ssh-agent and prompts for the private key passphrase on login.
-
-Without that Xenodm and the Gnome Keyring, you can start the agent and
-load the your SSH key from any X terminal like this, ideally before
-starting any tmux or screen sessons, so that they'll inherit the agent
-keys.
-
-```
-$ eval $(ssh-agent)
 $ ssh-add
 Enter passphrase for key '/home/<username>/.ssh/id_ed25519': 
 ```
+Use of Gnome Keyring is not optional. I found nowhere in the settings
+to disable it. When I launch Chromium, it prompts me to set a password 
+for the new 'default keyring'. I chose not to and I have accepted 
+dismissing the prompt each time I launch Chromium.
 
-You can kill the agent and lock your key without logging out of X.
-
-```
-$ pkill ssh-agent
-```
-
-Current issues:
-
-At first Gnome Terminal didn't render at all. But after a reboot it
-worked.
-
-The 14.4G SSD is now filled 10.5G to 77% capacity. With lots of apps
-open, disk usage climbed to 11.6G at 85% capacity. When I deleted the
-.core files and closed all but Gnome terminal, it returned to 77%.
-
-The Gnome beep is annoying, but can be turned off in Settings.
-
-The regular Fn-F2 or Fn-F3 Thinkpad volume controls don't work, at
-least for USB devices. The Gnome volume only detects the default
-built-in speakers.
-
-The Fn screen brigitness keys work fine. But the Gnome brightness
-control disappears if turned all the way down.
-
-Suspend on lid close does not work even when turned on in Tweaks. It
-also warns of its own suspend due to inactivity. But it does not suspend
-on its own and I've found no place in Settings or Tweaks to configure
-it.
-
-Even though I turned off the keyboard bell in Terminal, it does not
-respect that setting in Emacs and gVim. NeoVim and non-GUI Vim don't
-have the bell.
-
-
-When I removed Gnome, I kept the gnome custom class in /etc/login.conf.
-When I reverted that file to its original version, the next time I tried
-to login, it would not work. I logged in as root then tried to su to my
-standard account. It said,
-```
-su: no such login class: gnome
-```
-
-I had set the login class with:
+It can technically be disabled by renaming or moving the executables in
+/usr/local/bin:
 
 ```
-# usermod -L gnome <username>
+gnome-keyring
+gnome-keyring-3
+gnome-keyring-daemon
 ```
 
-To fix it, I set my regular user's login class to one of the pre-defined
-classes in /etc/login.conf. It was likely previously assigned to the
-'default' login class. I took this opportunity to add it to the 'staff'
-login class, so that firefox and other applications could take up more
-processes and memory.
+Only renaming the daemon was necessary to disable it. But then
+ssh-agent failed to start.
 
-It worked.
+I started it manually with:
+
+```
+$ eval `ssh-agent`
+```
+
+But it would not let me or my ~/.profile properly set $SSH_AUTH_SOCK,
+which is required for `ssh-add` to work properly.
+
+In the end I re-enabled gnome-keyring.
+
+### Cannot use BitWarden from Chromium desktop icon
+
+Chromium on OpenBSD disables WebAssembly, which is required for the
+Argon2 KDF feature of the BitWarden extension, and likely the website
+vault too.
+
+Rather than launching it as `chrome`, I do `chrome--enable-wasm`. When 
+launched from a terminal, it ties up the terminal until chromium
+exits. Launching it from a dedicated tmux pane leaves the rest of my
+terminal free for other use while chromium runs.
+
+The .desktop file for Chromium does not include that flag. Those files
+are located in:
+
+```
+/usr/local/share/applications
+```
+
+I copied `chromium-browser.desktop` to `chromium-wasm.desktop`. The
+Exec function [does not
+support](https://unix.stackexchange.com/questions/238565/how-to-pass-argument-in-desktop-file)
+double-dash command flags, only single-dash. However, they can work
+inside quotes, such as in a string for a subshell. In
+chromium-wasm.desktop, I changed the Exec lines to:
+
+```
+Exec=sh -c "chrome --enable-wasm %U"
+```
+
+And for the private window:
+
+```
+Exec=sh -c "chrome --incognito --enable-wasm"
+```
+That still did not work. It kept launching chromium without wasm.
+
+I only use Chromium with wasm for BitWarden. So I cannot add the icon
+to my favorites menu and will continue launching it from the terminal.
 
