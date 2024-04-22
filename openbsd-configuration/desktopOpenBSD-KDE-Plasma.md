@@ -32,3 +32,10 @@ icons are smashed together and overlap. And when opening the application
 menu with the mouse, the menu itself opens on a different monitor than
 the bottom bar and is also too big for the screen.
 
+When disconnected from external monitors, the built-in display does not
+fully revert to sole-display settings. This happens in cwm and any
+desktop environment which does not take special care to update the
+display configuration when external monitors are connected or
+disconnected. Plasma should have special settings to handle this. But it
+does not work as intended.
+
