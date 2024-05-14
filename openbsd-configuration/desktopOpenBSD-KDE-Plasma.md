@@ -39,3 +39,13 @@ display configuration when external monitors are connected or
 disconnected. Plasma should have special settings to handle this. But it
 does not work as intended.
 
+When I sysupgraded to the May 10th snapshot, updated all packages,
+followed the pkg-readme from scratch and rebooted, the task bar and
+start menu showed bad font colors on a transparently absent
+background, which was un-readable against the default plasma
+wallpaper. It would no longer apply any appearance setting I changed,
+would not let me move the windows around, or let me unhide the window
+menus or show the minimize, maximize, or exit buttons of each window.
+
+I have not yet uninistalled and re-installed kde-plasma-extras and all
+its dependencies.
