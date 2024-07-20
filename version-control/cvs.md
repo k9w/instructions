@@ -66,6 +66,14 @@ A daily update takes about 5 minutes.
 
 ## Setup folders for CVS
 
+Add your local user to group `wsrc`.
+
+```
+# usermod -G wsrc <username>
+```
+
+Then log out and back in to apply the change.
+
 `/usr/src` should already exist with these settings.
 
 ```
@@ -116,6 +124,17 @@ Or checkout a release instead (except www, which doesn't have tagged releases).
 $ cd /usr
 $ cvs -qd /cvs co -P {src,ports,xenocara} -rOPENBSD_7_5
 ```
+
+You might get this error:
+
+```
+$ cvs -qd /cvs co -P ports
+cvs checkout: failed to create lock directory for `/cvs/ports' (/cvs/ports/#cvs.lock): Permission denied
+cvs checkout: failed to obtain dir lock in repository `/cvs/ports'
+cvs [checkout aborted]: read lock failed - giving up
+```
+
+To fix that... (to be continued).
 
 To switch from -current to a release, cd into each folder (except www)
 and specify the revision tag `-r tag` like the checkout above.
