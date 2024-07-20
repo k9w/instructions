@@ -27,29 +27,12 @@ when its repository is remote across the internet, let's do the CVS
 equivalent of a 'git clone' and fetch a copy of the full repository
 using rsync and a wrapper script called reposync.
 
-
 ```
 # pkg_add reposync
-# useradd cvs
+# useradd -s /sbin/nologin cvs
 # install -d -o cvs /cvs /var/db/reposync
-# chmod -R g+w /cvs /var/db/reposync
+# chmod -R 755 /cvs /var/db/reposync
 ```
-
-Optionally set `cvs` user shell to nologin.
-
-```
-# usermod -s /sbin/nologin
-```
-
-But you'll need to ensure it can execute `rsync` and anything else
-needed by reposync.
-
-Ideally, restrict the cvs account to not have shell access, but to run
-just the following commands.
-- reposync
-- tar.
-
-Note we did not give it a home directory above.
 
 The one command below both fetches an initial mirror of the repository
 and can be used again to update it.
