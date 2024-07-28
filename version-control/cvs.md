@@ -134,7 +134,8 @@ cvs checkout: failed to obtain dir lock in repository `/cvs/ports'
 cvs [checkout aborted]: read lock failed - giving up
 ```
 
-To fix that... (to be continued).
+To fix that, ensure `/cvs` group owner is a group your user is in, and
+that the permissions are 775, both recursively.
 
 To switch from -current to a release, cd into each folder (except www)
 and specify the revision tag `-r tag` like the checkout above.
