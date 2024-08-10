@@ -202,3 +202,53 @@ Coming up, I will cover how to change these to accept only newer and
 safer algorithms.
 
 
+### Check Available & Configured HostKeyAlgorithms
+
+Check what algorithms `sshd` supports for keyword HostKeyAlgorithms:
+
+```
+$ ssh -Q hostkeyalgorithms
+```
+
+From the client, check what algorithms are currently configured for
+keyword HostKeyAlgorithms on the server.
+
+```
+$ ssh -G k9w.org | grep hostkeyalgorithms | tr ',' '\n'
+```
+
+### Set which HostKeyAlgorithms to Accept
+
+In `sshd_config`, perhaps right below the HostKey entry, add
+HostKeyAlgorithms with the algorithms you want to use.
+
+Here I choose all variations of ED25519:
+
+- Regular key
+- Certificate
+- MFA-backed key
+- MFA-backed certificate
+
+```
+HostKeyAlgorithms \
+	ssh-ed25519 \
+	ssh-ed25519-cert-v01@openssh.com \ 
+	sk-ssh-ed25519@openssh.com \
+	sk-ssh-ed25519-cert-v01@openssh.com
+```
+
+This disallows all other hostkey algorithms.
+
+But in my testing, it did not change the output of the 'ssh -G'
+command above.
+
+## Generate new hostkeys
+
+I have not yet tested setting HostKeyAlgorithms as specified above.
+
+Delete the current hostkeys from `/etc/ssh` named `ssh_host
+
+```
+$ ssh-keygen -A
+```
+
