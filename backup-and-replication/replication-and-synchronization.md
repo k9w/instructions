@@ -1,4 +1,26 @@
-# Openrsync
+# Replication & Synchronization
+
+Replication is not a backup because it only synchronizes data from the
+source to the destination, without necessarily keeping any version or
+change history. This means if you discover you need a previous version
+of your data, replication will not help because it (usually) only
+keeps the latest version.
+
+This guide focuses on Rsync and Openrsync.
+
+## Rsync
+
+### Usage examples
+
+```
+$ rsync -avzP ~/.xsession* ~/src/dotfiles
+```
+
+### Daemon to speed up file comparisons
+
+rsyncd
+
+## Openrsync
 
 [openrsync(1)](https://man.openbsd.org/openrsync) is an
 [ISC-licensed](https://en.wikipedia.org/wiki/ISC_license)
@@ -6,7 +28,7 @@ implementation of the [rsync](https://rsync.samba.org) protocol for
 [OpenBSD](https://openbsd.org).
 
 
-## Usage examples
+### Usage examples
 
 
 Copy a generated static website from the build directory to the
@@ -51,7 +73,7 @@ or immutability. Proper backup and restore tools would be Tarsnap,
 Borg, Rclone, Restic, and others.
 
 
-## Daemon to speedup file comparisons
+### Daemon to speedup file comparisons
 
 Copy files to a destination host which has rsync installed and the
 daemon running. Use the daemon by specifying two colons after the
@@ -73,6 +95,16 @@ ssh'ed into the remote machine.
 (To be continued.)
 
 ## See Also
+
+### Rsync
+
+<https://rsync.samba.org>
+
+<https://devhints.io/rsync>
+
+<https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories>
+
+### Openrsync
 
 <https://man.openbsd.org/openrsync>
 
