@@ -337,3 +337,20 @@ Delete the current hostkeys from `/etc/ssh` named `ssh_host
 $ ssh-keygen -A
 ```
 
+
+
+## Only use ed25519 hostkey
+
+To have the server only send the ed25519 hostkey for a client's
+known_hosts file:
+
+- Uncomment just ed25519 HostKey in sshd_config. Or
+
+- Delete all but the eds5519 host keypair.
+
+Then restart sshd for it to pickup the change.
+
+Doing both does not hurt either.
+
+Next step is to regenerate new ed25519 hostkeys.
+
