@@ -859,3 +859,14 @@ $ git push
 
 <https://stackoverflow.com/questions/35941566/git-says-remote-ref-does-not-exist-when-i-delete-remote-branch>
 
+
+
+Git merge conflict:
+
+```
+$ git merge --no-ff
+$ git pull
+$ git push
+```
+
+
