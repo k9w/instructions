@@ -348,7 +348,11 @@ known_hosts file:
 
 - Delete all but the eds5519 host keypair.
 
-Then restart sshd for it to pickup the change.
+Then reload sshd for it to pickup the change.
+
+```
+# rcctl reload sshd
+```
 
 Doing both does not hurt either.
 
