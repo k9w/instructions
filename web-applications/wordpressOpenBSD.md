@@ -87,25 +87,25 @@ OpenBSD offers multiple versions of PHP.
 $ pkg_info -I php | cut -d" " -f1
 ```
 
-On 7.4-release:
+On 7.6-release:
 ```
-php-7.4.33p1
-php-8.0.30
-php-8.1.25
-php-8.1.26
-php-8.1.27
-php-8.2.12
-php-8.2.13
-php-8.2.14
+php-8.1.30
+php-8.1.31
+php-8.2.24
+php-8.2.25
+php-8.2.26
+php-8.2.27
+php-8.3.12
+php-8.3.13
+php-8.3.14
+php-8.3.15
 ```
 
-On 7.4-current (Dec 28 2023 snapshot):
+On 7.6-current (as of Dec 21 2024):
 ```
-php-7.4.33p1
-php-8.0.30
-php-8.1.27
-php-8.2.14
-php-8.3.1
+php-8.2.26p0
+php-8.3.14
+php-8.4.1
 ```
 
 If you find any PHP extensions recommended by Wordpress are not tied
@@ -205,23 +205,31 @@ databases too.
   Memcached. OpenBSD package:
   [libmemcached](https://openports.pl/path/devel/libmemcached)
 
-- opache (requires libcurl)
+- [opcache](https://www.php.net/manual/en/book.opcache.php) (requires
+  libcurl) For pre-loading scripts when the PHP engine starts. (no
+  OpenBSD package)
 
-- redis (if using Redis)
+- [redis](https://pecl.php.net/package/redis) (if using Redis)
 
 #### Optional
 
-- bc - arbitrary precision math
+- [bc](https://www.php.net/manual/en/book.bc.php) - arbitrary
+  precision math
 
-- php-filter
+- [filter](https://www.php.net/manual/en/book.filter.php) For securely
+  filtering input.
 
-- image, libgd, php-gd (if imagick is not installed)
+- [image](https://www.php.net/manual/en/book.image.php), libgd, php-gd
+  (if imagick is not installed)
 
-- iconv
+- [iconv](https://www.php.net/manual/en/book.iconv.php) Convert
+  between character sets.
 
-- intl
+- [shmop](https://www.php.net/manual/en/book.shmop.php) Allow PHP to
+  manipulate shared sytem memory segments.
 
-- simplexml
+- [simplexml](https://www.php.net/manual/en/book.simplexml.php) to
+  parse XML.
 
 - sodium
 
@@ -543,3 +551,7 @@ Also, delete the WordPress installation script to limit any duplicate installati
 
 [Wordpress on OpenBSD 6.7 (released May 19, 2020) Guide updated May
 2023](https://docs.ircnow.org/openbsd/wordpress)
+
+[LowEndBox.com: Wordpress on OpenBSD,
+2024](https://lowendbox.com/blog/lets-try-bsd-part-5-of-7-setting-up-nginx-wordpress-on-openbsd-almost)
+
