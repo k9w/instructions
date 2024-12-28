@@ -71,76 +71,56 @@ server 127.0.0.1 {
 ### Production setup for httpd.conf
 
 This example has three websites:
-- subdomain.example.com
 - example.com
-- otherwebsite.com
+- foobar.org
+- www.foobar.org
 
 The port 80 server block for each site redirects to a port 443 block
 right below it.
 
 
 ```
-server "subdomain.example.com" {
-	listen on "subdomain.example.com" port 80
-	root "/subdomain.example.com"
-	location "/.well-known/acme-challenge/*" {
-		root "/acme"
-		request strip 2
-	}
-	location * {
-		block return 302 "https://$HTTP_HOST$REQUEST_URI"
-	}
-}
-
-server "subdomain.example.com" {
-	listen on "subdomain.example.com" tls port 443
-	root "/subdomain.example.com"
-	tls {
-		certificate "/etc/ssl/subdomain.example.com.crt"
-		key "/etc/ssl/private/subdomain.example.com.key"
-	}
+server "example.com" {
+        listen on "example.com" port 80
+        root "/example.com"
+        location "/.well-known/acme-challenge/*" {
+                root "/acme"
+                request strip 2
+        }
+        location * {
+                block return 302 "https://$HTTP_HOST$REQUEST_URI"
+        }
 }
 
 server "example.com" {
-	listen on "example.com" port 80
-	root "/example.com"
-	location "/.well-known/acme-challenge/*" {
-		root "/acme"
-		request strip 2
-	}
-	location * {
-		block return 302 "https://$HTTP_HOST$REQUEST_URI"
-	}
+        listen on "example.com" tls port 443
+        root "/example.com"
+        tls {
+                certificate "/etc/ssl/example.crt"
+                key "/etc/ssl/private/example.com.key"
+        }
 }
 
-server "example.com" {
-	listen on "example.com" tls port 443
-	root "/example.com"
-	tls {
-		certificate "/etc/ssl/example.com.crt"
-		key "/etc/ssl/private/example.com.key"
-	}
+server "foobar.org" {
+        listen on "foobar.org" port 80
+        alias "www.foobar.org"
+        root "/foobar.org"
+        location "/.well-known/acme-challenge/*" {
+                root "/acme"
+                request strip 2
+        }
+        location * {
+                block return 302 "https://$HTTP_HOST$REQUEST_URI"
+        }
 }
 
-server "otherwebsite.com" {
-	listen on "otherwebsite.com" port 80
-	root "/otherwebsite.com"
-	location "/.well-known/acme-challenge/*" {
-		root "/acme"
-		request strip 2
-	}
-	location * {
-		block return 302 "https://$HTTP_HOST$REQUEST_URI"
-	}
-}
-
-server "otherwebsite.com" {
-	listen on "otherwebsite.com" tls port 443
-	root "/otherwebsite.com"
-	tls {
-		certificate "/etc/ssl/otherwebsite.com.crt"
-		key "/etc/ssl/private/otherwebsite.com.key"
-	}
+server "foobar.org" {
+        listen on "foobar.org" tls port 443
+        root "/foobar.org"
+        tls {
+                certificate "/etc/ssl/foobar.org.crt"
+                key "/etc/ssl/private/foobar.org.key"
+        }
 }
 ```
 
@@ -172,27 +152,21 @@ subdomain.
 
 ```
 authority letsencrypt {
-	api url "https://acme-v02.api.letsencrypt.org/directory"
-	account key "/etc/acme/letsencrypt-privkey.pem" ecdsa
-}
-
-domain subdomain.example.com {
-	domain key "/etc/ssl/private/subdomain.example.com.key" ecdsa
-	domain certificate "/etc/ssl/subdomain.example.com.crt"
-	sign with letsencrypt
+        api url "https://acme-v02.api.letsencrypt.org/directory"
+        account key "/etc/acme/letsencrypt-privkey.pem" ecdsa
 }
 
 domain example.com {
-	domain key "/etc/ssl/private/example.com.key" ecdsa
-	domain certificate "/etc/ssl/example.com.crt"
-	sign with letsencrypt
+        domain key "/etc/ssl/private/example.com.key" ecdsa
+        domain certificate "/etc/ssl/example.com.crt"
+        sign with letsencrypt
 }
 
-domain otherwebsite.com {
-	alternative names { www.otherwebsite.com }
-	domain key "/etc/ssl/private/otherwebsite.com.key" ecdsa
-	domain certificate "/etc/ssl/otherwebsite.com.crt"
-	sign with letsencrypt
+domain foobar.org {
+        alternative names { www.foobar.org }
+        domain key "/etc/ssl/private/foobar.org.key" ecdsa
+        domain certificate "/etc/ssl/foobar.org.crt"
+        sign with letsencrypt
 }
 ```
 
@@ -261,13 +235,28 @@ If you have problems, see the Troubleshooting section below.
 
 ### Automate the cert renewal with cron
 
-Root's crontab runs /etc/weekly at 03:30 UTC every Saturday.
-/etc/weekly runs /etc/weekly.local which is where we add the following
-lines for each website.
+Make a script to fetch or renew the certs with acme-client, and then
+reload httpd.
 
 ```
-# Renew the TLS cert for example.com and restart httpd.
-acme-client example.com && rcctl restart httpd
+# cat /root/bin/tls-renew.sh
+#!/bin/sh
+
+for i in \
+  example.com \
+  foobar.org 
+#  barbaz.org 
+do acme-client -vv "$i";
+done
+
+rcctl reload httpd
+```
+
+Run the script weekly with cron.
+
+```
+$ cat /etc/weekly.local
+/root/bin/tls-renew.sh
 ```
 
 ## Web content folder
