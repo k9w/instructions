@@ -17,17 +17,10 @@ updates to your copy on your local computer. Use rsync to upload it to
 the server.
 
 ```
-rsync -avzP ./site example.com:/~
+$ rsync -avzP ./site example.com:~
 ```
 
-Then on the server, copy the site into /var/www/example.com. Note the
-`-a` flag needs to be re-evaluated, since it will try to change the
-owner and group in `/var/www` to match that in `$HOME` which won't be
-allowed and is not what we want.
-
-```
-rsync -avzP ~/site/ /var/www/example.com/site
-```
+Then on the server, copy the site into /var/www/example.com.
 
 Since `-a` corresponds to `-rlptgoD`, remove the following flags since
 we are not allowed to modify them in `/var/www`. We cannot preserve:
@@ -36,7 +29,6 @@ we are not allowed to modify them in `/var/www`. We cannot preserve:
 - `-t` - modification times
 - `-g` - group ownership
 - `-o` - user ownership
-
 
 ```
 $ rsync -rlDvzP ~/site/ /var/www/example.com/site
