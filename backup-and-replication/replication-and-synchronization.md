@@ -12,8 +12,34 @@ This guide focuses on Rsync and Openrsync.
 
 ### Usage examples
 
+Say you already have a static website on your server. You make some
+updates to your copy on your local computer. Use rsync to upload it to
+the server.
+
 ```
-$ rsync -avzP ~/.xsession* ~/src/dotfiles
+rsync -avzP ./site example.com:/~
+```
+
+Then on the server, copy the site into /var/www/example.com. Note the
+`-a` flag needs to be re-evaluated, since it will try to change the
+owner and group in `/var/www` to match that in `$HOME` which won't be
+allowed and is not what we want.
+
+```
+rsync -avzP ~/site/ /var/www/example.com/site
+```
+
+Since `-a` corresponds to `-rlptgoD`, remove the following flags since
+we are not allowed to modify them in `/var/www`. We cannot preserve:
+
+- `-p` - permissions
+- `-t` - modification times
+- `-g` - group ownership
+- `-o` - user ownership
+
+
+```
+$ rsync -rlDvzP ~/site/ /var/www/example.com/site
 ```
 
 ### Daemon to speed up file comparisons
