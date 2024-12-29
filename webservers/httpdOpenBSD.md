@@ -48,6 +48,14 @@ httpd(ok)
 
 ## Configuration
 
+Ensure your domain registrar or DNS provider's A record for your
+domain points to the correct IP address. If you want an alias such as
+www.example.com, letsencrypt (which we we will use for TLS certs)
+requires a separate A record for it.
+
+On the server, consider adding your user to the `daemon` group, so
+that you can edit content in `/var/www` without root or doas. 
+
 OpenBSD httpd requires
 [/etc/httpd.conf](https://man.openbsd.org/httpd.conf) to exist and
 contain at least one server \{\} block, listen address, and root
@@ -80,6 +88,7 @@ right below it.
 
 
 ```
+$ cat /etc/httpd.conf
 server "example.com" {
         listen on "example.com" port 80
         root "/example.com"
@@ -96,7 +105,7 @@ server "example.com" {
         listen on "example.com" tls port 443
         root "/example.com"
         tls {
-                certificate "/etc/ssl/example.crt"
+                certificate "/etc/ssl/example.com.crt"
                 key "/etc/ssl/private/example.com.key"
         }
 }
@@ -151,6 +160,7 @@ certificate. So a unique cert is needed for each domain and each
 subdomain.
 
 ```
+$ cat /etc/acme-client.conf
 authority letsencrypt {
         api url "https://acme-v02.api.letsencrypt.org/directory"
         account key "/etc/acme/letsencrypt-privkey.pem" ecdsa
@@ -250,6 +260,12 @@ do acme-client -vv "$i";
 done
 
 rcctl reload httpd
+```
+
+Make it executable.
+
+```
+# chmod 744 /root/bin/tls-renew.sh
 ```
 
 Run the script weekly with cron.
