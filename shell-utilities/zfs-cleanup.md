@@ -157,4 +157,6 @@ $ zpool status test-pool
 $ zfs list test-pool
 ```
 
+<https://openzfs.github.io/openzfs-docs/Basic%20Concepts/dRAID%20Howto.html>
+
 
