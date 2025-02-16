@@ -112,3 +112,49 @@ depending on it.
 ```
 # zfs destroy -R zroot/ROOT/default@2024-07-18-21:34:02-0
 ```
+
+
+How to create a pool with draid vdev.
+
+```
+$ mkdir ~/test-zfs && cd ~/test-zfs
+$ dd if=/dev/zero of=disk00
+```
+
+List all the device files into a file called `drive-list`.
+
+```
+/home/kevin/test-zfs/disk00
+/home/kevin/test-zfs/disk01
+/home/kevin/test-zfs/disk02
+/home/kevin/test-zfs/disk03
+/home/kevin/test-zfs/disk04
+/home/kevin/test-zfs/disk05
+/home/kevin/test-zfs/disk06
+/home/kevin/test-zfs/disk07
+/home/kevin/test-zfs/disk08
+/home/kevin/test-zfs/disk09
+/home/kevin/test-zfs/disk10
+/home/kevin/test-zfs/disk11
+/home/kevin/test-zfs/disk12
+/home/kevin/test-zfs/disk13
+/home/kevin/test-zfs/disk14
+```
+
+```
+# zpool create test-pool draid3:2s $(cat drive-list)
+```
+
+```
+# zpool destroy test-pool
+```
+
+```
+$ zpool status test-pool
+```
+
+```
+$ zfs list test-pool
+```
+
+
