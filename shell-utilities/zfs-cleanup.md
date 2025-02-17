@@ -1,3 +1,7 @@
+# ZFS Cleanup
+
+## Cleanup ZFS Snapshots
+
 One of my FreeBSD VMs with only 10GB storage recently ran out of
 space.
 
@@ -114,48 +118,83 @@ depending on it.
 ```
 
 
-How to create a pool with draid vdev.
+## How to create a pool with draid vdev
+
+For this test we will use device files as virtual drives in a test
+directory.
+
+Make the test directory and cd into it.
 
 ```
 $ mkdir ~/test-zfs && cd ~/test-zfs
-$ dd if=/dev/zero of=disk00
 ```
+
+Use dd to create a 64MB disk file. ZFS requires drives to be 64MB or larger.
+
+```
+$ dd if=/dev/zero of=disk00 bs=1M count=64
+```
+
+Repeat the process for the number of drives you want. I did 15 in
+this example.
 
 List all the device files into a file called `drive-list`.
 
 ```
-/home/kevin/test-zfs/disk00
-/home/kevin/test-zfs/disk01
-/home/kevin/test-zfs/disk02
-/home/kevin/test-zfs/disk03
-/home/kevin/test-zfs/disk04
-/home/kevin/test-zfs/disk05
-/home/kevin/test-zfs/disk06
-/home/kevin/test-zfs/disk07
-/home/kevin/test-zfs/disk08
-/home/kevin/test-zfs/disk09
-/home/kevin/test-zfs/disk10
-/home/kevin/test-zfs/disk11
-/home/kevin/test-zfs/disk12
-/home/kevin/test-zfs/disk13
-/home/kevin/test-zfs/disk14
+/home/user/test-zfs/disk00
+/home/user/test-zfs/disk01
+/home/user/test-zfs/disk02
+/home/user/test-zfs/disk03
+/home/user/test-zfs/disk04
+/home/user/test-zfs/disk05
+/home/user/test-zfs/disk06
+/home/user/test-zfs/disk07
+/home/user/test-zfs/disk08
+/home/user/test-zfs/disk09
+/home/user/test-zfs/disk10
+/home/user/test-zfs/disk11
+/home/user/test-zfs/disk12
+/home/user/test-zfs/disk13
+/home/user/test-zfs/disk14
 ```
+Create a pool with a vdev of:
+- type draid with 3 parity drives
+- the default of 8 data drives
+- no number of child drives specified (if specified, the count must
+  equal the number of drives listed on standard input)
+- 2 spare drives
 
 ```
 # zpool create test-pool draid3:2s $(cat drive-list)
 ```
 
+Destroy the test pool.
+
 ```
 # zpool destroy test-pool
 ```
 
+You can also add the draid vdev to an existing pool.
+
+````
+# zpool add 
+````
+
+List the status of the pool and how many spares it has of the drives
+listed.
+
 ```
 $ zpool status test-pool
 ```
+List the available space on the ZFS filesystem in the draid vdev. This
+can be less space with fewer data drives and/or more spare drives.
 
 ```
 $ zfs list test-pool
 ```
+
+
+## See Also
 
 <https://openzfs.github.io/openzfs-docs/Basic%20Concepts/dRAID%20Howto.html>
 
