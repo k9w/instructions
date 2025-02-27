@@ -11,7 +11,7 @@ browser each time the visitor requests a page.
 
 The database itself, the database application, Wordpress itself (the
 PHP files), the PHP language engine, any PHP extensions, any Wordpress
-pluglins - they all constitute a whole bunch of additional code and
+plugins - they all constitute a whole bunch of additional code and
 content on the server compared to running a static website with
 potentially the exact same text, pictures and other media, themes and
 formatting.
@@ -27,7 +27,7 @@ Wordpress and other dynamic website platforms such as Drupal and
 Joomla give a point-and-click way to generate and manage every piece
 of website content. The only typing the user needs to do for the most
 part is just the sentences and other text they want to appear on the
-website. Themes and collors, image and media placement, and website
+website. Themes and colors, image and media placement, and website
 layout, responsiveness and experience, even uploading files and
 publishging changes - all of them are available by point-and-click.
 
@@ -61,7 +61,7 @@ service. Your website could become unavailable for any number of
 reasons.
 
 If you have better control over your data and self-host it, you can
-pickup and move to a different provider more easily if you needed to.
+pickup and move to a different provider more easily if you need to.
 
 ### Why run it on OpenBSD?
 
@@ -115,7 +115,7 @@ until shortly before the next OpenBSD release.
 In this case, you'll have best support for Wordpress features by using
 the latest version of PHP offered for the most recent OpenBSD release.
 
-So in our case of 7.4-release, let's go with PHP 8.2.
+So in our case of 7.6-release, let's go with the latest version of PHP 8.3.
 
 ```
 # pkg_add php ....
@@ -270,6 +270,19 @@ install.
 # rcctl check mysqld
 # mysql_install_db
 # mysql_secure_installation
+```
+
+If you get this error at the password prompt:
+
+```
+Enter current password for root (enter for none): 
+ERROR 2002 (HY000): Can't connect to local server through socket '/var/run/mysql/mysql.sock' (2)
+```
+
+You need to do `this` to fix it. (continue working here as of 02-27-2025)
+
+
+```
 # vi /etc/my/cnf
 ```
 
