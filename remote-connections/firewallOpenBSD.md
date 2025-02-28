@@ -51,3 +51,46 @@ pass on vether0
 pass on { em1, em2, em3 }
 ```
 
+Here is another excellent pf ruleset from OpenBSD misc mailing list,
+with wireguard.
+
+<https://marc.info/?l=openbsd-misc&m=174071058028238>
+
+```
+set reassemble yes no-df
+
+set skip on lo
+
+WAN="vio0"
+
+antispoof quick for $WAN
+antispoof quick for wg1
+
+# since we're dropping all packets by default, we don't need to explicitly worry
+# about non-routable packets.
+block drop all
+match in all scrub (no-df random-id reassemble tcp)
+
+# people like blocking ICMP, but it breaks parts of IPv4, and really breaks IPv6
+# if you must, you can block echo-request and echo-reply, but it really doesn't
+# gain you anything except making it harder to troubleshoot things.
+pass in on any inet proto icmp from any to any
+pass in on any inet6 proto icmp from any to any
+
+# make sure you can ssh in
+pass in on any proto tcp from any to self port 22
+
+# your almost identical rule will work, but using parentheses will allow pf to
+# gracefully handle interface address changes. even if you don't think it'll
+# happen, i like having this. we don't need an explicit pass out for wg1, since
+# that is handled below.
+pass in on wg1 from (wg1:network)
+
+# i've had issues with tcp mss detection on wireguard interfaces in the past, so
+# i generally clamp the mss. ymmv; if you have issues with ssh over the
+# wireguard tunnel, try this. if you don't, you can leave it out.
+match out on wg1 from any to any scrub (max-mss 1380 random-id)
+
+pass out modulate state
+```
+
