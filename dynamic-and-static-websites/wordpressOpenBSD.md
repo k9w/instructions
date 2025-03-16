@@ -264,11 +264,10 @@ install.
 ## Setup the Database
 
 ```
-# pkg_add mariadb_server
+# pkg_add mariadb-server
 # rcctl enable mysqld
-# rcctl start mysqld
-# rcctl check mysqld
 # mysql_install_db
+# rcctl start mysqld
 # mysql_secure_installation
 ```
 
@@ -279,8 +278,9 @@ Enter current password for root (enter for none):
 ERROR 2002 (HY000): Can't connect to local server through socket '/var/run/mysql/mysql.sock' (2)
 ```
 
-You need to do `this` to fix it. (continue working here as of 02-27-2025)
+You need to do run `mysql_install_db` before you start `mysqld`.
 
+For the secure installation, follow all the defaults and recommendations.
 
 ```
 # vi /etc/my/cnf
@@ -305,7 +305,7 @@ MariaDB [(none)]> CREATE DATABASE sampledb;
 ```
 
 Create a new standard user with a strong password.
-
+ 
 ```
 MariaDB [(none)]> CREATE USER 'user2'@'localhost' IDENTIFIED BY 'STRONG-PASSWORD';
 ```
@@ -348,6 +348,10 @@ MariaDB [(none)]> show databases;
 Exit the console.
 MariaDB [(none)]> EXIT
 ```
+
+
+03-15-2025 - Continue working here.
+
 
 ## Setup PHP to talk with Webserver and Database
 
@@ -523,6 +527,8 @@ Also, delete the WordPress installation script to limit any duplicate installati
 ```
 
 ## See also
+
+<https://obsd.solutions/en/blog/2023/09/02/mariadb-109-on-openbsd-73-install/index.html>
 
 <https://developer.wordpress.org/advanced-administration>
 
