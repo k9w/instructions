@@ -79,6 +79,10 @@ https://make.wordpress.org/hosting/handbook/server-environment)
 section of their [Hosting
 Handbook](https://make.wordpress.org/hosting/handbook).
 
+```
+# pkg_add php-pdo_mysql mariadb-server
+```
+
 ### PHP Version
 
 OpenBSD offers multiple versions of PHP.
@@ -282,9 +286,13 @@ You need to do run `mysql_install_db` before you start `mysqld`.
 
 For the secure installation, follow all the defaults and recommendations.
 
+Edit MariaDB's configuration file.
+
 ```
-# vi /etc/my/cnf
+# vi /etc/my.cnf
 ```
+
+Uncomment the two lines under `[client-server]`.
 
 ```
 [client-server]
@@ -301,21 +309,20 @@ Enter the root password you set earlier.
 Create a new sample database.
 
 ```
-MariaDB [(none)]> CREATE DATABASE sampledb;
+MariaDB [(none)]> CREATE DATABASE wordpressdb;
 ```
 
 Create a new standard user with a strong password.
  
 ```
-MariaDB [(none)]> CREATE USER 'user2'@'localhost' IDENTIFIED BY 'STRONG-PASSWORD';
+MariaDB [(none)]> CREATE USER 'wpdb-user'@'localhost' IDENTIFIED BY 'STRONG-PASSWORD';
 ```
 
 Grant the user full permissions to the sample database.
 
 ```
-MariaDB [(none)]> use sampledb; 
-MariaDB [sampledb]> GRANT ALL PRIVILEGES ON sampledb.* TO
-'user2'@'localhost';
+MariaDB [(none)]> use wordpressdb; 
+MariaDB [sampledb]> GRANT ALL PRIVILEGES ON wordpressdb.* TO 'wpdb-user'@'localhost';
 ```
 
 Reload the privileges.
@@ -330,19 +337,21 @@ Exit the console.
 MariaDB [sampledb]> EXIT 
 ```
 
-Log in to the MySQL console again, this time as a standard user.
+Log in to the MariaDB console again, this time as a standard user.
 
 ```
-# mysql -u user2 -p
+# mysql -u wpdb-user -p
+```
 
 Check the current databases accessible by the user.
 
+```
 MariaDB [(none)]> show databases;
 +--------------------+
 | Database           |
 +--------------------+
 | information_schema |
-| sampledb           |
+| wordpressdb           |
 +--------------------+
 2 rows in set (0.002 sec)
 Exit the console.
@@ -350,13 +359,21 @@ MariaDB [(none)]> EXIT
 ```
 
 
-03-15-2025 - Continue working here.
-
-
 ## Setup PHP to talk with Webserver and Database
 
 ```
 # pkg_add php-mysqli php-pdo_mysql
+```
+
+Before you proceed with these steps, setup a static index.html
+page. If you're just testing, you can use the server IP address and
+not worry about DNS or TLS.
+
+
+03-20-2025 - Continue working here.
+
+
+```
 # vi /var/www/htdocs/test.php
 ```
 
