@@ -58,16 +58,22 @@ that you can edit content in `/var/www` without root or doas.
 
 OpenBSD httpd requires
 [/etc/httpd.conf](https://man.openbsd.org/httpd.conf) to exist and
-contain at least one server \{\} block, listen address, and root
-folder defined. You can copy the example file from
-/etc/examples/httpd.conf.
+contain at least one server \{\} block and listen address. The default
+root folder is '/var/www/htdocs'.
+
+For a public server instance with no DNS or TLS, you can specify its
+public IP address or the network interface name, such as vio0, found
+via ifconfig.
 
 ```
-# cp /etc/examples/httpd.conf /etc
+server "vio0" {
+        listen on * port 80
+}
 ```
 
 Or you can use the sample below for offline development on your local
-computer.
+computer. This one changes the root from '/var/www/htdocs' to
+'/var/www' with the 'root' keyword.
 
 ```
 server 127.0.0.1 {
@@ -75,6 +81,14 @@ server 127.0.0.1 {
         root '/'
 }
 ```
+
+For a production public server with DNS and TLS, it's easiest to copy
+the example file from /etc/examples/httpd.conf.
+
+```
+# cp /etc/examples/httpd.conf /etc
+```
+
 
 ### Production setup for httpd.conf
 
