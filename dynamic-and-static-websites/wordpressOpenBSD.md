@@ -369,8 +369,25 @@ Before you proceed with these steps, setup a static index.html
 page. If you're just testing, you can use the server IP address and
 not worry about DNS or TLS.
 
+Copy the required config for PHP in '/etc'.
 
-03-20-2025 - Continue working here.
+```
+# ln -s /etc/php-8.3.sample/${ini} /etc/php-8.3
+```
+
+Enable and start the PHP service.
+
+```
+# rcctl enable php83_fpm
+# rcctl start php83_fpm
+```
+
+
+
+<https://obsd.solutions/en/blog/2023/08/03/php-fpm-82-on-openbsd-73/index.html>
+
+
+04-07-2025 - Continue working here.
 
 
 ```
