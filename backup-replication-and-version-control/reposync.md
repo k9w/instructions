@@ -1,28 +1,61 @@
-## Host a reposync server
+Unlike Git and other distributed version control systems, CVS,
+Subversion, and other centralized version control systems usually
+don't give you the full repository and change history locally on your
+machine when you checkout a copy of current, tagged release, or similar.
 
 [reposync](https://github.com/sthen/reposync) is a client-side shell
 script to fetch and update a CVS repository to allow CVS commands to
 be run against the local machine, rather than reaching across the
 internet. This removes one bottle-neck to speed with CVS.
 
-### Create client user
+## Use Reposync as a Client
 
-On the server, create user `anoncvs`, which is used by reposync to
-connect from the client to the server.
+### Regular Usage
+
+Logged in as your regular user or root, su with your environmenent
+intact (-m) to the `cvs` user for just
+one command (-c), the reposync comnmand in single quotes: reposync
+from the listed rsync mirror, to the default checkout location `/cvs`
+(not specified at the end of the command).
 
 ```
-# useradd -s /sbin/nologin anoncvs
+# su -m cvs -c 'reposync rsync://mirror.example.org/cvs'
 ```
 
-Note that nologin does not exist in /etc/shells.
+### First Time Client Setup
+
+Install reposync from packages.
 
 ```
-anoncvs:*:32767:32767::/nonexistent:/sbin/nologin
+# pkg_add reposync
 ```
 
-Set its shell to nologin or whatever commands are needed for reposync.
-Is the rsync daemon on the server run by a `rsyncd` user? What about
-running as root to bind to the default priviledged port 873?
+Add a local client user to run reposync and own the resultant folder.
+
+```
+# useradd cvs
+```
+
+install (create) the following directories (-d) with the cvs user as
+owner (-o).
+
+- `/cvs` - To hold the full CVS repository.
+- `/var/db/reposync` - To hold reposync's hash of the repo, list of
+  known hosts, etc.
+
+```
+# install -d -o cvs /cvs /var/db/reposync
+```
+
+After your initial download of the repository (see Regular Usage
+above), you can set your `$CVSROOT` to `/cvs` and do your initial CVS
+checkout of each child repository: src, ports, xenocara.
+
+## Host a reposync server
+
+If you have several machines, or if you want to serve the OpenBSD
+repository to others, here is how to host your own Reposync mirror.
+
 
 ### Limit user options in SSHd
 
@@ -65,7 +98,30 @@ rsync daemon mode
 #        comment = ftp export area
 ```
 
+
+### Create client user
+
+On the server, create user `anoncvs`, which is used by reposync on the
+client to connect to the server.
+
+```
+# useradd -s /sbin/nologin anoncvs
+```
+
+Note that nologin does not exist in /etc/shells.
+
+```
+anoncvs:*:32767:32767::/nonexistent:/sbin/nologin
+```
+
+Set its shell to nologin or whatever commands are needed for reposync.
+Is the rsync daemon on the server run by a `rsyncd` user? What about
+running as root to bind to the default priviledged port 873?
+
+
 ## See Also
+
+<https://www.openbsd.org/anoncvs.html#rsync>
 
 <https://daulton.ca/2018/10/openbsd-create-private-mirror>
 
