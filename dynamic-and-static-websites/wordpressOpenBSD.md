@@ -3,75 +3,20 @@
 This guide shows you how to install and configure Wordpress on
 OpenBSD.
 
-### Why use Wordpress?
 
-Wordpress is one of many dynamic website platforms that uses a
-database to generate the webpage sent to the site visitor's web
-browser each time the visitor requests a page.
+## Setup the webserver with a static page first
 
-The database itself, the database application, Wordpress itself (the
-PHP files), the PHP language engine, any PHP extensions, any Wordpress
-plugins - they all constitute a whole bunch of additional code and
-content on the server compared to running a static website with
-potentially the exact same text, pictures and other media, themes and
-formatting.
+Whether you plan to use OpenBSD's httpd or Apache, Nginx or another
+webserver, setting up and activating a basic configuration for a
+static webpage will ensure a working site you can reach by IP address,
+or optionally with a domain name and TLS certificate.
 
-A static website usually requires directly editing and publishing
-HTML, CSS, JavaScript, or a frontend framework for those tools. Even
-using a static site generator such as Hugo, MkDocs, or mkws.sh (which
-requires none of their own code on the webserver) still requires
-defining templates and writing Markdown or a similar configuration
-language with a text editor and then uploading the files.
+If you plan to use one of those other webservers, install just the
+packages necessary to serve a static web page before installing any
+of the packages below.
 
-Wordpress and other dynamic website platforms such as Drupal and
-Joomla give a point-and-click way to generate and manage every piece
-of website content. The only typing the user needs to do for the most
-part is just the sentences and other text they want to appear on the
-website. Themes and colors, image and media placement, and website
-layout, responsiveness and experience, even uploading files and
-publishging changes - all of them are available by point-and-click.
 
-Many less-technical users don't want to type their content in
-Markdown, type any code or text to choose where on their site to place
-a picture, or to choose how the site looks, or to generate the site
-with 'hugo build' or upload the rendered site changes with a separate
-graphical FTP client such as FileZilla.
-
-Wordpress offers users that choice to point-and-click to accomplish
-all those things.
-
-### Why self-host Wordpress? Why not use Wix or GoDaddy?
-
-Self-hosting is running the website on a server you control, even if
-you don't own the server hardware used for it.
-
-A practical reason to self-host is to save money. All-inclusive
-services such as Wix and GoDaddy charge $10/mo or more (often with the
-domain name example.com included in the monthly price).
-
-You can get a website domain name for $15/yr in most cases at
-registrars such as Namecheap, and Porkbun.
-
-You can get server hosting at providers such as Vultr for $6/mo.
-
-An idealistic reason to self-host is to own your data and retain more
-control of it. Services such as Wix, GoDaddy, and even Wordpress.com
-could have a technical problem or change their pricing or terms of
-service. Your website could become unavailable for any number of
-reasons.
-
-If you have better control over your data and self-host it, you can
-pickup and move to a different provider more easily if you need to.
-
-### Why run it on OpenBSD?
-
-For all the advantages that Linux and FreeBSD offer, OpenBSD uses much
-less code in the base system to host a website, even a dynamic website
-with Wordpress. It is less code for the developers to keep secure from
-exploits. In some cases, it may even be lighter on server hosting
-resources.
-
-## Install Dependencies
+## Install & Configure Dependencies
 
 [Wordpress.org](https://wordpress.org) lists their required,
 recommended, and optional dependencies in the [Server Environment](
@@ -80,50 +25,52 @@ section of their [Hosting
 Handbook](https://make.wordpress.org/hosting/handbook).
 
 ```
-# pkg_add php-pdo_mysql mariadb-server
+# pkg_add php-cgi php-curl php-pdo_mysql php-zip php-intl libexif ImageMagick mariadb-server
 ```
 
-### PHP Version
+The package install command will ask what PHP version to use. Specify
+the same version each time. The server envirnment page above says what
+version of PHP to use.
 
-OpenBSD offers multiple versions of PHP.
+Check the package READMEs at `/usr/local/share/doc/pkg-readmes` and
+follow the recommended instructions.
 
-```
-$ pkg_info -I php | cut -d" " -f1
-```
+### femail-chroot
 
-On 7.6-release:
-```
-php-8.1.30
-php-8.1.31
-php-8.2.24
-php-8.2.25
-php-8.2.26
-php-8.2.27
-php-8.3.12
-php-8.3.13
-php-8.3.14
-php-8.3.15
-```
+Copy `/etc/resolv.conf` to `/var/www/etc`.
 
-On 7.6-current (as of Dec 21 2024):
-```
-php-8.2.26p0
-php-8.3.14
-php-8.4.1
-```
+### mariadb-server
 
-If you find any PHP extensions recommended by Wordpress are not tied
-to the latest PHP version in -current, they likely won't be updated
-until shortly before the next OpenBSD release.
-
-In this case, you'll have best support for Wordpress features by using
-the latest version of PHP offered for the most recent OpenBSD release.
-
-So in our case of 7.6-release, let's go with the latest version of PHP 8.3.
+Create an initial database with default settings.
 
 ```
-# pkg_add php ....
+# mariadb-install-db
 ```
+
+Create a directory for the MariaDB socket in the webserver chroot.
+
+```
+# install -d -m 0711 -o _mysql -g _mysql /var/www/var/run/mysql
+```
+
+Add the socket to `/etc/my.cnf`.
+
+```
+[client-server]
+socket = /var/www/var/run/mysql/mysql.sock
+```
+
+Check the tunables section of the README if you get resource limit
+errors.
+
+Use `mariadb-upgrade` after each MariaDB package upgrade.
+
+### php
+
+
+06-17-2-25 - Continue working here.
+
+
 
 ### Extensions to PHP
 
@@ -387,7 +334,6 @@ Enable and start the PHP service.
 <https://obsd.solutions/en/blog/2023/08/03/php-fpm-82-on-openbsd-73/index.html>
 
 
-04-07-2025 - Continue working here.
 
 
 ```
