@@ -48,22 +48,14 @@ httpd(ok)
 
 ## Configuration
 
-Ensure your domain registrar or DNS provider's A record for your
-domain points to the correct IP address. If you want an alias such as
-www.example.com, letsencrypt (which we we will use for TLS certs)
-requires a separate A record for it.
-
-On the server, consider adding your user to the `daemon` group, so
-that you can edit content in `/var/www` without root or doas. 
+### Localhost or IP address only
 
 OpenBSD httpd requires
 [/etc/httpd.conf](https://man.openbsd.org/httpd.conf) to exist and
-contain at least one server \{\} block and listen address. The default
-root folder is '/var/www/htdocs'.
+contain at least one server \{\} block and listen address.
 
-For a public server instance with no DNS or TLS, you can specify its
-public IP address or the network interface name, such as vio0, found
-via ifconfig.
+Serve http on network interface `vio0` and listen on port 80 with
+default root folder `/var/www/htdocs`.
 
 ```
 server "vio0" {
@@ -71,9 +63,8 @@ server "vio0" {
 }
 ```
 
-Or you can use the sample below for offline development on your local
-computer. This one changes the root from '/var/www/htdocs' to
-'/var/www' with the 'root' keyword.
+Serve on local loopback IP address `127.0.0.1`, listen on port 80, and
+set the root folder to `/` in the www chroot, which is `/var/www`.
 
 ```
 server 127.0.0.1 {
@@ -82,15 +73,65 @@ server 127.0.0.1 {
 }
 ```
 
-For a production public server with DNS and TLS, it's easiest to copy
-the example file from /etc/examples/httpd.conf.
+### Set a test page
+
+The default www root `/var/www/htdocs` is read and execute by group
+`daemon` and writable by root.
+
+Add your user to the `daemon` group.
 
 ```
-# cp /etc/examples/httpd.conf /etc
+# usermod -G daemon username
 ```
 
+Logout standard user and back in to apply the group membership.
 
-### Production setup for httpd.conf
+Add write permission to `daemon` group for `/var/www/htdocs`.
+
+```
+# chmod -R 775 /var/www/htdocs
+```
+
+Add an index file with any text. No HTML is needed for this
+simple test.
+
+```
+$ echo Test > /var/www/htdocs/index.html
+```
+
+If httpd is already running, there's no need to reload it.
+
+Navigate to the IP address in your browser to see the test page.
+
+
+### Production setup with DNS and TLS
+
+Login to your domain registrar or DNS provider and point an A record for your
+domain the correct IP address. Set a separate A record for each
+subdomain you want covered by TLS later.
+
+Example configs for `httpd.conf` and `acme-client.conf` are available
+at `/etc/examples`.
+
+Serve & listen on domain name `example.com` port 80 with root folder
+`/var/www/example.com`.
+
+```
+server 'example.com' {
+	    listen on 'example.com' port 80
+		root '/example.com'
+}
+```
+
+(The examples in the rest of this guide assume you have set the
+permissions for `/var/www/example.com` like described above for
+`/var/www/htdocs` and populated a test `index.html`.)
+
+
+06-20-2025 - This works. But it's not clear to me how to quickly
+remove the web serving even with commenting out all httpd.conf and
+stopping the service. Removing the A record worked.
+
 
 This example has three websites:
 - example.com
