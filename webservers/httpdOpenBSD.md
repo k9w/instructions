@@ -8,6 +8,13 @@ application similar to [Apache](httpdApache.md),
 
 ## Starting and Stopping
 
+Check if httpd is already running.
+
+```
+# rcctl check httpd
+httpd(ok)
+```
+
 Enable and start httpd.
 
 ```
@@ -20,13 +27,6 @@ Reload httpd to apply new configuration from httpd.conf.
 
 ```
 # rcctl reload httpd
-httpd(ok)
-```
-
-Check if httpd is running correctly.
-
-```
-# rcctl check httpd
 httpd(ok)
 ```
 
@@ -54,8 +54,9 @@ OpenBSD httpd requires
 [/etc/httpd.conf](https://man.openbsd.org/httpd.conf) to exist and
 contain at least one server \{\} block and listen address.
 
-Serve http on network interface `vio0` and listen on port 80 with
-default root folder `/var/www/htdocs`.
+Listen for requests to any address or name on network interface `vio0`
+on http port 80 and serve content from default root folder
+`/var/www/htdocs`.
 
 ```
 server "vio0" {
@@ -63,8 +64,8 @@ server "vio0" {
 }
 ```
 
-Serve on local loopback IP address `127.0.0.1`, listen on port 80, and
-set the root folder to `/` in the www chroot, which is `/var/www`.
+Listen only on local loopback IP address `127.0.0.1` on http port 80
+with folder `/` in the www chroot, which is `/var/www`.
 
 ```
 server 127.0.0.1 {
